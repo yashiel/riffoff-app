@@ -1,0 +1,136 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Calendar, Users, Ticket, Music, Download } from "lucide-react";
+import { StatusBadge } from "@/components/features/shared/StatusBadge";
+import { getEventById } from "@/actions/events";
+import { getEventTiers } from "@/actions/tiers";
+import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
+import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { formatDate } from "@/lib/utils";
+import { publishEvent, cancelEvent } from "@/actions/events";
+import { Query } from "node-appwrite";
+import type { EventDoc } from "@/lib/appwrite/types";
+
+interface ManageEventPageProps {
+  params: Promise<{ eventId: string }>;
+}
+
+export async function generateMetadata({ params }: ManageEventPageProps) {
+  const { eventId } = await params;
+  const event = await getEventById(eventId);
+  return { title: event ? `Manage: ${event.title}` : "Event Not Found" };
+}
+
+export default async function ManageEventPage({ params }: ManageEventPageProps) {
+  const { eventId } = await params;
+
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) notFound();
+  const user = await sessionClient.account.get();
+
+  const { databases } = await createAdminClient();
+
+  let event: EventDoc;
+  try {
+    event = (await databases.getDocument(
+      DATABASE_ID, COLLECTIONS.EVENTS, eventId,
+    )) as unknown as EventDoc;
+  } catch {
+    notFound();
+  }
+
+  if (event.organiserId !== user.$id) notFound();
+
+  const tiers = await getEventTiers(eventId);
+
+  // Stats
+  const [appsResult, rsvpsResult] = await Promise.all([
+    databases.listDocuments(DATABASE_ID, COLLECTIONS.APPLICATIONS, [
+      Query.equal("eventId", eventId), Query.limit(1),
+    ]).catch(() => ({ total: 0 })),
+    databases.listDocuments(DATABASE_ID, COLLECTIONS.RSVPS, [
+      Query.equal("eventId", eventId), Query.equal("status", "going"), Query.limit(1),
+    ]).catch(() => ({ total: 0 })),
+  ]);
+
+  const totalSold = tiers.reduce((sum, t) => sum + t.soldCount, 0);
+  const totalQuota = tiers.reduce((sum, t) => sum + t.quota, 0);
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-[28px]">{event.title}</h1>
+            <StatusBadge status={event.status} />
+          </div>
+          <div className="mt-2 flex items-center gap-4 text-[13px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Calendar className="size-3 text-coral" />
+              {formatDate(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
+            </span>
+          </div>
+        </div>
+
+        {/* Status actions */}
+        <div className="flex gap-2">
+          {event.status === "draft" && (
+            <form action={async () => { "use server"; await publishEvent(eventId); }}>
+              <button type="submit" className="btn-primary !py-2 !text-[12px]">
+                Publish Event
+              </button>
+            </form>
+          )}
+          {event.status !== "cancelled" && (
+            <form action={async () => { "use server"; await cancelEvent(eventId); }}>
+              <button
+                type="submit"
+                className="rounded border border-red-500/20 bg-red-500/10 px-4 py-2 text-[12px] font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+              >
+                Cancel Event
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+
+      {/* Stats grid */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-4">
+        {[
+          { label: "Tickets Sold", value: `${totalSold}/${totalQuota || "—"}`, icon: Ticket },
+          { label: "Applications", value: String(appsResult.total), icon: Music },
+          { label: "RSVPs (Going)", value: String(rsvpsResult.total), icon: Users },
+          { label: "Capacity", value: String(event.capacity), icon: Users },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-xl border border-[rgba(255,255,255,0.06)] p-4"
+          >
+            <stat.icon className="size-4 text-coral" />
+            <p className="mt-2 font-display text-[24px]">{stat.value}</p>
+            <p className="text-[12px] text-muted-foreground">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Tab navigation */}
+      <div className="mt-8 flex gap-2 border-b border-[rgba(255,255,255,0.06)] pb-0">
+        {[
+          { label: "Tiers", href: `/dashboard/events/${eventId}/tiers`, icon: Ticket },
+          { label: "Applications", href: `/dashboard/events/${eventId}/applications`, icon: Music },
+          { label: "Attendees", href: `/dashboard/events/${eventId}/attendees`, icon: Download },
+        ].map((tab) => (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className="flex items-center gap-1.5 border-b-2 border-transparent px-4 py-3 text-[13px] font-medium text-muted-foreground transition-colors hover:border-coral hover:text-white"
+          >
+            <tab.icon className="size-3.5" />
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

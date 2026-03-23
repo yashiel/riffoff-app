@@ -1,0 +1,30 @@
+import { notFound } from "next/navigation";
+import { getEventById } from "@/actions/events";
+import { getEventApplications } from "@/actions/applications";
+import { ApplicationList } from "@/components/features/applications/ApplicationList";
+
+export const metadata = { title: "Manage Applications" };
+
+interface ApplicationsPageProps {
+  params: Promise<{ eventId: string }>;
+}
+
+export default async function ApplicationsPage({ params }: ApplicationsPageProps) {
+  const { eventId } = await params;
+  const event = await getEventById(eventId);
+  if (!event) notFound();
+
+  const applications = await getEventApplications(eventId);
+
+  return (
+    <div>
+      <h2 className="font-display text-[24px]">Artist Applications</h2>
+      <p className="mt-1 text-[14px] text-muted-foreground">
+        Review and manage applications for {event.title}
+      </p>
+      <div className="mt-6">
+        <ApplicationList applications={applications} />
+      </div>
+    </div>
+  );
+}
