@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
+import { VenueCombobox } from "./VenueCombobox";
 import { createEvent, updateEvent, type EventFormResult } from "@/actions/events";
+import { createVenue } from "@/actions/venues";
 import { uploadEventImage } from "@/actions/upload";
 import type { EventDoc, VenueDoc } from "@/lib/appwrite/types";
 
@@ -18,6 +20,8 @@ export function EventForm({ event, venues }: EventFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState(event?.coverimageUrl ?? "");
   const [isUploading, setIsUploading] = useState(false);
+  const [venueId, setVenueId] = useState<string | null>(event?.venueId ?? null);
+  const [venueName, setVenueName] = useState("");
 
   const isEditing = !!event;
 
@@ -38,10 +42,19 @@ export function EventForm({ event, venues }: EventFormProps) {
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
+      // If no existing venue selected, create a new one
+      let resolvedVenueId = venueId;
+      if (!resolvedVenueId && venueName) {
+        const venueResult = await createVenue(venueName);
+        if (venueResult.error) { setError(venueResult.error); return; }
+        resolvedVenueId = venueResult.venueId ?? null;
+      }
+      if (!resolvedVenueId) { setError("Please select or enter a venue"); return; }
+
       const input = {
         title: formData.get("title") as string,
         description: (formData.get("description") as string) || undefined,
-        venueId: formData.get("venueId") as string,
+        venueId: resolvedVenueId,
         genres: (formData.get("genres") as string)
           .split(",")
           .map((g) => g.trim())
@@ -98,19 +111,14 @@ export function EventForm({ event, venues }: EventFormProps) {
         />
       </div>
 
-      {/* Venue */}
+      {/* Venue — autocomplete with free-text */}
       <div className="space-y-1.5">
-        <Label htmlFor="venueId" className="text-[13px] text-muted-foreground">Venue</Label>
-        <select
-          id="venueId" name="venueId" required
-          defaultValue={event?.venueId ?? ""}
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
-        >
-          <option value="">Select a venue</option>
-          {venues.map((v) => (
-            <option key={v.$id} value={v.$id}>{v.name}</option>
-          ))}
-        </select>
+        <Label className="text-[13px] text-muted-foreground">Venue</Label>
+        <VenueCombobox
+          venues={venues}
+          defaultVenueId={event?.venueId}
+          onChange={(id, name) => { setVenueId(id); setVenueName(name); }}
+        />
       </div>
 
       {/* Dates */}
