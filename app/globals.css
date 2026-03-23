@@ -49,41 +49,41 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ─── RiffOff Dark Theme — Shotgun-inspired ──────────── */
+/* ─── RiffOff Dark Theme — Electric Nightlife ──────────── */
 :root {
-  --background: #161616;
-  --foreground: #ffffff;
-  --card: #1e1e1e;
-  --card-foreground: #ffffff;
-  --popover: #1e1e1e;
-  --popover-foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #1c1c1c;
-  --secondary: #2a2a2a;
-  --secondary-foreground: #ffffff;
-  --muted: #2a2a2a;
-  --muted-foreground: #a3a5a8;
-  --accent: #2a2a2a;
-  --accent-foreground: #ffffff;
+  --background: #0e0e10;
+  --foreground: #f0f0f2;
+  --card: #18181b;
+  --card-foreground: #f0f0f2;
+  --popover: #18181b;
+  --popover-foreground: #f0f0f2;
+  --primary: #f0f0f2;
+  --primary-foreground: #0e0e10;
+  --secondary: #1e1e22;
+  --secondary-foreground: #f0f0f2;
+  --muted: #1e1e22;
+  --muted-foreground: #6b6b78;
+  --accent: #1e1e22;
+  --accent-foreground: #f0f0f2;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.05);
-  --ring: #e87758;
-  --chart-1: #e87758;
-  --chart-2: #8b5cf6;
-  --chart-3: #22c55e;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.04);
+  --ring: #bfff00;
+  --chart-1: #bfff00;
+  --chart-2: #7c3aed;
+  --chart-3: #06b6d4;
   --chart-4: #3b82f6;
   --chart-5: #f59e0b;
   --radius: 0.25rem;
-  --coral: #e87758;
-  --sidebar: #181818;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #e87758;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2a2a2a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #e87758;
+  --coral: #bfff00;
+  --sidebar: #0c0c0e;
+  --sidebar-foreground: #f0f0f2;
+  --sidebar-primary: #bfff00;
+  --sidebar-primary-foreground: #0e0e10;
+  --sidebar-accent: #1e1e22;
+  --sidebar-accent-foreground: #f0f0f2;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: #bfff00;
 }
 
 @layer base {
@@ -107,17 +107,25 @@
   letter-spacing: 0.02em;
 }
 
-/* ─── Coral accent for dates ──────────── */
+/* ─── Accent color for dates + highlights ──────────── */
 .text-coral {
   color: var(--coral);
 }
 
-/* ─── Ghost button (Shotgun-style outlined) ──────────── */
+/* ─── Logo gradient — lime to violet ──────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #bfff00 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Ghost button (outlined) ──────────── */
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f0f0f2;
+  border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
   text-transform: uppercase;
@@ -125,15 +133,16 @@
   transition: all 0.2s;
 }
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(191, 255, 0, 0.3);
+  color: #bfff00;
 }
 
-/* ─── Primary CTA (white fill — dramatic inversion) ──────────── */
+/* ─── Primary CTA — electric lime ──────────── */
 .btn-primary {
-  background: #ffffff;
-  color: #1c1c1c;
-  border-radius: 4px;
+  background: #bfff00;
+  color: #0e0e10;
+  border-radius: 6px;
   padding: 12px 24px;
   font-weight: 700;
   text-transform: uppercase;
@@ -142,34 +151,35 @@
   border: none;
 }
 .btn-primary:hover {
-  background: #f0f0f0;
+  background: #d4ff4d;
   transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(191, 255, 0, 0.2);
 }
 
-/* ─── Genre pill (Shotgun-style) ──────────── */
+/* ─── Genre pill ──────────── */
 .genre-pill {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.2);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
   transition: all 0.2s;
 }
 .genre-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.4);
+  color: #c4b5fd;
 }
 .genre-pill.active {
-  background: rgba(232, 119, 88, 0.15);
-  border-color: rgba(232, 119, 88, 0.4);
-  color: #e87758;
+  background: rgba(191, 255, 0, 0.1);
+  border-color: rgba(191, 255, 0, 0.3);
+  color: #bfff00;
 }
 
 /* ─── Subtle card hover ──────────── */
@@ -185,39 +195,39 @@
 
 /* ─── Filter button ──────────── */
 .filter-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
-  color: #ffffff;
+  color: #f0f0f2;
   transition: all 0.2s;
 }
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(191, 255, 0, 0.2);
 }
 .filter-btn.active {
-  background: #e87758;
-  border-color: #e87758;
-  color: #ffffff;
+  background: rgba(191, 255, 0, 0.12);
+  border-color: rgba(191, 255, 0, 0.4);
+  color: #bfff00;
 }
 
 /* ─── Scrollbar ──────────── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(191, 255, 0, 0.2);
 }
 
 /* ─── Stagger animation ──────────── */

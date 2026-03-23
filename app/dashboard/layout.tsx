@@ -49,13 +49,13 @@ export default async function DashboardLayout({
   );
 
   return (
-    <div className="flex min-h-screen bg-[#141414]">
+    <div className="flex min-h-screen bg-[#0a0a0c]">
       {/* ─── Sidebar — warm translucent glass ─── */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] flex-col lg:flex">
         {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1917] via-[#181818] to-[#141414]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0e0e12] via-[#0c0c0e] to-[#0a0a0c]" />
         {/* Right edge glow line */}
-        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-[rgba(232,119,88,0.15)] to-transparent" />
+        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-[rgba(191,255,0,0.1)] to-transparent" />
 
         <div className="relative flex h-full flex-col">
           {/* Logo */}
@@ -93,7 +93,7 @@ export default async function DashboardLayout({
                   <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/30 to-coral/10 text-[12px] font-bold text-coral ring-2 ring-coral/20">
                     {initials}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#1a1917] bg-emerald-400" />
+                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#0e0e12] bg-emerald-400" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13px] font-semibold text-white/90">{displayName}</p>
@@ -122,7 +122,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* ─── Mobile header ─── */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-white/[0.04] bg-[#141414]/90 px-4 backdrop-blur-xl lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-white/[0.04] bg-[#0a0a0c]/90 px-4 backdrop-blur-xl lg:hidden">
         <Link
           href="/"
           className="font-[family-name:var(--font-display)] text-lg font-extrabold"
