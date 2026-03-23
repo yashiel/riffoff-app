@@ -4,9 +4,10 @@ import type { EventWithVenue } from "@/actions/events";
 
 interface EventGridProps {
   events: EventWithVenue[];
+  wishlistedIds?: string[];
 }
 
-export function EventGrid({ events }: EventGridProps) {
+export function EventGrid({ events, wishlistedIds = [] }: EventGridProps) {
   if (events.length === 0) {
     return (
       <EmptyState
@@ -16,10 +17,16 @@ export function EventGrid({ events }: EventGridProps) {
     );
   }
 
+  const wishlistSet = new Set(wishlistedIds);
+
   return (
     <div className="grid gap-x-6 gap-y-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {events.map((event) => (
-        <EventCard key={event.$id} event={event} />
+        <EventCard
+          key={event.$id}
+          event={event}
+          initialWishlisted={wishlistSet.has(event.$id)}
+        />
       ))}
     </div>
   );

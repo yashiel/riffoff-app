@@ -1,23 +1,40 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Calendar, MapPin } from "lucide-react";
 import { formatDate, formatCurrency } from "@/lib/utils";
+import { toggleWishlist } from "@/actions/wishlist";
 import type { EventWithVenue } from "@/actions/events";
 
 interface EventCardProps {
   event: EventWithVenue;
   variant?: "grid" | "scroll";
+  initialWishlisted?: boolean;
 }
 
-export function EventCard({ event, variant = "grid" }: EventCardProps) {
+export function EventCard({ event, variant = "grid", initialWishlisted = false }: EventCardProps) {
+  const [wishlisted, setWishlisted] = useState(initialWishlisted);
+  const [isPending, startTransition] = useTransition();
+
+  function handleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    startTransition(async () => {
+      const result = await toggleWishlist(event.$id);
+      if (!result.error) {
+        setWishlisted(result.wishlisted);
+      }
+    });
+  }
+
   return (
     <Link
       href={`/events/${event.$id}`}
       className={`group block ${variant === "scroll" ? "w-[260px] flex-shrink-0" : ""}`}
     >
-      {/* Image — rounded 12px (our identity, not DICE's 8px) */}
+      {/* Image */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
         {event.coverimageUrl ? (
           <Image
@@ -27,12 +44,12 @@ export function EventCard({ event, variant = "grid" }: EventCardProps) {
             className="object-cover transition-all duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-[#2a2a2a]">
+          <div className="flex h-full items-center justify-center bg-[#1e1e22]">
             <span className="text-5xl opacity-10">♪</span>
           </div>
         )}
 
-        {/* Bottom gradient overlay — RiffOff unique (not flat like DICE) */}
+        {/* Bottom gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
         {/* Top-left badges */}
@@ -44,17 +61,22 @@ export function EventCard({ event, variant = "grid" }: EventCardProps) {
           )}
         </div>
 
-        {/* Heart button — top right */}
+        {/* Heart/wishlist button — top right */}
         <button
           type="button"
-          onClick={(e) => e.preventDefault()}
-          className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-black/40 text-white/70 backdrop-blur-sm transition-all hover:bg-black/60 hover:text-white"
-          aria-label="Save to wishlist"
+          onClick={handleWishlist}
+          disabled={isPending}
+          className={`absolute right-3 top-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-all ${
+            wishlisted
+              ? "bg-coral/90 text-black"
+              : "bg-black/40 text-white/70 hover:bg-black/60 hover:text-white"
+          } ${isPending ? "animate-pulse" : ""}`}
+          aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
         >
-          <Heart className="size-4" />
+          <Heart className={`size-4 ${wishlisted ? "fill-current" : ""}`} />
         </button>
 
-        {/* Bottom overlay info — our unique pattern */}
+        {/* Bottom overlay info */}
         <div className="absolute bottom-0 left-0 right-0 p-3.5">
           <h3 className="line-clamp-2 text-[15px] font-bold leading-tight text-white drop-shadow-sm">
             {event.title}
@@ -64,7 +86,6 @@ export function EventCard({ event, variant = "grid" }: EventCardProps) {
 
       {/* Meta below image */}
       <div className="mt-2.5 space-y-0.5">
-        {/* Date — coral accent */}
         <div className="flex items-center gap-1.5">
           <Calendar className="size-3 text-coral" />
           <span className="text-[13px] font-medium text-coral">
@@ -72,7 +93,6 @@ export function EventCard({ event, variant = "grid" }: EventCardProps) {
           </span>
         </div>
 
-        {/* Venue */}
         {event.venue && (
           <div className="flex items-center gap-1.5">
             <MapPin className="size-3 text-muted-foreground" />
@@ -82,7 +102,6 @@ export function EventCard({ event, variant = "grid" }: EventCardProps) {
           </div>
         )}
 
-        {/* Price + genres row */}
         <div className="flex items-center justify-between pt-0.5">
           <span className="text-[13px] font-semibold text-white">
             {event.isFree ? (

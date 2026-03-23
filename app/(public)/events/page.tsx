@@ -4,6 +4,7 @@ import { EventFilters } from "@/components/features/events/EventFilters";
 import { Pagination } from "@/components/features/events/Pagination";
 import { SkeletonList } from "@/components/features/shared/SkeletonCard";
 import { getPublishedEvents, getAvailableGenres } from "@/actions/events";
+import { getWishlistedEventIds } from "@/actions/wishlist";
 import { serialize } from "@/lib/utils";
 import type { EventFilters as EventFilterType, EventWithVenue } from "@/actions/events";
 
@@ -33,6 +34,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   let page = 1;
   let totalPages = 1;
   let genres: string[] = [];
+  let wishlistedIds: string[] = [];
 
   try {
     const [eventsResult, genresResult] = await Promise.all([
@@ -43,6 +45,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     page = eventsResult.page;
     totalPages = eventsResult.totalPages;
     genres = genresResult;
+
+    // Fetch wishlist state for logged-in users
+    const eventIds = events.map((e) => e.$id);
+    if (eventIds.length > 0) {
+      const wishlistSet = await getWishlistedEventIds(eventIds);
+      wishlistedIds = [...wishlistSet];
+    }
   } catch {
     // Appwrite may not be reachable or permissions not set — show empty state
   }
@@ -64,7 +73,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
       <div className="mt-8">
         <Suspense fallback={<SkeletonList count={6} />}>
-          <EventGrid events={serialize(events)} />
+          <EventGrid events={serialize(events)} wishlistedIds={wishlistedIds} />
         </Suspense>
       </div>
 
