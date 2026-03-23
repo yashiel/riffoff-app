@@ -34,6 +34,18 @@ export type ApplicationStatus =
   | "rejected"
   | "withdrawn";
 
+/** Notification type — matches Appwrite enum */
+export type NotificationType =
+  | "ticket_purchased"
+  | "event_published"
+  | "event_cancelled"
+  | "application_submitted"
+  | "application_accepted"
+  | "application_rejected"
+  | "application_shortlisted"
+  | "checkin_complete"
+  | "system";
+
 /** Message thread type — matches Appwrite enum */
 export type ThreadType = "application" | "event";
 
@@ -168,5 +180,15 @@ export interface AuditLogDoc extends Models.Document {
   action: string;
   entityType: string;
   entityId: string;
+  metadata: string | null;
+}
+
+export interface NotificationDoc extends Models.Document {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  linkUrl: string | null;
+  readAt: string | null;
   metadata: string | null;
 }
