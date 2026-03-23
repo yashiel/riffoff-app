@@ -22,7 +22,7 @@ npm run dev                    # http://localhost:3000
 - **Appwrite** — Auth, Database, Storage
 - **Stripe** + **PayPal** + **TNG eWallet** — payments
 - **html5-qrcode** — QR camera scanning
-- **Vitest** — 217 tests
+- **Vitest** — 259 tests
 
 ---
 
@@ -37,7 +37,8 @@ npm run dev                    # http://localhost:3000
 - Role-based auth (attendee / artist / organiser / admin)
 - Dark theme UI inspired by DICE and Shotgun
 - In-app notifications
-- Admin dashboard with user management, event moderation, audit log with bell dropdown and real-time badges
+- Admin dashboard with user management, event moderation, audit log
+- Security: CSP headers, HSTS, rate limiting, input sanitization, CSRF protection with bell dropdown and real-time badges
 
 ---
 
