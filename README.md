@@ -22,7 +22,7 @@ npm run dev                    # http://localhost:3000
 - **Appwrite** — Auth, Database, Storage
 - **Stripe** + **PayPal** + **TNG eWallet** — payments
 - **html5-qrcode** — QR camera scanning
-- **Vitest** — 274 tests
+- **Vitest** — 329 tests + 20 E2E specs
 
 ---
 
