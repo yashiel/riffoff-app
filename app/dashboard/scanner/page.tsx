@@ -89,7 +89,7 @@ export default function ScannerPage() {
     setScanning(true);
   }, []);
 
-  const selectedEvent = events.find((e) => e.eventId === selectedEventId);
+
 
   return (
     <div className="mx-auto max-w-md">
