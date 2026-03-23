@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import type { EventDoc, TicketTierDoc } from "@/lib/appwrite/types";
 
 const tierSchema = z.object({
@@ -38,7 +39,8 @@ async function verifyEventOwnership(
     eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return { error: "Not authorized" };
+  const admin = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !admin) return { error: "Not authorized" };
   return { databases, event, userId: user.$id };
 }
 

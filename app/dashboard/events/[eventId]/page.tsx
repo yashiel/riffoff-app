@@ -6,6 +6,7 @@ import { getEventById } from "@/actions/events";
 import { getEventTiers } from "@/actions/tiers";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { formatDate } from "@/lib/utils";
 import { publishEvent, cancelEvent } from "@/actions/events";
 import { Query } from "node-appwrite";
@@ -39,7 +40,8 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
     notFound();
   }
 
-  if (event.organiserId !== user.$id) notFound();
+  const adminManage = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminManage) notFound();
 
   const tiers = await getEventTiers(eventId);
 

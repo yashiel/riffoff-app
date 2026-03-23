@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { notifyEventCancelled } from "@/actions/notifications";
 import type {
@@ -159,8 +160,8 @@ export async function getEventById(
 
       try {
         const user = await sessionClient.account.get();
-        if (event.organiserId !== user.$id) {
-          // TODO: also check admin role
+        const admin = await isCurrentUserAdmin();
+        if (event.organiserId !== user.$id && !admin) {
           return null;
         }
       } catch {
@@ -192,7 +193,8 @@ export async function getEventWithDetails(
       if (!sessionClient) return null;
       try {
         const user = await sessionClient.account.get();
-        if (event.organiserId !== user.$id) return null;
+        const admin = await isCurrentUserAdmin();
+        if (event.organiserId !== user.$id && !admin) return null;
       } catch {
         return null;
       }
@@ -389,7 +391,8 @@ export async function updateEvent(
     parsed.data.eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) {
+  const admin = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !admin) {
     return { error: "Not authorized" };
   }
 
@@ -435,7 +438,8 @@ export async function publishEvent(
     eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return { error: "Not authorized" };
+  const adminPub = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminPub) return { error: "Not authorized" };
   if (event.status !== "draft") return { error: "Only draft events can be published" };
 
   // Check: paid events must have at least 1 tier
@@ -494,7 +498,8 @@ export async function cancelEvent(
     eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return { error: "Not authorized" };
+  const adminCancel = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminCancel) return { error: "Not authorized" };
   if (event.status === "cancelled") return { error: "Event is already cancelled" };
 
   try {
@@ -537,19 +542,20 @@ export async function cancelEvent(
   }
 }
 
-/** Get events owned by the current organiser */
+/** Get events owned by the current organiser (admins see all) */
 export async function getOrganiserEvents(): Promise<EventWithVenue[]> {
   const sessionClient = await createSessionClient();
   if (!sessionClient) return [];
 
   const user = await sessionClient.account.get();
   const { databases } = await createAdminClient();
+  const admin = await isCurrentUserAdmin();
 
-  const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, [
-    Query.equal("organiserId", user.$id),
-    Query.orderDesc("$createdAt"),
-    Query.limit(50),
-  ]);
+  const queries = admin
+    ? [Query.orderDesc("$createdAt"), Query.limit(100)]
+    : [Query.equal("organiserId", user.$id), Query.orderDesc("$createdAt"), Query.limit(50)];
+
+  const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, queries);
 
   const events = result.documents as unknown as EventDoc[];
 

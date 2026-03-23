@@ -3,6 +3,7 @@
 import { Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { verifyTicketToken } from "@/lib/tickets/sign";
 import type {
   TicketDoc,
@@ -92,7 +93,8 @@ export async function validateAndCheckIn(
     return { valid: false, reason: "Event not found", code: "SERVER_ERROR" };
   }
 
-  if (event.organiserId !== user.$id) {
+  const adminScan = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminScan) {
     return { valid: false, reason: "Not authorized to scan for this event", code: "NOT_AUTHORIZED" };
   }
 
@@ -187,7 +189,8 @@ export async function getScannerStats(
     return null;
   }
 
-  if (event.organiserId !== user.$id) return null;
+  const adminStats = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminStats) return null;
 
   const [allTickets, checkedIn] = await Promise.all([
     databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
@@ -235,7 +238,8 @@ export async function getScanHistory(
     return [];
   }
 
-  if (event.organiserId !== user.$id) return [];
+  const adminList = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminList) return [];
 
   const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
     Query.equal("eventId", eventId),

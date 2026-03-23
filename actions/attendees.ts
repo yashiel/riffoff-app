@@ -3,6 +3,7 @@
 import { Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import type {
   TicketDoc,
   TicketTierDoc,
@@ -38,7 +39,8 @@ export async function getEventAttendees(
     eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return [];
+  const adminAtt = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminAtt) return [];
 
   // Get tickets
   const ticketsResult = await databases.listDocuments(

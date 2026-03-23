@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { notifyApplicationStatusChanged } from "@/actions/notifications";
 import type {
   ApplicationDoc,
@@ -33,7 +34,8 @@ export async function getEventApplications(
     eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return [];
+  const adminApps = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminApps) return [];
 
   const result = await databases.listDocuments(
     DATABASE_ID,
@@ -107,7 +109,8 @@ export async function updateApplicationStatus(
     application.eventId,
   )) as unknown as EventDoc;
 
-  if (event.organiserId !== user.$id) return { error: "Not authorized" };
+  const adminStatus = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !adminStatus) return { error: "Not authorized" };
 
   // Validate transition
   const allowed = VALID_TRANSITIONS[application.status];
