@@ -85,30 +85,30 @@ export default async function DashboardLayout({
           </nav>
 
           {/* User section */}
-          <div className="p-4">
+          <div className="p-3">
             <div className="rounded-xl bg-white/[0.03] p-3">
               <div className="flex items-center gap-3">
                 {/* Avatar with coral ring */}
-                <div className="relative">
+                <div className="relative shrink-0">
                   <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/30 to-coral/10 text-[12px] font-bold text-coral ring-2 ring-coral/20">
                     {initials}
                   </div>
-                  {/* Online dot */}
-                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#181818] bg-emerald-400" />
+                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#1a1917] bg-emerald-400" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13px] font-semibold text-white/90">{displayName}</p>
-                  <p className="truncate text-[11px] text-white/30 capitalize">
-                    {role}
-                  </p>
+                  <p className="truncate text-[11px] text-white/30 capitalize">{role}</p>
                 </div>
-              </div>
-              <div className="mt-3 flex items-center gap-1">
+                {/* Notification bell — inline with user info */}
                 <NotificationBell />
-                <form action={logout} className="flex-1">
+              </div>
+
+              {/* Sign out — full-width subtle button below */}
+              <div className="mt-2.5 border-t border-white/[0.04] pt-2.5">
+                <form action={logout}>
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium text-white/30 transition-all hover:bg-white/[0.04] hover:text-white/60"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium text-white/25 transition-all hover:bg-white/[0.04] hover:text-white/50"
                     aria-label="Log out"
                   >
                     <LogOut className="size-3" />
