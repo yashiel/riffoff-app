@@ -112,3 +112,39 @@ export function checkScannerRateLimit(identifier: string): RateLimitResult {
     windowMs: 60 * 1000,
   });
 }
+
+/** Profile updates: 10 per 5 minutes */
+export function checkProfileRateLimit(identifier: string): RateLimitResult {
+  return checkRateLimit(identifier, {
+    prefix: "profile",
+    maxRequests: 10,
+    windowMs: 5 * 60 * 1000,
+  });
+}
+
+/** Avatar uploads: 5 per 5 minutes */
+export function checkAvatarRateLimit(identifier: string): RateLimitResult {
+  return checkRateLimit(identifier, {
+    prefix: "avatar",
+    maxRequests: 5,
+    windowMs: 5 * 60 * 1000,
+  });
+}
+
+/** Data export: 1 per hour */
+export function checkExportRateLimit(identifier: string): RateLimitResult {
+  return checkRateLimit(identifier, {
+    prefix: "export",
+    maxRequests: 1,
+    windowMs: 60 * 60 * 1000,
+  });
+}
+
+/** Sensitive settings (password, email, deletion): 3 per 15 minutes */
+export function checkSensitiveRateLimit(identifier: string): RateLimitResult {
+  return checkRateLimit(identifier, {
+    prefix: "sensitive",
+    maxRequests: 3,
+    windowMs: 15 * 60 * 1000,
+  });
+}

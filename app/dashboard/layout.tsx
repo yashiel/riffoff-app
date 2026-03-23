@@ -5,7 +5,7 @@ import { getLoggedInUser } from "@/lib/appwrite/server";
 import { getProfileByUserId } from "@/actions/profiles";
 import { logout } from "@/actions/auth";
 import type { UserRole } from "@/lib/appwrite/types";
-import { Ticket, CalendarDays, Music, User, Shield, QrCode, LogOut } from "lucide-react";
+import { Ticket, CalendarDays, Music, Settings, Shield, QrCode, LogOut } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/NotificationBell";
 
 interface NavItem {
@@ -20,7 +20,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Events", href: "/dashboard/events", icon: CalendarDays, roles: ["organiser", "admin"] },
   { label: "Scanner", href: "/dashboard/scanner", icon: QrCode, roles: ["organiser", "admin"] },
   { label: "Applications", href: "/dashboard/applications", icon: Music, roles: ["artist", "admin"] },
-  { label: "Profile", href: "/dashboard/profile", icon: User },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
   { label: "Admin", href: "/dashboard/admin", icon: Shield, roles: ["admin"] },
 ];
 

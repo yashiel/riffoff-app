@@ -42,6 +42,10 @@ export async function login(
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
+    // Reactivate deactivated accounts on login
+    const { reactivateAccount } = await import("@/actions/settings/deactivate");
+    await reactivateAccount(session.userId);
+
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE_NAME, session.secret, {
       path: "/",

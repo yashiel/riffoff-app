@@ -14,12 +14,15 @@ export const COLLECTIONS = {
   DISPUTES: "disputes",
   AUDIT_LOGS: "auditlogs",
   NOTIFICATIONS: "notifications",
+  USER_CONSENTS: "user-consents",
+  DELETION_REQUESTS: "deletion-requests",
 } as const;
 
 export const BUCKETS = {
   EVENT_MEDIA: "event-media",
   ARTIST_RIDERS: "artist-riders",
   DISPUTE_EVIDENCE: "dispute-evidence",
+  PROFILE_AVATARS: "profile-avatars",
 } as const;
 
 export const TEAMS = {

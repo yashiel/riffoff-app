@@ -46,6 +46,17 @@ export type NotificationType =
   | "checkin_complete"
   | "system";
 
+/** Consent type — matches Appwrite enum */
+export type ConsentType =
+  | "marketing_email"
+  | "analytics"
+  | "third_party_sharing"
+  | "terms_of_service"
+  | "privacy_policy";
+
+/** Deletion request status — matches Appwrite enum */
+export type DeletionRequestStatus = "pending" | "processing" | "completed" | "cancelled";
+
 /** Message thread type — matches Appwrite enum */
 export type ThreadType = "application" | "event";
 
@@ -65,6 +76,10 @@ export interface ProfileDoc extends Models.Document {
   photoUrl: string | null;
   role: UserRole;
   phone: string | null;
+  // Preferences
+  timezone: string | null;
+  language: string | null;
+  deactivatedAt: string | null;
   // Artist-specific fields (nullable for non-artists)
   bio: string | null;
   artistGenres: string[];
@@ -191,4 +206,24 @@ export interface NotificationDoc extends Models.Document {
   linkUrl: string | null;
   readAt: string | null;
   metadata: string | null;
+}
+
+export interface UserConsentDoc extends Models.Document {
+  userId: string;
+  consentType: ConsentType;
+  granted: boolean;
+  grantedAt: string;
+  revokedAt: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+}
+
+export interface DeletionRequestDoc extends Models.Document {
+  userId: string;
+  reason: string | null;
+  status: DeletionRequestStatus;
+  requestedAt: string;
+  scheduledDeleteAt: string;
+  completedAt: string | null;
+  cancelledAt: string | null;
 }
