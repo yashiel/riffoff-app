@@ -6,6 +6,7 @@ import { getProfileByUserId } from "@/actions/profiles";
 import { logout } from "@/actions/auth";
 import type { UserRole } from "@/lib/appwrite/types";
 import { Ticket, CalendarDays, Music, User, Shield, QrCode, LogOut } from "lucide-react";
+import { NotificationBell } from "@/components/features/notifications/NotificationBell";
 
 interface NavItem {
   label: string;
@@ -82,6 +83,7 @@ export default async function DashboardLayout({
                 {role}
               </p>
             </div>
+            <NotificationBell />
             <form action={logout}>
               <button
                 type="submit"
@@ -104,6 +106,7 @@ export default async function DashboardLayout({
           <span className="gradient-text">Riff</span>Off
         </Link>
         <div className="ml-auto flex items-center gap-2">
+          <NotificationBell />
           {visibleNav.slice(0, 4).map((item) => (
             <Link
               key={item.href}
