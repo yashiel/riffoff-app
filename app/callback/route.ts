@@ -6,55 +6,51 @@ import { ensureProfile } from "@/actions/profiles";
 /**
  * OAuth callback Route Handler.
  *
- * Appwrite redirects here after successful OAuth with ?userId=xxx&secret=xxx
- * We exchange the token for a session, set the cookie ON the redirect response,
- * and redirect to dashboard.
- *
- * CRITICAL: Cookie must be set on the NextResponse object (not via cookies() API)
- * so it travels WITH the 302 redirect. Otherwise the browser follows the redirect
- * to /dashboard without the session cookie, causing a brief auth failure flash.
+ * After OAuth, Appwrite redirects here with ?userId=xxx&secret=xxx.
+ * We exchange the token for a session, set the cookie, then return an HTML page
+ * that redirects client-side. This avoids the 302-redirect-before-cookie-propagates
+ * race condition with Next.js middleware.
  */
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get("userId");
   const secret = request.nextUrl.searchParams.get("secret");
+  const origin = request.nextUrl.origin;
 
   if (!userId || !secret) {
-    console.error("[OAUTH CALLBACK] Missing userId or secret");
-    return NextResponse.redirect(
-      `${request.nextUrl.origin}/login?error=missing_params`,
-    );
+    return NextResponse.redirect(`${origin}/login?error=missing_params`);
   }
 
   try {
     const { account } = await createAdminClient();
-
-    // Exchange the OAuth2 token for a real session
     const session = await account.createSession(userId, secret);
 
-    // Ensure profile document exists (non-blocking — don't let it break the redirect)
-    await ensureProfile(session.userId, undefined).catch((err) => {
-      console.error("[OAUTH CALLBACK] ensureProfile failed:", err);
-    });
+    // Ensure profile exists (non-blocking)
+    await ensureProfile(session.userId, undefined).catch(() => {});
 
-    // Create redirect response and set cookie ON it
-    // This ensures the cookie travels with the 302 redirect
-    const response = NextResponse.redirect(
-      `${request.nextUrl.origin}/dashboard`,
-    );
+    // Return an HTML response that sets the cookie and redirects client-side
+    // This ensures the cookie is fully set before the browser navigates to /dashboard
+    const html = `<!DOCTYPE html>
+<html><head>
+<meta http-equiv="refresh" content="0;url=/dashboard">
+<script>window.location.href="/dashboard";</script>
+</head><body></body></html>`;
+
+    const response = new NextResponse(html, {
+      status: 200,
+      headers: { "Content-Type": "text/html" },
+    });
 
     response.cookies.set(SESSION_COOKIE_NAME, session.secret, {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return response;
   } catch (error) {
     console.error("[OAUTH CALLBACK ERROR]", error);
-    return NextResponse.redirect(
-      `${request.nextUrl.origin}/login?error=oauth_failed`,
-    );
+    return NextResponse.redirect(`${origin}/login?error=oauth_failed`);
   }
 }
