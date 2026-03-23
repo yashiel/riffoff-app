@@ -22,7 +22,7 @@ npm run dev                    # http://localhost:3000
 - **Appwrite** — Auth, Database, Storage
 - **Stripe** + **PayPal** + **TNG eWallet** — payments
 - **html5-qrcode** — QR camera scanning
-- **Vitest** — 189 tests
+- **Vitest** — 203 tests
 
 ---
 
@@ -36,6 +36,7 @@ npm run dev                    # http://localhost:3000
 - QR scanner PWA for door check-in
 - Role-based auth (attendee / artist / organiser / admin)
 - Dark theme UI inspired by DICE and Shotgun
+- In-app notifications with bell dropdown and real-time badges
 
 ---
 
@@ -110,6 +111,6 @@ docker run -p 3000:3000 --env-file .env.local riffoff
 npm run dev       # Dev server
 npm run build     # Production build
 npm run lint      # Lint
-npm test          # Run tests (189)
+npm test          # Run tests (203)
 npx tsc --noEmit  # Type check
 ```
