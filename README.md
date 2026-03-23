@@ -22,7 +22,7 @@ npm run dev                    # http://localhost:3000
 - **Appwrite** — Auth, Database, Storage
 - **Stripe** + **PayPal** + **TNG eWallet** — payments
 - **html5-qrcode** — QR camera scanning
-- **Vitest** — 203 tests
+- **Vitest** — 217 tests
 
 ---
 
@@ -36,7 +36,8 @@ npm run dev                    # http://localhost:3000
 - QR scanner PWA for door check-in
 - Role-based auth (attendee / artist / organiser / admin)
 - Dark theme UI inspired by DICE and Shotgun
-- In-app notifications with bell dropdown and real-time badges
+- In-app notifications
+- Admin dashboard with user management, event moderation, audit log with bell dropdown and real-time badges
 
 ---
 
@@ -83,7 +84,10 @@ Copy `.env.example` and fill in:
 /dashboard/scanner             QR scanner
 /dashboard/applications        My applications (artist)
 /dashboard/profile             Profile settings
-/dashboard/admin               Admin panel
+/dashboard/admin               Admin overview + stats
+/dashboard/admin/users         User management
+/dashboard/admin/events        Event moderation
+/dashboard/admin/audit-log     Audit log
 /payment/success               Payment confirmation
 /payment/cancel                Payment cancelled
 ```
