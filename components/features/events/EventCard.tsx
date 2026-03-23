@@ -12,9 +12,10 @@ interface EventCardProps {
   event: EventWithVenue;
   variant?: "grid" | "scroll";
   initialWishlisted?: boolean;
+  convertedPrice?: string | null;
 }
 
-export function EventCard({ event, variant = "grid", initialWishlisted = false }: EventCardProps) {
+export function EventCard({ event, variant = "grid", initialWishlisted = false, convertedPrice }: EventCardProps) {
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
   const [isPending, startTransition] = useTransition();
 
@@ -103,13 +104,26 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false }
         )}
 
         <div className="flex items-center justify-between pt-0.5">
-          <span className="text-[13px] font-semibold text-white">
+          <div className="text-[13px] font-semibold">
             {event.isFree ? (
               <span className="text-emerald-400">Free</span>
+            ) : event.minPrice && event.minPriceCurrency ? (
+              <div>
+                {convertedPrice ? (
+                  <>
+                    <span className="text-white">{convertedPrice}</span>
+                    <span className="ml-1.5 text-[10px] font-normal text-muted-foreground">
+                      ({formatCurrency(event.minPrice, event.minPriceCurrency)})
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-white">From {formatCurrency(event.minPrice, event.minPriceCurrency)}</span>
+                )}
+              </div>
             ) : (
-              <>From {formatCurrency(0)}</>
+              <span className="text-muted-foreground">Price TBA</span>
             )}
-          </span>
+          </div>
           {event.genres.length > 0 && (
             <div className="flex gap-1">
               {event.genres.slice(0, 2).map((genre) => (

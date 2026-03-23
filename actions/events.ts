@@ -25,6 +25,8 @@ export interface EventFilters {
 
 export interface EventWithVenue extends EventDoc {
   venue: VenueDoc | null;
+  minPrice?: number | null;
+  minPriceCurrency?: string | null;
 }
 
 export interface EventDetails {
@@ -93,10 +95,39 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
     }
   }
 
-  const eventsWithVenue: EventWithVenue[] = events.map((event) => ({
-    ...event,
-    venue: venueMap.get(event.venueId) ?? null,
-  }));
+  // Batch-fetch minimum tier prices for all events on this page
+  const eventIds = events.map((e) => e.$id);
+  const priceMap = new Map<string, { price: number; currency: string }>();
+
+  if (eventIds.length > 0) {
+    try {
+      const tiersResult = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.TICKET_TIERS,
+        [Query.equal("eventId", eventIds), Query.limit(500)],
+      );
+
+      for (const doc of tiersResult.documents) {
+        const tier = doc as unknown as TicketTierDoc;
+        const existing = priceMap.get(tier.eventId);
+        if (!existing || tier.price < existing.price) {
+          priceMap.set(tier.eventId, { price: tier.price, currency: tier.currency });
+        }
+      }
+    } catch {
+      // Tiers fetch failed — prices will show as null
+    }
+  }
+
+  const eventsWithVenue: EventWithVenue[] = events.map((event) => {
+    const minTier = priceMap.get(event.$id);
+    return {
+      ...event,
+      venue: venueMap.get(event.venueId) ?? null,
+      minPrice: minTier?.price ?? null,
+      minPriceCurrency: minTier?.currency ?? null,
+    };
+  });
 
   return {
     events: eventsWithVenue,

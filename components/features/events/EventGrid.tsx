@@ -5,9 +5,10 @@ import type { EventWithVenue } from "@/actions/events";
 interface EventGridProps {
   events: EventWithVenue[];
   wishlistedIds?: string[];
+  convertedPrices?: Record<string, string>;
 }
 
-export function EventGrid({ events, wishlistedIds = [] }: EventGridProps) {
+export function EventGrid({ events, wishlistedIds = [], convertedPrices = {} }: EventGridProps) {
   if (events.length === 0) {
     return (
       <EmptyState
@@ -26,6 +27,7 @@ export function EventGrid({ events, wishlistedIds = [] }: EventGridProps) {
           key={event.$id}
           event={event}
           initialWishlisted={wishlistSet.has(event.$id)}
+          convertedPrice={convertedPrices[event.$id] ?? null}
         />
       ))}
     </div>
