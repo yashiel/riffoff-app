@@ -33,7 +33,11 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
   const [photoUrl, setPhotoUrl] = useState(profile.photoUrl ?? "");
   const [isUploading, setIsUploading] = useState(false);
 
-  const isArtist = profile.role === "artist" || profile.role === "organiser" || profile.role === "admin";
+  const role = profile.role;
+  const showBio = role === "artist" || role === "organiser";
+  const showGenres = role === "artist";
+  const showSocialLinks = role === "artist" || role === "organiser";
+  const showPortfolio = role === "artist";
 
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -59,19 +63,31 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
     setError(null);
     setSuccess(false);
     startTransition(async () => {
-      const result = await updateGeneralProfile({
+      const input: Parameters<typeof updateGeneralProfile>[0] = {
         displayName: formData.get("displayName") as string,
         phone: (formData.get("phone") as string) || undefined,
-        bio: (formData.get("bio") as string) || undefined,
         timezone: (formData.get("timezone") as string) || undefined,
         language: (formData.get("language") as string) || undefined,
-        artistGenres: (formData.get("artistGenres") as string)
-          .split(",").map((g) => g.trim()).filter(Boolean),
-        socialLinks: (formData.get("socialLinks") as string)
-          .split("\n").map((s) => s.trim()).filter(Boolean),
-        portfolioUrls: (formData.get("portfolioUrls") as string)
-          .split("\n").map((s) => s.trim()).filter(Boolean),
-      });
+      };
+
+      // Only include role-specific fields if they exist in the form
+      if (showBio) {
+        input.bio = (formData.get("bio") as string) || undefined;
+      }
+      if (showGenres) {
+        input.artistGenres = (formData.get("artistGenres") as string)
+          .split(",").map((g) => g.trim()).filter(Boolean);
+      }
+      if (showSocialLinks) {
+        input.socialLinks = (formData.get("socialLinks") as string)
+          .split("\n").map((s) => s.trim()).filter(Boolean);
+      }
+      if (showPortfolio) {
+        input.portfolioUrls = (formData.get("portfolioUrls") as string)
+          .split("\n").map((s) => s.trim()).filter(Boolean);
+      }
+
+      const result = await updateGeneralProfile(input);
 
       if (result.error) setError(result.error);
       if (result.success) { setSuccess(true); setTimeout(() => setSuccess(false), 3000); }
@@ -175,34 +191,46 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
             </div>
           </div>
 
-          {/* Bio */}
-          {isArtist && (
-            <>
-              <div className="space-y-1.5">
-                <Label htmlFor="bio" className="text-[12px] text-muted-foreground">Bio</Label>
-                <textarea id="bio" name="bio" rows={3} maxLength={500} defaultValue={profile.bio ?? ""}
-                  placeholder="Tell people about yourself..."
-                  className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="artistGenres" className="text-[12px] text-muted-foreground">Genres (comma-separated)</Label>
-                <input id="artistGenres" name="artistGenres" defaultValue={profile.artistGenres?.join(", ") ?? ""}
-                  placeholder="Electronic, Techno, House"
-                  className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="socialLinks" className="text-[12px] text-muted-foreground">Social links (one per line)</Label>
-                <textarea id="socialLinks" name="socialLinks" rows={2} defaultValue={profile.socialLinks?.join("\n") ?? ""}
-                  placeholder={"https://instagram.com/you\nhttps://soundcloud.com/you"}
-                  className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="portfolioUrls" className="text-[12px] text-muted-foreground">Portfolio links (one per line)</Label>
-                <textarea id="portfolioUrls" name="portfolioUrls" rows={2} defaultValue={profile.portfolioUrls?.join("\n") ?? ""}
-                  placeholder={"https://mixcloud.com/yourset\nhttps://youtube.com/watch?v=..."}
-                  className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
-              </div>
-            </>
+          {/* Bio — artists & organisers */}
+          {showBio && (
+            <div className="space-y-1.5">
+              <Label htmlFor="bio" className="text-[12px] text-muted-foreground">
+                {role === "organiser" ? "About your organisation" : "Bio"}
+              </Label>
+              <textarea id="bio" name="bio" rows={3} maxLength={500} defaultValue={profile.bio ?? ""}
+                placeholder={role === "organiser" ? "Tell people about your organisation..." : "Tell people about yourself..."}
+                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none" />
+            </div>
+          )}
+
+          {/* Genres — artists only */}
+          {showGenres && (
+            <div className="space-y-1.5">
+              <Label htmlFor="artistGenres" className="text-[12px] text-muted-foreground">Genres (comma-separated)</Label>
+              <input id="artistGenres" name="artistGenres" defaultValue={profile.artistGenres?.join(", ") ?? ""}
+                placeholder="Electronic, Techno, House"
+                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]" />
+            </div>
+          )}
+
+          {/* Social links — artists & organisers */}
+          {showSocialLinks && (
+            <div className="space-y-1.5">
+              <Label htmlFor="socialLinks" className="text-[12px] text-muted-foreground">Social links (one per line)</Label>
+              <textarea id="socialLinks" name="socialLinks" rows={2} defaultValue={profile.socialLinks?.join("\n") ?? ""}
+                placeholder={"https://instagram.com/you\nhttps://soundcloud.com/you"}
+                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
+            </div>
+          )}
+
+          {/* Portfolio — artists only */}
+          {showPortfolio && (
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolioUrls" className="text-[12px] text-muted-foreground">Portfolio links (one per line)</Label>
+              <textarea id="portfolioUrls" name="portfolioUrls" rows={2} defaultValue={profile.portfolioUrls?.join("\n") ?? ""}
+                placeholder={"https://mixcloud.com/yourset\nhttps://youtube.com/watch?v=..."}
+                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
+            </div>
           )}
 
           <button type="submit" disabled={isPending} className="btn-primary !py-2.5">
