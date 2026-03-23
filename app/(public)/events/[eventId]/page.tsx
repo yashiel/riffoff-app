@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 import { Calendar, MapPin, Users, Clock, Shield } from "lucide-react";
 import { TierList } from "@/components/features/events/TierList";
 import { RSVPButton } from "@/components/features/events/RSVPButton";
-import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
 import { getEventWithDetails } from "@/actions/events";
 import { getUserRSVP } from "@/actions/rsvps";
 import { getExchangeRates, formatConvertedPrice } from "@/lib/currency";
@@ -143,12 +142,6 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                 Capacity: {event.capacity.toLocaleString()}
               </p>
             </div>
-          </div>
-
-          {/* Currency selector */}
-          <div className="flex items-center justify-between">
-            <div />
-            <CurrencySelector currentCurrency={displayCurrency} />
           </div>
 
           {/* Price bar — DICE-inspired with transparency messaging */}

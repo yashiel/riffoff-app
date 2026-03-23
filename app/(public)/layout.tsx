@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getLoggedInUser } from "@/lib/appwrite/server";
+import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
 
 export default async function PublicLayout({
   children,
@@ -8,6 +11,8 @@ export default async function PublicLayout({
   children: ReactNode;
 }) {
   const user = await getLoggedInUser();
+  const cookieStore = await cookies();
+  const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -23,10 +28,15 @@ export default async function PublicLayout({
           </Link>
 
           {/* Right nav */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Global currency picker */}
+            <Suspense>
+              <CurrencySelector currentCurrency={displayCurrency} />
+            </Suspense>
+
             <Link
               href="/events"
-              className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-white"
+              className="hidden text-[13px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-white sm:block"
             >
               Browse Events
             </Link>
@@ -39,7 +49,7 @@ export default async function PublicLayout({
               <>
                 <Link
                   href="/login"
-                  className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-white"
+                  className="hidden text-[13px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-white sm:block"
                 >
                   Log in
                 </Link>

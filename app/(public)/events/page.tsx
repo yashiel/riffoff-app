@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { EventGrid } from "@/components/features/events/EventGrid";
 import { EventFilters } from "@/components/features/events/EventFilters";
 import { Pagination } from "@/components/features/events/Pagination";
-import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
 import { SkeletonList } from "@/components/features/shared/SkeletonCard";
 import { getPublishedEvents, getAvailableGenres } from "@/actions/events";
 import { getWishlistedEventIds } from "@/actions/wishlist";
@@ -84,16 +83,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="font-display text-2xl tracking-tight sm:text-3xl">Discover Events</h1>
-          <p className="text-[13px] text-muted-foreground">
-            Find live music events near you
-          </p>
-        </div>
-        <Suspense>
-          <CurrencySelector currentCurrency={displayCurrency} />
-        </Suspense>
+      <div className="space-y-1">
+        <h1 className="font-display text-2xl tracking-tight sm:text-3xl">Discover Events</h1>
+        <p className="text-[13px] text-muted-foreground">
+          Find live music events near you
+        </p>
       </div>
 
       <div className="mt-6">
