@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getLoggedInUser } from "@/lib/appwrite/server";
 import { getProfile, ensureProfile } from "@/actions/profiles";
 import { getLinkedProviders } from "@/actions/settings/oauth";
@@ -14,6 +15,9 @@ export const metadata = { title: "Settings" };
 export default async function SettingsRoute() {
   const user = await getLoggedInUser();
   if (!user) redirect("/login");
+
+  const cookieStore = await cookies();
+  const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
 
   const [profileResult, providers, consents, deletionRequest, userHasPassword] = await Promise.all([
     getProfile().then(async (p) => p ?? ensureProfile(user.$id, user.name || undefined)),
@@ -55,6 +59,7 @@ export default async function SettingsRoute() {
           profile={serialize(profileResult)}
           userEmail={user.email}
           userHasPassword={userHasPassword}
+          displayCurrency={displayCurrency}
           providers={serialize(providers)}
           consents={serialize(consents)}
           deletionRequest={serialize(deletionRequest)}

@@ -24,6 +24,7 @@ interface SettingsPageProps {
   profile: ProfileDoc;
   userEmail: string;
   userHasPassword: boolean;
+  displayCurrency: string;
   providers: LinkedProvider[];
   consents: UserConsentDoc[];
   deletionRequest: DeletionRequestDoc | null;
@@ -33,6 +34,7 @@ export function SettingsPage({
   profile,
   userEmail,
   userHasPassword,
+  displayCurrency,
   providers,
   consents,
   deletionRequest,
@@ -112,7 +114,7 @@ export function SettingsPage({
           })}
         </div>
         <div className="flex-1">
-          {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
+          {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} currentCurrency={displayCurrency} />}
           {activeTab === "security" && <SecurityTab userEmail={userEmail} userHasPassword={userHasPassword} />}
           {activeTab === "connected" && <ConnectedTab providers={providers} />}
           {activeTab === "privacy" && <PrivacyTab consents={consents} />}
@@ -122,7 +124,7 @@ export function SettingsPage({
 
       {/* ─── Desktop content panel ─── */}
       <div className="hidden min-w-0 flex-1 md:block">
-        {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
+        {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} currentCurrency={displayCurrency} />}
         {activeTab === "security" && <SecurityTab userEmail={userEmail} userHasPassword={userHasPassword} />}
         {activeTab === "connected" && <ConnectedTab providers={providers} />}
         {activeTab === "privacy" && <PrivacyTab consents={consents} />}

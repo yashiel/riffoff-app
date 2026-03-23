@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { SettingsSection } from "./SettingsSection";
 import { updateGeneralProfile, uploadAvatar, deleteAvatar } from "@/actions/settings/profile";
 import { upgradeRole } from "@/actions/profiles";
+import { SUPPORTED_CURRENCIES } from "@/lib/currency";
 import type { ProfileDoc } from "@/lib/appwrite/types";
 
 interface GeneralTabProps {
   profile: ProfileDoc;
   userEmail: string;
+  currentCurrency?: string;
 }
 
 const TIMEZONES = [
@@ -26,7 +28,7 @@ const LANGUAGES = [
   { code: "ta", label: "தமிழ்" },
 ];
 
-export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
+export function GeneralTab({ profile, userEmail, currentCurrency = "original" }: GeneralTabProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -88,6 +90,12 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
       }
 
       const result = await updateGeneralProfile(input);
+
+      // Sync currency cookie with settings preference
+      const currency = formData.get("currency") as string;
+      if (currency) {
+        document.cookie = `riffoff-currency=${currency};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
+      }
 
       if (result.error) setError(result.error);
       if (result.success) { setSuccess(true); setTimeout(() => setSuccess(false), 3000); }
@@ -174,7 +182,7 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="timezone" className="text-[12px] text-muted-foreground">Timezone</Label>
               <select id="timezone" name="timezone" defaultValue={profile.timezone ?? "UTC"}
@@ -187,6 +195,14 @@ export function GeneralTab({ profile, userEmail }: GeneralTabProps) {
               <select id="language" name="language" defaultValue={profile.language ?? "en"}
                 className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none">
                 {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="currency" className="text-[12px] text-muted-foreground">Display currency</Label>
+              <select id="currency" name="currency" defaultValue={currentCurrency}
+                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none">
+                <option value="original">🌐 Original</option>
+                {SUPPORTED_CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.flag} {c.code} — {c.label}</option>)}
               </select>
             </div>
           </div>
