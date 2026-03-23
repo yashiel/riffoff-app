@@ -130,5 +130,5 @@ export function formatConvertedPrice(
     maximumFractionDigits: toCurrency === "IDR" || toCurrency === "KRW" || toCurrency === "LKR" ? 0 : 2,
   }).format(converted);
 
-  return `~${formatted}`;
+  return formatted;
 }
