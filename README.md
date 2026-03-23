@@ -22,7 +22,7 @@ npm run dev                    # http://localhost:3000
 - **Appwrite** — Auth, Database, Storage
 - **Stripe** + **PayPal** + **TNG eWallet** — payments
 - **html5-qrcode** — QR camera scanning
-- **Vitest** — 329 tests + 20 E2E specs
+- **Vitest** — 354 tests + 20 E2E specs
 
 ---
 
@@ -39,6 +39,7 @@ npm run dev                    # http://localhost:3000
 - In-app notifications
 - Admin dashboard with user management, event moderation, audit log
 - Security: CSP headers, HSTS, rate limiting, input sanitization, CSRF protection
+- Settings page: profile, password, sessions, OAuth linking, GDPR data export, account deletion
 - Performance: image optimization, React.cache, SEO metadata, JSON-LD, sitemap, HSTS, rate limiting, input sanitization, CSRF protection with bell dropdown and real-time badges
 
 ---
