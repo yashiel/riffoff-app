@@ -15,7 +15,7 @@ export default async function TicketsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[32px] tracking-tight">My Tickets</h1>
+      <h1 className="font-display text-2xl tracking-tight sm:text-[32px]">My Tickets</h1>
       <p className="mt-1 text-[13px] text-white/30">
         Your purchased tickets and e-passes
       </p>

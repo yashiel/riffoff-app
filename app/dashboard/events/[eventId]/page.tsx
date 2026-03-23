@@ -59,10 +59,10 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
   return (
     <div>
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="font-display text-[28px]">{event.title}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="font-display text-xl sm:text-[28px]">{event.title}</h1>
             <StatusBadge status={event.status} />
           </div>
           <div className="mt-2 flex items-center gap-4 text-[13px] text-muted-foreground">
@@ -96,7 +96,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
       </div>
 
       {/* Stats grid */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {[
           { label: "Tickets Sold", value: `${totalSold}/${totalQuota || "—"}`, icon: Ticket },
           { label: "Applications", value: String(appsResult.total), icon: Music },

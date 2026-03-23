@@ -80,7 +80,7 @@ export function EventCarousel({ events, title, subtitle }: EventCarouselProps) {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {events.map((event) => (
-            <div key={event.$id} className="w-[260px] shrink-0">
+            <div key={event.$id} className="w-[70vw] max-w-[260px] shrink-0 sm:w-[260px]">
               <EventCard event={event} variant="scroll" />
             </div>
           ))}

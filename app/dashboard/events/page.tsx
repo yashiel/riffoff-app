@@ -18,14 +18,14 @@ export default async function OrgEventsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-[28px]">My Events</h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">
+          <h1 className="font-display text-xl sm:text-[28px]">My Events</h1>
+          <p className="mt-1 text-[13px] text-muted-foreground">
             Create and manage your events
           </p>
         </div>
-        <Link href="/dashboard/events/new" className="btn-primary inline-flex items-center gap-1.5">
+        <Link href="/dashboard/events/new" className="btn-primary inline-flex w-fit items-center gap-1.5 !py-2.5 !text-[12px]">
           <Plus className="size-4" />
           Create Event
         </Link>

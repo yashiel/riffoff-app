@@ -118,7 +118,7 @@ export default async function HomePage() {
               },
             ].map((item) => (
               <div key={item.step} className="relative">
-                <span className="font-display text-[64px] leading-none text-white/[0.04]">
+                <span className="font-display text-[48px] leading-none text-white/[0.04] sm:text-[64px]">
                   {item.step}
                 </span>
                 <div className="mt-[-20px]">

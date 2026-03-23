@@ -79,7 +79,7 @@ export function QRScanner({ onScan, scanning }: QRScannerProps) {
         id="qr-reader"
         ref={containerRef}
         className="aspect-square w-full"
-        style={{ minHeight: 300 }}
+        style={{ minHeight: "min(300px, 80vw)" }}
       />
 
       {/* Overlay when not scanning */}

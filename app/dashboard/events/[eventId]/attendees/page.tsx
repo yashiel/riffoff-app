@@ -59,9 +59,9 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-[24px]">Attendees</h2>
+          <h2 className="font-display text-xl sm:text-[24px]">Attendees</h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
             {attendees.length} tickets · {checkedInCount} checked in
           </p>
@@ -77,7 +77,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
       </div>
 
       {/* Search */}
-      <div className="relative mt-6 max-w-sm">
+      <div className="relative mt-6 w-full sm:max-w-sm">
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"

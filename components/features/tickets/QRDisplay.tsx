@@ -133,11 +133,9 @@ export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
             <img
               src={qrDataUrl}
               alt={`QR code for ticket ${ticketCode}`}
-              width={320}
-              height={320}
-              className="rounded-xl"
+              className="size-[min(320px,80vw)] rounded-xl"
             />
-            <p className="font-mono text-[28px] font-bold tracking-widest text-white">
+            <p className="font-mono text-xl font-bold tracking-widest text-white sm:text-[28px]">
               {ticketCode}
             </p>
             <p className="text-[14px] text-muted-foreground">

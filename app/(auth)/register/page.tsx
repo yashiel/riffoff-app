@@ -22,7 +22,7 @@ export default function RegisterPage() {
 
       <div className="mt-8 space-y-4">
         {/* OAuth */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <form action={() => loginWithProvider("google")}>
             <button type="submit" className="btn-ghost w-full !text-[13px]">
               Google
