@@ -42,9 +42,40 @@ const envSchema = z.object({
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_PHONE_NUMBER: z.string().optional(),
 
-  // Ticket signing
+  // Ticket signing — minimum 32 chars for HMAC security
   TICKET_SIGNING_SECRET: z.string().min(32).optional(),
+
+  // CSRF — minimum 32 chars for HMAC security
+  CSRF_SECRET: z.string().min(32).optional(),
 });
+
+// ─── Server-only secret leak detection ───────────────
+
+const SERVER_ONLY_PREFIXES = [
+  "NEXT_APPWRITE_KEY",
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "PAYPAL_CLIENT_SECRET",
+  "TNG_PRIVATE_KEY",
+  "TNG_PUBLIC_KEY",
+  "TNG_CLIENT_ID",
+  "TNG_PARTNER_ID",
+  "TICKET_SIGNING_SECRET",
+  "CSRF_SECRET",
+  "RESEND_API_KEY",
+  "TWILIO_AUTH_TOKEN",
+];
+
+function checkNoServerSecretLeaks() {
+  if (typeof window !== "undefined") {
+    // Client-side — verify no server secrets leaked
+    for (const key of SERVER_ONLY_PREFIXES) {
+      if (key in (globalThis as Record<string, unknown>)) {
+        console.error(`[SECURITY] Server secret "${key}" found in client bundle!`);
+      }
+    }
+  }
+}
 
 function validateEnv() {
   const result = envSchema.safeParse(process.env);
@@ -54,6 +85,8 @@ function validateEnv() {
     console.error("Invalid environment variables:\n", formatted);
     throw new Error("Invalid environment variables. Check server logs.");
   }
+
+  checkNoServerSecretLeaks();
 
   return result.data;
 }
