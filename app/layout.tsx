@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import { Bebas_Neue, Outfit } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,6 +25,10 @@ const outfit = Outfit({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#e87758",
+};
+
 export const metadata: Metadata = {
   title: {
     default: "RiffOff — Music Events, Tickets & More",
@@ -33,7 +37,6 @@ export const metadata: Metadata = {
   description:
     "Discover music events, buy tickets, and connect with artists. The platform for small-to-mid scale music events.",
   manifest: "/manifest.json",
-  themeColor: "#e87758",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

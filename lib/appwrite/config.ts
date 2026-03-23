@@ -13,6 +13,7 @@ export const COLLECTIONS = {
   MESSAGES: "messages",
   DISPUTES: "disputes",
   AUDIT_LOGS: "auditlogs",
+  NOTIFICATIONS: "notifications",
 } as const;
 
 export const BUCKETS = {
