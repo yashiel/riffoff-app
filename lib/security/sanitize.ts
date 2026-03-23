@@ -44,9 +44,8 @@ export function sanitizeName(input: string): string {
 export function sanitizeUrl(input: string): string | null {
   try {
     const url = new URL(input.trim());
+    // Only allow http and https protocols (blocks javascript:, data:, etc.)
     if (url.protocol !== "https:" && url.protocol !== "http:") return null;
-    // Block javascript: and data: protocols
-    if (url.protocol === "javascript:" || url.protocol === "data:") return null;
     return url.toString();
   } catch {
     return null;
