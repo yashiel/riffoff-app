@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
   </div>
   <script>
     // Small delay to ensure cookie is fully processed before navigating
-    setTimeout(function() { window.location.replace("/dashboard"); }, 200);
+    setTimeout(function() { window.location.replace("/dashboard/tickets"); }, 500);
   </script>
 </body>
 </html>`;
