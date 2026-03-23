@@ -51,11 +51,11 @@
 
 /* ─── RiffOff Dark Theme — Shotgun-inspired ──────────── */
 :root {
-  --background: #1c1c1c;
+  --background: #161616;
   --foreground: #ffffff;
-  --card: #242424;
+  --card: #1e1e1e;
   --card-foreground: #ffffff;
-  --popover: #242424;
+  --popover: #1e1e1e;
   --popover-foreground: #ffffff;
   --primary: #ffffff;
   --primary-foreground: #1c1c1c;

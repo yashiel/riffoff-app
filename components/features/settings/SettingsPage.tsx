@@ -12,12 +12,12 @@ import type { LinkedProvider } from "@/actions/settings/oauth";
 
 type Tab = "general" | "security" | "connected" | "privacy" | "danger";
 
-const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: "general", label: "General", icon: User },
-  { id: "security", label: "Security", icon: Shield },
-  { id: "connected", label: "Connected", icon: Link2 },
-  { id: "privacy", label: "Privacy", icon: Eye },
-  { id: "danger", label: "Danger Zone", icon: AlertTriangle },
+const TABS: { id: Tab; label: string; description: string; icon: React.ElementType }[] = [
+  { id: "general", label: "General", description: "Profile & preferences", icon: User },
+  { id: "security", label: "Security", description: "Password & sessions", icon: Shield },
+  { id: "connected", label: "Connected", description: "Linked accounts", icon: Link2 },
+  { id: "privacy", label: "Privacy", description: "Data & consent", icon: Eye },
+  { id: "danger", label: "Danger Zone", description: "Delete or deactivate", icon: AlertTriangle },
 ];
 
 interface SettingsPageProps {
@@ -50,29 +50,76 @@ export function SettingsPage({
   }
 
   return (
-    <div>
-      {/* Tab navigation */}
-      <div className="flex gap-1 overflow-x-auto border-b border-[rgba(255,255,255,0.06)] pb-0">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setTab(tab.id)}
-            className={`flex shrink-0 items-center gap-1.5 border-b-2 px-4 py-3 text-[13px] font-medium transition-colors ${
-              activeTab === tab.id
-                ? tab.id === "danger"
-                  ? "border-red-400 text-red-400"
-                  : "border-coral text-white"
-                : "border-transparent text-muted-foreground hover:text-white"
-            }`}
-          >
-            <tab.icon className="size-3.5" />
-            {tab.label}
-          </button>
-        ))}
+    <div className="flex gap-8 lg:gap-10">
+      {/* ─── Vertical side nav ─── */}
+      <nav className="hidden w-[200px] shrink-0 md:block">
+        <div className="sticky top-8 space-y-1">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            const isDanger = tab.id === "danger";
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setTab(tab.id)}
+                className={`group flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 ${
+                  isActive
+                    ? isDanger
+                      ? "bg-red-500/[0.08] text-red-400"
+                      : "bg-white/[0.05] text-white"
+                    : "text-white/40 hover:bg-white/[0.03] hover:text-white/70"
+                }`}
+              >
+                <tab.icon className={`mt-0.5 size-4 shrink-0 transition-colors ${
+                  isActive
+                    ? isDanger ? "text-red-400" : "text-coral"
+                    : "group-hover:text-white/50"
+                }`} />
+                <div className="min-w-0">
+                  <span className="block text-[13px] font-medium leading-tight">{tab.label}</span>
+                  <span className={`block text-[11px] leading-tight ${
+                    isActive ? "text-white/40" : "text-white/20"
+                  }`}>{tab.description}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* ─── Mobile horizontal tabs (shown < md) ─── */}
+      <div className="flex w-full flex-col md:hidden">
+        <div className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-4">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setTab(tab.id)}
+                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-medium transition-colors ${
+                  isActive
+                    ? tab.id === "danger"
+                      ? "bg-red-500/15 text-red-400"
+                      : "bg-white/10 text-white"
+                    : "text-white/40 hover:text-white/60"
+                }`}
+              >
+                <tab.icon className="size-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex-1">
+          {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
+          {activeTab === "security" && <SecurityTab userEmail={userEmail} />}
+          {activeTab === "connected" && <ConnectedTab providers={providers} />}
+          {activeTab === "privacy" && <PrivacyTab consents={consents} />}
+          {activeTab === "danger" && <DangerZoneTab deletionRequest={deletionRequest} />}
+        </div>
       </div>
 
-      {/* Tab content */}
-      <div className="mt-6">
+      {/* ─── Desktop content panel ─── */}
+      <div className="hidden min-w-0 flex-1 md:block">
         {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
         {activeTab === "security" && <SecurityTab userEmail={userEmail} />}
         {activeTab === "connected" && <ConnectedTab providers={providers} />}

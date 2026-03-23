@@ -5,7 +5,7 @@ import { getLoggedInUser } from "@/lib/appwrite/server";
 import { getProfileByUserId } from "@/actions/profiles";
 import { logout } from "@/actions/auth";
 import type { UserRole } from "@/lib/appwrite/types";
-import { Ticket, CalendarDays, Music, Settings, Shield, QrCode, LogOut } from "lucide-react";
+import { Ticket, CalendarDays, Music, Settings, Shield, QrCode, LogOut, ChevronRight } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/NotificationBell";
 
 interface NavItem {
@@ -31,12 +31,10 @@ export default async function DashboardLayout({
 }) {
   const user = await getLoggedInUser();
   if (!user) {
-    console.error("[DASHBOARD] No user session, redirecting to login");
     redirect("/login");
   }
 
   const profile = await getProfileByUserId(user.$id);
-  console.log("[DASHBOARD] User:", user.$id, "Profile:", profile?.$id, "Role:", profile?.role);
   const role = profile?.role ?? "attendee";
   const displayName = user.name || profile?.displayName || "User";
   const initials = displayName
@@ -51,71 +49,93 @@ export default async function DashboardLayout({
   );
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/5 bg-[oklch(0.08_0.015_270)] lg:flex">
-        <div className="flex h-16 items-center px-6">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-xl font-extrabold tracking-tight"
-          >
-            <span className="gradient-text">Riff</span>Off
-          </Link>
-        </div>
+    <div className="flex min-h-screen bg-[#141414]">
+      {/* ─── Sidebar — warm translucent glass ─── */}
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] flex-col lg:flex">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1917] via-[#181818] to-[#141414]" />
+        {/* Right edge glow line */}
+        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-[rgba(232,119,88,0.15)] to-transparent" />
 
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {visibleNav.map((item) => (
+        <div className="relative flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex h-16 items-center px-6">
             <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-white/5 hover:text-foreground"
+              href="/"
+              className="font-[family-name:var(--font-display)] text-xl font-extrabold tracking-tight"
             >
-              <item.icon className="size-4" />
-              {item.label}
+              <span className="gradient-text">Riff</span>
+              <span className="text-white/90">Off</span>
             </Link>
-          ))}
-        </nav>
+          </div>
 
-        <div className="border-t border-white/5 p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{displayName}</p>
-              <p className="truncate text-xs text-muted-foreground capitalize">
-                {role}
-              </p>
-            </div>
-            <NotificationBell />
-            <form action={logout}>
-              <button
-                type="submit"
-                className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
-                aria-label="Log out"
+          {/* Nav */}
+          <nav className="flex-1 space-y-0.5 px-3 py-4">
+            {visibleNav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-white/50 transition-all duration-200 hover:bg-white/[0.04] hover:text-white/90"
               >
-                <LogOut className="size-4" />
-              </button>
-            </form>
+                <item.icon className="size-[18px] transition-colors group-hover:text-coral" />
+                <span className="flex-1">{item.label}</span>
+                <ChevronRight className="size-3 opacity-0 transition-all group-hover:opacity-40" />
+              </Link>
+            ))}
+          </nav>
+
+          {/* User section */}
+          <div className="p-4">
+            <div className="rounded-xl bg-white/[0.03] p-3">
+              <div className="flex items-center gap-3">
+                {/* Avatar with coral ring */}
+                <div className="relative">
+                  <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/30 to-coral/10 text-[12px] font-bold text-coral ring-2 ring-coral/20">
+                    {initials}
+                  </div>
+                  {/* Online dot */}
+                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#181818] bg-emerald-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-semibold text-white/90">{displayName}</p>
+                  <p className="truncate text-[11px] text-white/30 capitalize">
+                    {role}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-1">
+                <NotificationBell />
+                <form action={logout} className="flex-1">
+                  <button
+                    type="submit"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium text-white/30 transition-all hover:bg-white/[0.04] hover:text-white/60"
+                    aria-label="Log out"
+                  >
+                    <LogOut className="size-3" />
+                    Sign out
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
 
-      {/* Mobile header */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-white/5 bg-background/80 px-4 backdrop-blur-xl lg:hidden">
+      {/* ─── Mobile header ─── */}
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-white/[0.04] bg-[#141414]/90 px-4 backdrop-blur-xl lg:hidden">
         <Link
           href="/"
           className="font-[family-name:var(--font-display)] text-lg font-extrabold"
         >
           <span className="gradient-text">Riff</span>Off
         </Link>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1">
           <NotificationBell />
           {visibleNav.slice(0, 4).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/[0.04] hover:text-white/80"
               aria-label={item.label}
             >
               <item.icon className="size-4" />
@@ -124,8 +144,9 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main className="flex-1 pt-14 lg:pl-64 lg:pt-0">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* ─── Main content ─── */}
+      <main className="flex-1 pt-14 lg:pl-[260px] lg:pt-0">
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-10">
           {children}
         </div>
       </main>

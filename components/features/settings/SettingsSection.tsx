@@ -8,19 +8,19 @@ interface SettingsSectionProps {
 export function SettingsSection({ title, description, children, danger }: SettingsSectionProps) {
   return (
     <div
-      className={`rounded-xl border p-6 ${
+      className={`rounded-2xl border p-5 transition-colors ${
         danger
-          ? "border-red-500/20 bg-red-500/5"
-          : "border-[rgba(255,255,255,0.06)]"
+          ? "border-red-500/10 bg-red-500/[0.03]"
+          : "border-white/[0.04] bg-white/[0.02] hover:border-white/[0.06]"
       }`}
     >
-      <h3 className={`text-[16px] font-bold ${danger ? "text-red-400" : "text-white"}`}>
+      <h3 className={`text-[15px] font-semibold tracking-[-0.01em] ${danger ? "text-red-400" : "text-white/90"}`}>
         {title}
       </h3>
       {description && (
-        <p className="mt-1 text-[13px] text-muted-foreground">{description}</p>
+        <p className="mt-0.5 text-[12px] leading-relaxed text-white/30">{description}</p>
       )}
-      <div className="mt-4">{children}</div>
+      <div className="mt-5">{children}</div>
     </div>
   );
 }

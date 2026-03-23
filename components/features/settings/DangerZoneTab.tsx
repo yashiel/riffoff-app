@@ -44,8 +44,9 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
     });
   }
 
+  const [now] = useState(() => Date.now());
   const daysRemaining = activeDeletion
-    ? Math.max(0, Math.ceil((new Date(activeDeletion.scheduledDeleteAt).getTime() - Date.now()) / 86400000))
+    ? Math.max(0, Math.ceil((new Date(activeDeletion.scheduledDeleteAt).getTime() - now) / 86400000))
     : 0;
 
   return (

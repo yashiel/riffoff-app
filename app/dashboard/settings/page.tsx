@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Settings } from "lucide-react";
 import { getLoggedInUser } from "@/lib/appwrite/server";
 import { getProfile, ensureProfile } from "@/actions/profiles";
 import { getLinkedProviders } from "@/actions/settings/oauth";
@@ -15,7 +14,6 @@ export default async function SettingsRoute() {
   const user = await getLoggedInUser();
   if (!user) redirect("/login");
 
-  // Fetch all data in parallel
   const [profileResult, providers, consents, deletionRequest] = await Promise.all([
     getProfile().then(async (p) => p ?? ensureProfile(user.$id, user.name || undefined)),
     getLinkedProviders(),
@@ -26,26 +24,39 @@ export default async function SettingsRoute() {
   if (!profileResult) redirect("/login");
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="flex items-center gap-2">
-        <Settings className="size-5 text-coral" />
-        <h1 className="font-display text-[28px]">Settings</h1>
+    <div>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="font-display text-[32px] tracking-tight">Settings</h1>
+        <p className="mt-1 text-[13px] text-white/30">
+          Manage your account, security, and privacy preferences
+        </p>
       </div>
-      <p className="mt-1 text-[14px] text-muted-foreground">
-        Manage your account, security, and privacy
-      </p>
 
-      <div className="mt-6">
-        <Suspense fallback={<div className="py-8 text-center text-muted-foreground">Loading settings...</div>}>
-          <SettingsPage
-            profile={serialize(profileResult)}
-            userEmail={user.email}
-            providers={serialize(providers)}
-            consents={serialize(consents)}
-            deletionRequest={serialize(deletionRequest)}
-          />
-        </Suspense>
-      </div>
+      <Suspense fallback={
+        <div className="flex gap-10">
+          <div className="hidden w-[200px] shrink-0 md:block">
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-12 animate-pulse rounded-xl bg-white/[0.03]" />
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-32 animate-pulse rounded-2xl bg-white/[0.02]" />
+            ))}
+          </div>
+        </div>
+      }>
+        <SettingsPage
+          profile={serialize(profileResult)}
+          userEmail={user.email}
+          providers={serialize(providers)}
+          consents={serialize(consents)}
+          deletionRequest={serialize(deletionRequest)}
+        />
+      </Suspense>
     </div>
   );
 }
