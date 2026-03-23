@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { cookies } from "next/headers";
 import { Calendar, MapPin, Users, Clock, Shield } from "lucide-react";
 import { TierList } from "@/components/features/events/TierList";
 import { RSVPButton } from "@/components/features/events/RSVPButton";
+import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
 import { getEventWithDetails } from "@/actions/events";
 import { getUserRSVP } from "@/actions/rsvps";
-import { formatDate, formatRelativeTime, serialize } from "@/lib/utils";
+import { getExchangeRates, formatConvertedPrice } from "@/lib/currency";
+import { formatDate, formatRelativeTime, formatCurrency, serialize } from "@/lib/utils";
 
 interface EventPageProps {
   params: Promise<{ eventId: string }>;
@@ -29,6 +32,23 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   const { event, venue, tiers, lineup, rsvpCount } = data;
   const userRSVP = await getUserRSVP(eventId);
   const isPast = new Date(event.endsAt) < new Date();
+
+  // Currency conversion for tier prices
+  const cookieStore = await cookies();
+  const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
+  let convertedTierPrices: Record<string, string> = {};
+
+  if (displayCurrency !== "original") {
+    const rates = await getExchangeRates("USD");
+    if (rates) {
+      for (const tier of tiers) {
+        if (tier.currency !== displayCurrency) {
+          const converted = formatConvertedPrice(tier.price, tier.currency, displayCurrency, rates);
+          if (converted) convertedTierPrices[tier.$id] = converted;
+        }
+      }
+    }
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -125,17 +145,38 @@ export default async function EventDetailPage({ params }: EventPageProps) {
             </div>
           </div>
 
+          {/* Currency selector */}
+          <div className="flex items-center justify-between">
+            <div />
+            <CurrencySelector currentCurrency={displayCurrency} />
+          </div>
+
           {/* Price bar — DICE-inspired with transparency messaging */}
           {!isPast && !event.isFree && tiers.length > 0 && (
             <div className="rounded-xl bg-[#242424] p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[20px] font-bold text-white">
-                    From {tiers[0] ? `${tiers[0].currency} ${tiers[0].price.toFixed(2)}` : "—"}
-                  </p>
-                  <p className="mt-0.5 text-[13px] text-muted-foreground">
-                    The price you see is the price you pay. No surprises.
-                  </p>
+                  {(() => {
+                    const minTier = tiers.reduce((min, t) => t.price < min.price ? t : min, tiers[0]);
+                    const converted = convertedTierPrices[minTier.$id];
+                    return (
+                      <>
+                        <div className="flex items-baseline gap-2">
+                          <p className="text-[20px] font-bold text-white">
+                            From {converted ?? formatCurrency(minTier.price, minTier.currency)}
+                          </p>
+                          {converted && (
+                            <p className="text-[13px] text-white/30">
+                              {formatCurrency(minTier.price, minTier.currency)}
+                            </p>
+                          )}
+                        </div>
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
+                          The price you see is the price you pay. No surprises.
+                        </p>
+                      </>
+                    );
+                  })()}
                 </div>
                 <a
                   href={`/events/${event.$id}/checkout?tierId=${tiers[0]?.$id}&qty=1&eventTitle=${encodeURIComponent(event.title)}&tierName=${encodeURIComponent(tiers[0]?.name ?? "")}&price=${tiers[0]?.price ?? 0}&currency=${tiers[0]?.currency ?? "MYR"}`}
@@ -167,6 +208,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
               isFree={event.isFree}
               eventId={event.$id}
               eventTitle={event.title}
+              convertedPrices={convertedTierPrices}
             />
           )}
 

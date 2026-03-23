@@ -108,16 +108,14 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
             {event.isFree ? (
               <span className="text-emerald-400">Free</span>
             ) : event.minPrice && event.minPriceCurrency ? (
-              <div>
-                {convertedPrice ? (
-                  <>
-                    <span className="text-white">{convertedPrice}</span>
-                    <span className="ml-1.5 text-[10px] font-normal text-muted-foreground">
-                      ({formatCurrency(event.minPrice, event.minPriceCurrency)})
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-white">From {formatCurrency(event.minPrice, event.minPriceCurrency)}</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-white">
+                  From {convertedPrice ?? formatCurrency(event.minPrice, event.minPriceCurrency)}
+                </span>
+                {convertedPrice && (
+                  <span className="text-[10px] font-normal text-white/30">
+                    {formatCurrency(event.minPrice, event.minPriceCurrency)}
+                  </span>
                 )}
               </div>
             ) : (

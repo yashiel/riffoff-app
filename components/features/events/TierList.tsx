@@ -12,15 +12,26 @@ interface TierListProps {
   isFree: boolean;
   eventId: string;
   eventTitle: string;
+  /** Map of tierId → converted price string (e.g., "~USD 85.00") */
+  convertedPrices?: Record<string, string>;
 }
 
-export function TierList({ tiers, isFree, eventId, eventTitle }: TierListProps) {
+export function TierList({ tiers, isFree, eventId, eventTitle, convertedPrices = {} }: TierListProps) {
   if (isFree) return null;
   if (tiers.length === 0) return null;
 
+  const hasConversions = Object.keys(convertedPrices).length > 0;
+
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">Tickets</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Tickets</h2>
+        {hasConversions && (
+          <span className="text-[11px] text-white/30">
+            Converted prices are approximate
+          </span>
+        )}
+      </div>
       <div className="space-y-2">
         {tiers.map((tier) => {
           const available = tier.quota - tier.soldCount;
@@ -28,6 +39,7 @@ export function TierList({ tiers, isFree, eventId, eventTitle }: TierListProps) 
           const isLowStock = available > 0 && available <= 10;
           const isOnSale = isTierOnSale(tier);
           const canBuy = !isSoldOut && isOnSale;
+          const converted = convertedPrices[tier.$id];
 
           const checkoutUrl = `/events/${eventId}/checkout?tierId=${tier.$id}&qty=1&eventTitle=${encodeURIComponent(eventTitle)}&tierName=${encodeURIComponent(tier.name)}&price=${tier.price}&currency=${tier.currency}`;
 
@@ -56,9 +68,16 @@ export function TierList({ tiers, isFree, eventId, eventTitle }: TierListProps) 
                       </Badge>
                     )}
                   </div>
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {formatCurrency(tier.price, tier.currency)}
-                  </p>
+                  <div className="mt-0.5 flex items-baseline gap-2">
+                    <p className="text-sm font-medium text-white">
+                      {converted ?? formatCurrency(tier.price, tier.currency)}
+                    </p>
+                    {converted && (
+                      <p className="text-[11px] text-white/30">
+                        {formatCurrency(tier.price, tier.currency)}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {canBuy ? (
