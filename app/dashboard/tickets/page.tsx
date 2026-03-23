@@ -20,9 +20,14 @@ export default async function TicketsPage() {
         Your purchased tickets and e-passes
       </p>
 
-      {/* Upcoming events carousel */}
+      {/* Ticket list — priority */}
+      <div className="mt-8">
+        <TicketList tickets={tickets} />
+      </div>
+
+      {/* Upcoming events carousel — below tickets */}
       {upcomingEvents.length > 0 && (
-        <div className="mt-8">
+        <div className="mt-12 border-t border-white/[0.04] pt-10">
           <EventCarousel
             events={serialize(upcomingEvents)}
             title="Upcoming Events"
@@ -30,11 +35,6 @@ export default async function TicketsPage() {
           />
         </div>
       )}
-
-      {/* Ticket list */}
-      <div className="mt-10">
-        <TicketList tickets={tickets} />
-      </div>
     </div>
   );
 }
