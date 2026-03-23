@@ -32,6 +32,13 @@ export const metadata: Metadata = {
   },
   description:
     "Discover music events, buy tickets, and connect with artists. The platform for small-to-mid scale music events.",
+  manifest: "/manifest.json",
+  themeColor: "#e87758",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "RiffOff Scanner",
+  },
 };
 
 export default async function RootLayout({
@@ -76,6 +83,18 @@ export default async function RootLayout({
             />
           </AuthProvider>
         </QueryProvider>
+        {/* Service Worker registration — static string, no user input (XSS-safe) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
