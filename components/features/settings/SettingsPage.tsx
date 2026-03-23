@@ -23,6 +23,7 @@ const TABS: { id: Tab; label: string; description: string; icon: React.ElementTy
 interface SettingsPageProps {
   profile: ProfileDoc;
   userEmail: string;
+  userHasPassword: boolean;
   providers: LinkedProvider[];
   consents: UserConsentDoc[];
   deletionRequest: DeletionRequestDoc | null;
@@ -31,6 +32,7 @@ interface SettingsPageProps {
 export function SettingsPage({
   profile,
   userEmail,
+  userHasPassword,
   providers,
   consents,
   deletionRequest,
@@ -111,7 +113,7 @@ export function SettingsPage({
         </div>
         <div className="flex-1">
           {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
-          {activeTab === "security" && <SecurityTab userEmail={userEmail} />}
+          {activeTab === "security" && <SecurityTab userEmail={userEmail} userHasPassword={userHasPassword} />}
           {activeTab === "connected" && <ConnectedTab providers={providers} />}
           {activeTab === "privacy" && <PrivacyTab consents={consents} />}
           {activeTab === "danger" && <DangerZoneTab deletionRequest={deletionRequest} />}
@@ -121,7 +123,7 @@ export function SettingsPage({
       {/* ─── Desktop content panel ─── */}
       <div className="hidden min-w-0 flex-1 md:block">
         {activeTab === "general" && <GeneralTab profile={profile} userEmail={userEmail} />}
-        {activeTab === "security" && <SecurityTab userEmail={userEmail} />}
+        {activeTab === "security" && <SecurityTab userEmail={userEmail} userHasPassword={userHasPassword} />}
         {activeTab === "connected" && <ConnectedTab providers={providers} />}
         {activeTab === "privacy" && <PrivacyTab consents={consents} />}
         {activeTab === "danger" && <DangerZoneTab deletionRequest={deletionRequest} />}

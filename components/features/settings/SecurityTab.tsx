@@ -5,32 +5,34 @@ import { Monitor, Smartphone, Globe, X, Shield } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { SettingsSection } from "./SettingsSection";
 import { PasswordStrengthBar } from "./PasswordStrengthBar";
-import { changePassword } from "@/actions/settings/password";
+import { changePassword, setPassword, hasPasswordSet } from "@/actions/settings/password";
 import { listMySessions, revokeSession, revokeAllOtherSessions, type SessionInfo } from "@/actions/settings/sessions";
 import { requestEmailChange } from "@/actions/settings/email";
 import { formatDate } from "@/lib/utils";
 
 interface SecurityTabProps {
   userEmail: string;
+  userHasPassword?: boolean;
 }
 
-export function SecurityTab({ userEmail }: SecurityTabProps) {
+export function SecurityTab({ userEmail, userHasPassword }: SecurityTabProps) {
   return (
     <div className="space-y-6">
-      <ChangePasswordSection />
+      <PasswordSection hasPassword={userHasPassword ?? true} />
       <EmailChangeSection currentEmail={userEmail} />
       <SessionsSection />
     </div>
   );
 }
 
-function ChangePasswordSection() {
+function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [passwordSet, setPasswordSet] = useState(hasPassword);
 
-  function handleSubmit(formData: FormData) {
+  function handleChangePassword(formData: FormData) {
     setError(null); setSuccess(false);
     startTransition(async () => {
       const result = await changePassword({
@@ -42,11 +44,53 @@ function ChangePasswordSection() {
     });
   }
 
+  function handleSetPassword(formData: FormData) {
+    setError(null); setSuccess(false);
+    startTransition(async () => {
+      const result = await setPassword({
+        newPassword: formData.get("newPassword") as string,
+      });
+      if (result.error) setError(result.error);
+      if (result.success) {
+        setSuccess(true);
+        setNewPassword("");
+        setPasswordSet(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }
+    });
+  }
+
+  if (!passwordSet) {
+    // OAuth-only user — needs to set a password for the first time
+    return (
+      <SettingsSection
+        title="Set a Password"
+        description="You signed up with a social account. Set a password so you can also sign in with email."
+      >
+        {error && <div role="alert" className="mb-3 rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400">{error}</div>}
+        {success && <div className="mb-3 rounded border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-400">Password set successfully! You can now sign in with email too.</div>}
+        <form action={handleSetPassword} className="space-y-3 max-w-sm">
+          <div className="space-y-1.5">
+            <Label htmlFor="newPassword" className="text-[12px] text-muted-foreground">Create a password</Label>
+            <input id="newPassword" name="newPassword" type="password" required minLength={8} maxLength={128}
+              value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)]" />
+            <PasswordStrengthBar password={newPassword} />
+          </div>
+          <button type="submit" disabled={isPending} className="btn-primary !py-2 !text-[12px]">
+            {isPending ? "Setting..." : "Set Password"}
+          </button>
+        </form>
+      </SettingsSection>
+    );
+  }
+
+  // User has a password — show change form
   return (
     <SettingsSection title="Change Password" description="Update your password regularly for security.">
       {error && <div role="alert" className="mb-3 rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400">{error}</div>}
       {success && <div className="mb-3 rounded border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-400">Password changed successfully</div>}
-      <form action={handleSubmit} className="space-y-3 max-w-sm">
+      <form action={handleChangePassword} className="space-y-3 max-w-sm">
         <div className="space-y-1.5">
           <Label htmlFor="currentPassword" className="text-[12px] text-muted-foreground">Current password</Label>
           <input id="currentPassword" name="currentPassword" type="password" required minLength={8}

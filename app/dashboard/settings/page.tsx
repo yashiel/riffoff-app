@@ -5,6 +5,7 @@ import { getProfile, ensureProfile } from "@/actions/profiles";
 import { getLinkedProviders } from "@/actions/settings/oauth";
 import { getMyConsents } from "@/actions/settings/privacy";
 import { getDeletionRequest } from "@/actions/settings/deletion";
+import { hasPasswordSet } from "@/actions/settings/password";
 import { SettingsPage } from "@/components/features/settings/SettingsPage";
 import { serialize } from "@/lib/utils";
 
@@ -14,11 +15,12 @@ export default async function SettingsRoute() {
   const user = await getLoggedInUser();
   if (!user) redirect("/login");
 
-  const [profileResult, providers, consents, deletionRequest] = await Promise.all([
+  const [profileResult, providers, consents, deletionRequest, userHasPassword] = await Promise.all([
     getProfile().then(async (p) => p ?? ensureProfile(user.$id, user.name || undefined)),
     getLinkedProviders(),
     getMyConsents(),
     getDeletionRequest(),
+    hasPasswordSet(),
   ]);
 
   if (!profileResult) redirect("/login");
@@ -52,6 +54,7 @@ export default async function SettingsRoute() {
         <SettingsPage
           profile={serialize(profileResult)}
           userEmail={user.email}
+          userHasPassword={userHasPassword}
           providers={serialize(providers)}
           consents={serialize(consents)}
           deletionRequest={serialize(deletionRequest)}
