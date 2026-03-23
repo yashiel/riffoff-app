@@ -30,9 +30,13 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const user = await getLoggedInUser();
-  if (!user) redirect("/login");
+  if (!user) {
+    console.error("[DASHBOARD] No user session, redirecting to login");
+    redirect("/login");
+  }
 
   const profile = await getProfileByUserId(user.$id);
+  console.log("[DASHBOARD] User:", user.$id, "Profile:", profile?.$id, "Role:", profile?.role);
   const role = profile?.role ?? "attendee";
   const displayName = user.name || profile?.displayName || "User";
   const initials = displayName

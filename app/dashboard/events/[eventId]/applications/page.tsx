@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getEventById } from "@/actions/events";
 import { getEventApplications } from "@/actions/applications";
 import { ApplicationList } from "@/components/features/applications/ApplicationList";
+import { serialize } from "@/lib/utils";
 
 export const metadata = { title: "Manage Applications" };
 
@@ -23,7 +24,7 @@ export default async function ApplicationsPage({ params }: ApplicationsPageProps
         Review and manage applications for {event.title}
       </p>
       <div className="mt-6">
-        <ApplicationList applications={applications} />
+        <ApplicationList applications={serialize(applications)} />
       </div>
     </div>
   );

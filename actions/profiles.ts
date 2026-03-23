@@ -12,19 +12,21 @@ import type { ProfileDoc, UserRole } from "@/lib/appwrite/types";
  * Returns null if not authenticated or profile doesn't exist.
  */
 export async function getProfile(): Promise<ProfileDoc | null> {
-  const sessionClient = await createSessionClient();
-  if (!sessionClient) return null;
-
   try {
+    const sessionClient = await createSessionClient();
+    if (!sessionClient) return null;
+
     const user = await sessionClient.account.get();
-    const { documents } = await sessionClient.databases.listDocuments(
+    const { databases } = await createAdminClient();
+    const { documents } = await databases.listDocuments(
       DATABASE_ID,
       COLLECTIONS.PROFILES,
       [Query.equal("userId", user.$id), Query.limit(1)],
     );
 
     return (documents[0] as unknown as ProfileDoc) ?? null;
-  } catch {
+  } catch (error) {
+    console.error("[getProfile] Error:", error);
     return null;
   }
 }

@@ -1,6 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/**
+ * Strip class prototypes from Appwrite documents so they can be
+ * safely passed from Server Components to Client Components.
+ * Next.js RSC boundary requires plain objects only.
+ */
+export function serialize<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

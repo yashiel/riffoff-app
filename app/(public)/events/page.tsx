@@ -4,6 +4,7 @@ import { EventFilters } from "@/components/features/events/EventFilters";
 import { Pagination } from "@/components/features/events/Pagination";
 import { SkeletonList } from "@/components/features/shared/SkeletonCard";
 import { getPublishedEvents, getAvailableGenres } from "@/actions/events";
+import { serialize } from "@/lib/utils";
 import type { EventFilters as EventFilterType, EventWithVenue } from "@/actions/events";
 
 export const metadata = { title: "Discover Events" };
@@ -63,7 +64,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
       <div className="mt-8">
         <Suspense fallback={<SkeletonList count={6} />}>
-          <EventGrid events={events} />
+          <EventGrid events={serialize(events)} />
         </Suspense>
       </div>
 

@@ -91,12 +91,13 @@ export async function register(
     // Create profile document for the new user
     await ensureProfile(session.userId, name);
   } catch (error) {
+    console.error("[REGISTER ERROR]", error);
     const message =
       error instanceof Error ? error.message : "Registration failed";
     if (message.includes("already exists")) {
       return { error: "An account with this email already exists" };
     }
-    return { error: "Registration failed. Please try again." };
+    return { error: `Registration failed: ${message}` };
   }
 
   redirect("/dashboard");

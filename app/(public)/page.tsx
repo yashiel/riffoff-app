@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Zap, Headphones, QrCode, BarChart3 } from "lucide-react";
 import { EventScrollRow } from "@/components/features/events/EventScrollRow";
 import { getUpcomingEvents } from "@/actions/events";
+import { serialize } from "@/lib/utils";
 import type { EventWithVenue } from "@/actions/events";
 
 export const dynamic = "force-dynamic";
@@ -79,7 +80,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="mt-8">
-              <EventScrollRow events={upcomingEvents} />
+              <EventScrollRow events={serialize(upcomingEvents)} />
             </div>
           </div>
         </section>

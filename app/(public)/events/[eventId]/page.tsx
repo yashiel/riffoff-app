@@ -5,7 +5,7 @@ import { TierList } from "@/components/features/events/TierList";
 import { RSVPButton } from "@/components/features/events/RSVPButton";
 import { getEventWithDetails } from "@/actions/events";
 import { getUserRSVP } from "@/actions/rsvps";
-import { formatDate, formatRelativeTime } from "@/lib/utils";
+import { formatDate, formatRelativeTime, serialize } from "@/lib/utils";
 
 interface EventPageProps {
   params: Promise<{ eventId: string }>;
@@ -163,7 +163,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
             />
           ) : (
             <TierList
-              tiers={tiers}
+              tiers={serialize(tiers)}
               isFree={event.isFree}
               eventId={event.$id}
               eventTitle={event.title}
