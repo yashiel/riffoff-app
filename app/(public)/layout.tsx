@@ -29,11 +29,6 @@ export default async function PublicLayout({
 
           {/* Right nav */}
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Global currency picker */}
-            <Suspense>
-              <CurrencySelector currentCurrency={displayCurrency} />
-            </Suspense>
-
             <Link
               href="/events"
               className="hidden text-[13px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-white sm:block"
@@ -58,6 +53,13 @@ export default async function PublicLayout({
                 </Link>
               </>
             )}
+
+            {/* Currency picker — far right, after all nav items */}
+            <div className="border-l border-white/[0.06] pl-3">
+              <Suspense>
+                <CurrencySelector currentCurrency={displayCurrency} />
+              </Suspense>
+            </div>
           </div>
         </nav>
       </header>

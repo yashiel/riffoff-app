@@ -7,9 +7,10 @@ import type { EventWithVenue } from "@/actions/events";
 
 interface EventScrollRowProps {
   events: EventWithVenue[];
+  convertedPrices?: Record<string, string>;
 }
 
-export function EventScrollRow({ events }: EventScrollRowProps) {
+export function EventScrollRow({ events, convertedPrices = {} }: EventScrollRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   function scroll(direction: "left" | "right") {
@@ -48,7 +49,7 @@ export function EventScrollRow({ events }: EventScrollRowProps) {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {events.map((event) => (
-          <EventCard key={event.$id} event={event} variant="scroll" />
+          <EventCard key={event.$id} event={event} variant="scroll" convertedPrice={convertedPrices[event.$id] ?? null} />
         ))}
       </div>
     </div>
