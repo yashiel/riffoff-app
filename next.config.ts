@@ -12,6 +12,25 @@ const nextConfig: NextConfig = {
         hostname: "cloud.appwrite.io",
       },
     ],
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  // Compress responses
+  compress: true,
+  // Strict mode for catching issues early
+  reactStrictMode: true,
+  // Power header reveals framework — disable in production
+  poweredByHeader: false,
+  // Optimize package imports
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+    ],
   },
 };
 
