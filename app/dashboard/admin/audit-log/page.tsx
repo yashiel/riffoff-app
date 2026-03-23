@@ -77,9 +77,9 @@ export default function AuditLogPage() {
                   <span className="text-muted-foreground">
                     {log.entityType}/{log.entityId.slice(0, 8)}...
                   </span>
-                  {metadata.reason && (
+                  {typeof metadata.reason === "string" && (
                     <span className="text-muted-foreground/60">
-                      — {String(metadata.reason).slice(0, 60)}
+                      — {metadata.reason.slice(0, 60)}
                     </span>
                   )}
                 </div>
