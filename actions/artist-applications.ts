@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { notifyApplicationSubmitted } from "@/actions/notifications";
+import { getProfileByUserId } from "@/actions/profiles";
 import type { ApplicationDoc, EventDoc, VenueDoc } from "@/lib/appwrite/types";
 
 // ─── Types ───────────────────────────────────────────
@@ -104,6 +106,15 @@ export async function applyToEvent(
         entityId: application.$id,
         metadata: JSON.stringify({ eventId: parsed.data.eventId, eventTitle: event.title }),
       },
+    );
+
+    // Notify the event organiser
+    const artistProfile = await getProfileByUserId(user.$id);
+    await notifyApplicationSubmitted(
+      event.organiserId,
+      artistProfile?.displayName ?? "An artist",
+      event.title,
+      event.$id,
     );
 
     revalidatePath("/dashboard/applications");

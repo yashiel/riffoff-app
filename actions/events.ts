@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { notifyEventCancelled } from "@/actions/notifications";
 import type {
   EventDoc,
   VenueDoc,
@@ -481,6 +482,19 @@ export async function cancelEvent(
         entityId: eventId,
         metadata: JSON.stringify({ title: event.title }),
       },
+    );
+
+    // Notify ticket holders about cancellation
+    const ticketHolders = await databases.listDocuments(
+      DATABASE_ID,
+      COLLECTIONS.TICKETS,
+      [Query.equal("eventId", eventId), Query.limit(500)],
+    );
+    const ownerIds = [...new Set(ticketHolders.documents.map((t) => (t as unknown as { ownerId: string }).ownerId))];
+    await Promise.all(
+      ownerIds.map((ownerId) =>
+        notifyEventCancelled(ownerId, event.title, eventId),
+      ),
     );
 
     revalidatePath(`/dashboard/events/${eventId}`);

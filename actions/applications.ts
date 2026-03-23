@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { notifyApplicationStatusChanged } from "@/actions/notifications";
 import type {
   ApplicationDoc,
   ApplicationStatus,
@@ -141,6 +142,16 @@ export async function updateApplicationStatus(
         }),
       },
     );
+
+    // Notify the artist
+    if (newStatus === "accepted" || newStatus === "rejected" || newStatus === "shortlisted") {
+      await notifyApplicationStatusChanged(
+        application.artistId,
+        event.title,
+        application.eventId,
+        newStatus,
+      );
+    }
 
     revalidatePath(`/dashboard/events/${application.eventId}/applications`);
     return {};
