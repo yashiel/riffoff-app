@@ -30,14 +30,3 @@ export async function isCurrentUserAdmin(): Promise<boolean> {
   }
 }
 
-/**
- * Check if a user owns the resource OR is an admin.
- * Replaces `if (event.organiserId !== user.$id)` checks.
- */
-export function isOwnerOrAdmin(
-  resourceOwnerId: string,
-  currentUserId: string,
-  userRole: string,
-): boolean {
-  return resourceOwnerId === currentUserId || userRole === "admin";
-}
