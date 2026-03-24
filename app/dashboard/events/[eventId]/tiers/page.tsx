@@ -4,6 +4,7 @@ import { getEventTiers } from "@/actions/tiers";
 import { getEventById } from "@/actions/events";
 import { TierCard } from "@/components/features/events/TierCard";
 import { TierForm } from "@/components/features/events/TierForm";
+import { serialize } from "@/lib/utils";
 
 export const metadata = { title: "Manage Tiers" };
 
@@ -16,11 +17,11 @@ export default async function TiersPage({ params }: TiersPageProps) {
   const event = await getEventById(eventId);
   if (!event) notFound();
 
-  const tiers = await getEventTiers(eventId);
+  const tiers = serialize(await getEventTiers(eventId));
 
   return (
     <div>
-      <h2 className="font-display text-[24px]">Ticket Tiers</h2>
+      <h2 className="font-display text-xl sm:text-[24px]">Ticket Tiers</h2>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Manage pricing and availability for {event.title}
       </p>
@@ -38,7 +39,7 @@ export default async function TiersPage({ params }: TiersPageProps) {
           <Plus className="size-4" />
           Add new tier
         </h3>
-        <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#242424] p-4">
+        <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#1e1e22] p-4">
           <TierForm eventId={eventId} />
         </div>
       </div>
