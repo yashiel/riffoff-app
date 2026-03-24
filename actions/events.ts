@@ -542,6 +542,61 @@ export async function cancelEvent(
   }
 }
 
+/** Unpublish an event (published → draft) — only if no tickets sold */
+export async function unpublishEvent(
+  eventId: string,
+): Promise<EventFormResult> {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return { error: "Please log in" };
+
+  const user = await sessionClient.account.get();
+  const { databases } = await createAdminClient();
+
+  const event = (await databases.getDocument(
+    DATABASE_ID,
+    COLLECTIONS.EVENTS,
+    eventId,
+  )) as unknown as EventDoc;
+
+  const admin = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !admin) return { error: "Not authorized" };
+  if (event.status !== "published") return { error: "Only published events can be unpublished" };
+
+  // Check if tickets have been sold
+  const tiers = await databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKET_TIERS, [
+    Query.equal("eventId", eventId),
+    Query.limit(100),
+  ]);
+  const totalSold = tiers.documents.reduce(
+    (sum, t) => sum + ((t as unknown as { soldCount: number }).soldCount || 0),
+    0,
+  );
+  if (totalSold > 0) {
+    return { error: `Cannot unpublish — ${totalSold} tickets already sold. Cancel the event instead.` };
+  }
+
+  try {
+    await databases.updateDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId, {
+      status: "draft",
+    });
+
+    await databases.createDocument(DATABASE_ID, COLLECTIONS.AUDIT_LOGS, ID.unique(), {
+      actorId: user.$id,
+      action: "event.unpublished",
+      entityType: "event",
+      entityId: eventId,
+      metadata: JSON.stringify({ title: event.title }),
+    });
+
+    revalidatePath(`/dashboard/events/${eventId}`);
+    revalidatePath("/dashboard/events");
+    revalidatePath("/events");
+    return { eventId };
+  } catch {
+    return { error: "Failed to unpublish event" };
+  }
+}
+
 /** Get events owned by the current organiser (admins see all) */
 export async function getOrganiserEvents(): Promise<EventWithVenue[]> {
   const sessionClient = await createSessionClient();

@@ -8,7 +8,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { formatDate } from "@/lib/utils";
-import { publishEvent, cancelEvent } from "@/actions/events";
+import { publishEvent, cancelEvent, unpublishEvent } from "@/actions/events";
 import { Query } from "node-appwrite";
 import type { EventDoc } from "@/lib/appwrite/types";
 
@@ -87,6 +87,16 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
             <form action={async () => { "use server"; await publishEvent(eventId); }}>
               <button type="submit" className="btn-primary !py-2 !text-[12px]">
                 Publish Event
+              </button>
+            </form>
+          )}
+          {event.status === "published" && (
+            <form action={async () => { "use server"; await unpublishEvent(eventId); }}>
+              <button
+                type="submit"
+                className="rounded border border-amber-500/20 bg-amber-500/10 px-4 py-2 text-[12px] font-medium uppercase text-amber-400 transition-colors hover:bg-amber-500/20"
+              >
+                Unpublish
               </button>
             </form>
           )}

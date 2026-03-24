@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Plus, Calendar, MapPin } from "lucide-react";
-import { StatusBadge } from "@/components/features/shared/StatusBadge";
+import { Plus } from "lucide-react";
 import { EmptyState } from "@/components/features/shared/EmptyState";
 import { getOrganiserEvents } from "@/actions/events";
-import { formatDate } from "@/lib/utils";
+import { serialize } from "@/lib/utils";
+import { EventListClient } from "@/components/features/events/EventListClient";
 
 export const metadata = { title: "My Events" };
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export default async function OrgEventsPage() {
         <div>
           <h1 className="font-display text-xl sm:text-[28px]">My Events</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">
-            Create and manage your events
+            {events.length} event{events.length !== 1 ? "s" : ""} total
           </p>
         </div>
         <Link href="/dashboard/events/new" className="btn-primary inline-flex w-fit items-center gap-1.5 !py-2.5 !text-[12px]">
@@ -31,7 +31,7 @@ export default async function OrgEventsPage() {
         </Link>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         {events.length === 0 ? (
           <EmptyState
             title="No events yet"
@@ -40,43 +40,7 @@ export default async function OrgEventsPage() {
             actionHref="/dashboard/events/new"
           />
         ) : (
-          <div className="space-y-3">
-            {events.map((event) => (
-              <Link
-                key={event.$id}
-                href={`/dashboard/events/${event.$id}`}
-                className="flex items-center gap-4 rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-all hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.02)]"
-              >
-                <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-[#2a2a2a]">
-                  {event.coverimageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={event.coverimageUrl} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-xl opacity-15">♪</div>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="truncate text-[15px] font-bold text-white">{event.title}</h3>
-                    <StatusBadge status={event.status} />
-                  </div>
-                  <div className="mt-1 flex items-center gap-4 text-[13px] text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="size-3 text-coral" />
-                      {formatDate(event.startsAt, { dateStyle: "medium" })}
-                    </span>
-                    {event.venue && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="size-3" />
-                        {event.venue.name}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <span className="text-[13px] text-muted-foreground">Manage →</span>
-              </Link>
-            ))}
-          </div>
+          <EventListClient events={serialize(events)} />
         )}
       </div>
     </div>
