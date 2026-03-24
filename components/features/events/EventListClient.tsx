@@ -46,7 +46,7 @@ type SortOption = (typeof SORT_OPTIONS)[number]["id"];
 
 const statusConfig: Record<string, { dot: string; bg: string; text: string; label: string }> = {
   published: { dot: "bg-emerald-400", bg: "bg-emerald-400/8", text: "text-emerald-400", label: "Live" },
-  completed: { dot: "bg-blue-400/60", bg: "bg-blue-400/[0.06]", text: "text-blue-400/60", label: "Completed" },
+  completed: { dot: "bg-blue-400", bg: "bg-blue-400/15", text: "text-blue-400", label: "Completed" },
   draft: { dot: "bg-amber-400", bg: "bg-amber-400/8", text: "text-amber-400", label: "Draft" },
   cancelled: { dot: "bg-red-400/60", bg: "bg-red-400/8", text: "text-red-400/60", label: "Cancelled" },
 };
