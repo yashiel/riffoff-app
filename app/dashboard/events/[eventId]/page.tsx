@@ -75,8 +75,14 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
           </div>
         </div>
 
-        {/* Status actions */}
-        <div className="flex gap-2">
+        {/* Actions */}
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/dashboard/events/${eventId}/edit`}
+            className="btn-ghost !py-2 !text-[12px] inline-flex items-center gap-1"
+          >
+            Edit Details
+          </Link>
           {event.status === "draft" && (
             <form action={async () => { "use server"; await publishEvent(eventId); }}>
               <button type="submit" className="btn-primary !py-2 !text-[12px]">
