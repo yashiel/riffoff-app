@@ -32,9 +32,9 @@ export default async function SettingsRoute() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="font-display text-2xl tracking-tight sm:text-[32px]">Settings</h1>
-        <p className="mt-1 text-[13px] text-white/30">
+      <div className="mb-10">
+        <h1 className="font-display text-3xl tracking-tight sm:text-[40px]">Settings</h1>
+        <p className="mt-2 text-[14px] text-white/30">
           Manage your account, security, and privacy preferences
         </p>
       </div>

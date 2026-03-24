@@ -18,20 +18,20 @@ export default async function OrgEventsPage() {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-display text-xl sm:text-[28px]">My Events</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            {events.length} event{events.length !== 1 ? "s" : ""} total
+          <h1 className="font-display text-3xl tracking-tight sm:text-[40px]">My Events</h1>
+          <p className="mt-2 text-[14px] text-white/30">
+            Manage, publish, and track your events
           </p>
         </div>
-        <Link href="/dashboard/events/new" className="btn-primary inline-flex w-fit items-center gap-1.5 !py-2.5 !text-[12px]">
+        <Link href="/dashboard/events/new" className="btn-primary inline-flex w-fit items-center gap-2 !rounded-xl !px-6 !py-3 !text-[13px]">
           <Plus className="size-4" />
           Create Event
         </Link>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-10">
         {events.length === 0 ? (
           <EmptyState
             title="No events yet"

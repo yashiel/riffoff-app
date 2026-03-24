@@ -84,7 +84,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
   const daysUntil = Math.ceil((new Date(event.startsAt).getTime() - Date.now()) / 86400000);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* ─── Hero banner with cover image ─── */}
       <div className="relative overflow-hidden rounded-2xl border border-white/[0.04]">
         {/* Background image (blurred) */}
@@ -173,7 +173,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
       </div>
 
       {/* ─── Stats row ─── */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {/* Tickets sold — with progress bar */}
         <div className="col-span-2 rounded-2xl border border-white/[0.04] bg-white/[0.015] p-4 lg:col-span-1">
           <div className="flex items-center justify-between">
@@ -221,7 +221,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
       </div>
 
       {/* ─── Quick links grid ─── */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Link
           href={`/dashboard/events/${eventId}/tiers`}
           className="group flex items-center justify-between rounded-2xl border border-white/[0.04] bg-white/[0.015] p-4 transition-all hover:border-coral/20 hover:bg-coral/[0.03]"

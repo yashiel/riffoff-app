@@ -146,7 +146,7 @@ export default async function DashboardLayout({
 
       {/* ─── Main content ─── */}
       <main className="flex-1 pt-14 lg:pl-[260px] lg:pt-0">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:px-12">
           {children}
         </div>
       </main>

@@ -147,19 +147,17 @@ export function EventListClient({ events }: EventListClientProps) {
   return (
     <div className="space-y-5">
       {/* ─── Stats strip ─── */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
           { label: "Total Events", value: stats.total, icon: BarChart3, accent: "text-white/50" },
           { label: "Live Now", value: stats.live, icon: Zap, accent: "text-emerald-400" },
           { label: "Upcoming", value: stats.upcoming, icon: Clock, accent: "text-coral" },
           { label: "Past", value: stats.past, icon: TrendingUp, accent: "text-white/30" },
         ].map((stat) => (
-          <div key={stat.label} className="flex items-center gap-3 rounded-xl border border-white/[0.04] bg-white/[0.015] px-3.5 py-3">
-            <stat.icon className={`size-4 ${stat.accent}`} />
-            <div>
-              <p className="font-display text-lg leading-none tracking-tight">{stat.value}</p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/25">{stat.label}</p>
-            </div>
+          <div key={stat.label} className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5">
+            <stat.icon className={`size-5 ${stat.accent}`} />
+            <p className="mt-3 font-display text-3xl leading-none tracking-tight">{stat.value}</p>
+            <p className="mt-1 text-[11px] uppercase tracking-wider text-white/25">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -313,7 +311,7 @@ export function EventListClient({ events }: EventListClientProps) {
         </div>
       ) : viewMode === "grid" ? (
         /* ─── Grid View ─── */
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((event, i) => {
             const cfg = statusConfig[event.status] ?? statusConfig.draft;
             const isUpcoming = new Date(event.startsAt) > new Date();
@@ -327,7 +325,7 @@ export function EventListClient({ events }: EventListClientProps) {
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 {/* Cover */}
-                <div className={`relative aspect-[2/1] overflow-hidden ${isPast ? "grayscale-[40%]" : ""}`}>
+                <div className={`relative aspect-[16/10] overflow-hidden ${isPast ? "grayscale-[40%]" : ""}`}>
                   {event.coverimageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -361,34 +359,34 @@ export function EventListClient({ events }: EventListClientProps) {
                 </div>
 
                 {/* Info */}
-                <div className="p-3.5 pb-4">
-                  <h3 className="truncate text-[14px] font-bold leading-tight text-white/90 group-hover:text-white transition-colors">
+                <div className="space-y-3 p-5">
+                  <h3 className="text-[16px] font-bold leading-snug text-white/90 group-hover:text-white transition-colors line-clamp-2">
                     {event.title}
                   </h3>
-                  <div className="mt-2.5 flex items-center gap-3 text-[11px] text-white/25">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="size-3 text-coral/40" />
-                      {formatDate(event.startsAt, { dateStyle: "medium" })}
+                  <div className="flex flex-col gap-1.5 text-[12px] text-white/30">
+                    <span className="flex items-center gap-2">
+                      <Calendar className="size-3.5 text-coral/50" />
+                      {formatDate(event.startsAt, { dateStyle: "long" })}
                     </span>
                     {event.venue && (
-                      <span className="flex items-center gap-1.5 truncate">
-                        <MapPin className="size-3 shrink-0" />
+                      <span className="flex items-center gap-2 truncate">
+                        <MapPin className="size-3.5 shrink-0 text-white/15" />
                         <span className="truncate">{event.venue.name}</span>
                       </span>
                     )}
                   </div>
 
                   {/* Bottom row: genres + capacity */}
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="flex gap-1 overflow-hidden">
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex gap-1.5 overflow-hidden">
                       {event.genres.slice(0, 2).map((g) => (
-                        <span key={g} className="rounded-md bg-violet-500/[0.06] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-violet-300/40">
+                        <span key={g} className="rounded-md bg-violet-500/[0.06] px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-violet-300/40">
                           {g}
                         </span>
                       ))}
                     </div>
-                    <span className="flex items-center gap-1 text-[10px] text-white/15">
-                      <Users className="size-3" />
+                    <span className="flex items-center gap-1.5 text-[11px] text-white/15">
+                      <Users className="size-3.5" />
                       {event.capacity.toLocaleString()}
                     </span>
                   </div>
