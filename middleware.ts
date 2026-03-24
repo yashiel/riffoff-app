@@ -6,6 +6,7 @@ const PUBLIC_ROUTES = [
   "/",
   "/login",
   "/register",
+  "/verify",
   "/callback",
   "/events",
   "/api/webhooks",

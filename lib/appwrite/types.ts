@@ -227,3 +227,12 @@ export interface DeletionRequestDoc extends Models.Document {
   completedAt: string | null;
   cancelledAt: string | null;
 }
+
+export interface VerificationCodeDoc extends Models.Document {
+  email: string;
+  code: string;
+  userId: string;
+  expiresAt: string;
+  attempts: number;
+  used: boolean;
+}

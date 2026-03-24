@@ -16,6 +16,7 @@ export const COLLECTIONS = {
   NOTIFICATIONS: "notifications",
   USER_CONSENTS: "user-consents",
   DELETION_REQUESTS: "deletion-requests",
+  VERIFICATION_CODES: "verification-codes",
 } as const;
 
 export const BUCKETS = {

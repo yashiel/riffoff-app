@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+import { Search } from "lucide-react";
 import { EventGrid } from "@/components/features/events/EventGrid";
 import { EventFilters } from "@/components/features/events/EventFilters";
 import { Pagination } from "@/components/features/events/Pagination";
@@ -32,7 +33,6 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     page: params.page ? parseInt(params.page, 10) : 1,
   };
 
-  // Read currency preference from cookie
   const cookieStore = await cookies();
   const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
 
@@ -53,50 +53,50 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     totalPages = eventsResult.totalPages;
     genres = genresResult;
 
-    // Fetch wishlist state for logged-in users
     const eventIds = events.map((e) => e.$id);
     if (eventIds.length > 0) {
       const wishlistSet = await getWishlistedEventIds(eventIds);
       wishlistedIds = [...wishlistSet];
     }
 
-    // Convert prices if a display currency is selected
     if (displayCurrency !== "original") {
       const rates = await getExchangeRates("USD");
       if (rates) {
         for (const event of events) {
           if (event.minPrice && event.minPriceCurrency && event.minPriceCurrency !== displayCurrency) {
-            const converted = formatConvertedPrice(
-              event.minPrice,
-              event.minPriceCurrency,
-              displayCurrency,
-              rates,
-            );
+            const converted = formatConvertedPrice(event.minPrice, event.minPriceCurrency, displayCurrency, rates);
             if (converted) convertedPrices[event.$id] = converted;
           }
         }
       }
     }
-  } catch {
-    // Appwrite may not be reachable — show empty state
-  }
+  } catch {}
+
+  const totalEvents = events.length + (totalPages - 1) * 12;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="space-y-1">
-        <h1 className="font-display text-2xl tracking-tight sm:text-3xl">Discover Events</h1>
-        <p className="text-[13px] text-muted-foreground">
-          Find live music events near you
-        </p>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      {/* ─── Page header — Shotgun style ─── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-[clamp(2rem,5vw,3rem)] leading-none tracking-tight">
+            Discover Events
+          </h1>
+          <p className="mt-2 text-[14px] text-muted-foreground">
+            {totalEvents > 0 ? `${totalEvents}+ upcoming events` : "Find live music events near you"}
+          </p>
+        </div>
       </div>
 
+      {/* ─── Filters ─── */}
       <div className="mt-6">
         <Suspense>
           <EventFilters genres={genres} />
         </Suspense>
       </div>
 
-      <div className="mt-8">
+      {/* ─── Date-grouped event grid ─── */}
+      <div className="mt-10">
         <Suspense fallback={<SkeletonList count={6} />}>
           <EventGrid
             events={serialize(events)}
@@ -106,7 +106,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         </Suspense>
       </div>
 
-      <div className="mt-8">
+      {/* ─── Pagination ─── */}
+      <div className="mt-10">
         <Pagination currentPage={page} totalPages={totalPages} />
       </div>
     </div>

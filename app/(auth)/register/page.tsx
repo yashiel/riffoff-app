@@ -1,15 +1,24 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register, loginWithProvider, type AuthResult } from "@/actions/auth";
 import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState<AuthResult, FormData>(
     register,
     {},
   );
+
+  // Handle redirect from server action
+  useEffect(() => {
+    if (state.redirect) {
+      router.push(state.redirect);
+    }
+  }, [state.redirect, router]);
 
   return (
     <div>
@@ -50,7 +59,7 @@ export default function RegisterPage() {
           {state.error && (
             <div
               role="alert"
-              className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400"
+              className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-400"
             >
               {state.error}
             </div>
@@ -67,7 +76,7 @@ export default function RegisterPage() {
               autoComplete="name"
               required
               placeholder="Your full name"
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+              className="w-full rounded-xl bg-[var(--input)] border border-[var(--border)] px-4 py-3 text-[14px] text-foreground placeholder:text-muted-foreground outline-none focus:border-coral/40 focus:ring-2 focus:ring-coral/10 transition-all"
             />
           </div>
 
@@ -82,7 +91,7 @@ export default function RegisterPage() {
               autoComplete="email"
               required
               placeholder="you@example.com"
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+              className="w-full rounded-xl bg-[var(--input)] border border-[var(--border)] px-4 py-3 text-[14px] text-foreground placeholder:text-muted-foreground outline-none focus:border-coral/40 focus:ring-2 focus:ring-coral/10 transition-all"
             />
           </div>
 
@@ -98,9 +107,30 @@ export default function RegisterPage() {
               required
               minLength={8}
               placeholder="At least 8 characters"
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+              className="w-full rounded-xl bg-[var(--input)] border border-[var(--border)] px-4 py-3 text-[14px] text-foreground placeholder:text-muted-foreground outline-none focus:border-coral/40 focus:ring-2 focus:ring-coral/10 transition-all"
             />
           </div>
+
+          {/* Terms acknowledgement */}
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              name="termsAccepted"
+              required
+              className="mt-1 size-4 rounded border-[var(--border)] bg-transparent accent-coral"
+            />
+            <span className="text-[13px] leading-relaxed text-muted-foreground">
+              I agree to the{" "}
+              <Link href="/terms" className="text-coral hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-coral hover:underline">
+                Privacy Policy
+              </Link>
+              . I understand RiffOff will process my data as described.
+            </span>
+          </label>
 
           <button
             type="submit"
