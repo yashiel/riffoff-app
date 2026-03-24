@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Calendar, MapPin, Heart, Users } from "lucide-react";
 import { EmptyState } from "@/components/features/shared/EmptyState";
