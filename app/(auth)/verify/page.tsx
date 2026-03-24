@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useTransition, useEffect, useCallback } from "react";
+import { Suspense, useState, useRef, useTransition, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, ArrowLeft, RefreshCw } from "lucide-react";
@@ -10,6 +10,14 @@ const CODE_LENGTH = 6;
 const RESEND_COOLDOWN = 60; // seconds
 
 export default function VerifyPage() {
+  return (
+    <Suspense fallback={<div className="py-12 text-center text-muted-foreground">Loading...</div>}>
+      <VerifyContent />
+    </Suspense>
+  );
+}
+
+function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email") ?? "";
