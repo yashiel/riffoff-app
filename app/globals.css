@@ -50,42 +50,43 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   "LIGHT" MODE — Warm Charcoal (still dark, warmer tone)
-   For users who want softer contrast
+   LIGHT MODE — "Neon on Snow"
+   Bright white canvas, same bold neon colors
+   Magenta, cyan, lime POP on white
    ═══════════════════════════════════════════════════ */
 :root {
-  --background: #1a1a1e;
-  --foreground: #eeeef0;
-  --card: #222226;
-  --card-foreground: #eeeef0;
-  --popover: #222226;
-  --popover-foreground: #eeeef0;
-  --primary: #eeeef0;
-  --primary-foreground: #1a1a1e;
-  --secondary: #2a2a2f;
-  --secondary-foreground: #eeeef0;
-  --muted: #2a2a2f;
-  --muted-foreground: #8888a0;
-  --accent: #2a2a2f;
-  --accent-foreground: #eeeef0;
-  --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.04);
+  --background: #fafafa;
+  --foreground: #0a0a0c;
+  --card: #ffffff;
+  --card-foreground: #0a0a0c;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0c;
+  --primary: #0a0a0c;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f4;
+  --secondary-foreground: #0a0a0c;
+  --muted: #f2f2f4;
+  --muted-foreground: #64647a;
+  --accent: #f2f2f4;
+  --accent-foreground: #0a0a0c;
+  --destructive: #dc2626;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.03);
   --ring: #FF2D78;
   --chart-1: #FF2D78;
-  --chart-2: #00D4FF;
-  --chart-3: #BFFF00;
-  --chart-4: #FF6B35;
-  --chart-5: #A855F7;
+  --chart-2: #00B4D8;
+  --chart-3: #65A30D;
+  --chart-4: #EA580C;
+  --chart-5: #9333EA;
   --radius: 0.625rem;
   --coral: #FF2D78;
-  --sidebar: #161619;
-  --sidebar-foreground: #eeeef0;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0a0a0c;
   --sidebar-primary: #FF2D78;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2a2a2f;
-  --sidebar-accent-foreground: #eeeef0;
-  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-accent: #f2f2f4;
+  --sidebar-accent-foreground: #0a0a0c;
+  --sidebar-border: rgba(0, 0, 0, 0.06);
   --sidebar-ring: #FF2D78;
 }
 
@@ -155,7 +156,7 @@
 
 /* ─── Logo gradient ──────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #FF2D78 0%, #00D4FF 100%);
+  background: linear-gradient(135deg, #FF2D78 0%, #9333EA 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -262,6 +263,22 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--coral) 30%, transparent); }
+
+/* ─── Light mode specifics ──────────── */
+:root .event-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.04);
+}
+:root .event-card:hover {
+  box-shadow: 0 8px 30px rgba(255,45,120,0.1), 0 12px 40px rgba(0,0,0,0.06);
+}
+:root aside {
+  border-right: 1px solid rgba(0,0,0,0.06);
+}
+/* Dark mode — no card shadows, glow on hover */
+.dark .event-card { box-shadow: none; }
+.dark .event-card:hover {
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--coral) 10%, transparent);
+}
 
 /* ─── Animations ──────────── */
 @keyframes fade-up {
