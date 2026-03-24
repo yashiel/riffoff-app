@@ -95,7 +95,7 @@ export function VenueCombobox({ venues, defaultVenueId, onChange }: VenueCombobo
 
       {/* Dropdown */}
       {isOpen && (filtered.length > 0 || showCreateOption) && (
-        <div className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#1e1e22] py-1 shadow-xl">
+        <div className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-[rgba(255,255,255,0.1)] bg-card py-1 shadow-xl">
           {filtered.slice(0, 8).map((venue) => (
             <button
               key={venue.$id}

@@ -97,7 +97,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
               alt=""
               className="h-full w-full object-cover opacity-20 blur-2xl scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0e0e10] via-[#0e0e10]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
           </div>
         )}
 

@@ -49,8 +49,51 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ─── RiffOff Dark Theme — Electric Nightlife ──────────── */
+/* ═══════════════════════════════════════════════════
+   LIGHT MODE — Daylight Festival
+   Warm whites, crisp shadows, deep green accent
+   ═══════════════════════════════════════════════════ */
 :root {
+  --background: #fafaf9;
+  --foreground: #0c0c0e;
+  --card: #ffffff;
+  --card-foreground: #0c0c0e;
+  --popover: #ffffff;
+  --popover-foreground: #0c0c0e;
+  --primary: #0c0c0e;
+  --primary-foreground: #fafaf9;
+  --secondary: #f0efed;
+  --secondary-foreground: #0c0c0e;
+  --muted: #f0efed;
+  --muted-foreground: #6b6b78;
+  --accent: #f0efed;
+  --accent-foreground: #0c0c0e;
+  --destructive: #dc2626;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.04);
+  --ring: #4d7c0f;
+  --chart-1: #4d7c0f;
+  --chart-2: #7c3aed;
+  --chart-3: #0891b2;
+  --chart-4: #2563eb;
+  --chart-5: #d97706;
+  --radius: 0.25rem;
+  --coral: #4d7c0f;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0c0c0e;
+  --sidebar-primary: #4d7c0f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0efed;
+  --sidebar-accent-foreground: #0c0c0e;
+  --sidebar-border: rgba(0, 0, 0, 0.06);
+  --sidebar-ring: #4d7c0f;
+}
+
+/* ═══════════════════════════════════════════════════
+   DARK MODE — Electric Nightlife
+   Near-black, electric lime, violet secondary
+   ═══════════════════════════════════════════════════ */
+.dark {
   --background: #0e0e10;
   --foreground: #f0f0f2;
   --card: #18181b;
@@ -74,7 +117,6 @@
   --chart-3: #06b6d4;
   --chart-4: #3b82f6;
   --chart-5: #f59e0b;
-  --radius: 0.25rem;
   --coral: #bfff00;
   --sidebar: #0c0c0e;
   --sidebar-foreground: #f0f0f2;
@@ -111,20 +153,23 @@
 .text-coral {
   color: var(--coral);
 }
+.bg-coral {
+  background-color: var(--coral);
+}
 
-/* ─── Logo gradient — lime to violet ──────────── */
+/* ─── Logo gradient ──────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #bfff00 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--coral) 0%, #7c3aed 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─── Ghost button (outlined) ──────────── */
+/* ─── Ghost button ──────────── */
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f0f0f2;
+  border: 1px solid var(--border);
+  color: var(--foreground);
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
@@ -133,15 +178,15 @@
   transition: all 0.2s;
 }
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(191, 255, 0, 0.3);
-  color: #bfff00;
+  background: var(--input);
+  border-color: color-mix(in srgb, var(--coral) 30%, transparent);
+  color: var(--coral);
 }
 
-/* ─── Primary CTA — electric lime ──────────── */
+/* ─── Primary CTA ──────────── */
 .btn-primary {
-  background: #bfff00;
-  color: #0e0e10;
+  background: var(--coral);
+  color: var(--primary-foreground);
   border-radius: 6px;
   padding: 12px 24px;
   font-weight: 700;
@@ -150,36 +195,38 @@
   transition: all 0.2s;
   border: none;
 }
+.dark .btn-primary {
+  color: #0e0e10;
+}
 .btn-primary:hover {
-  background: #d4ff4d;
+  opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(191, 255, 0, 0.2);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--coral) 25%, transparent);
 }
 
 /* ─── Genre pill ──────────── */
 .genre-pill {
   display: inline-flex;
   align-items: center;
-  background: rgba(124, 58, 237, 0.08);
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: color-mix(in srgb, var(--chart-2) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--chart-2) 20%, transparent);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--muted-foreground);
   transition: all 0.2s;
 }
 .genre-pill:hover {
-  background: rgba(124, 58, 237, 0.15);
-  border-color: rgba(124, 58, 237, 0.4);
-  color: #c4b5fd;
+  background: color-mix(in srgb, var(--chart-2) 15%, transparent);
+  border-color: color-mix(in srgb, var(--chart-2) 40%, transparent);
 }
 .genre-pill.active {
-  background: rgba(191, 255, 0, 0.1);
-  border-color: rgba(191, 255, 0, 0.3);
-  color: #bfff00;
+  background: color-mix(in srgb, var(--coral) 12%, transparent);
+  border-color: color-mix(in srgb, var(--coral) 40%, transparent);
+  color: var(--coral);
 }
 
 /* ─── Subtle card hover ──────────── */
@@ -195,24 +242,23 @@
 
 /* ─── Filter button ──────────── */
 .filter-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--input);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
-  color: #f0f0f2;
+  color: var(--foreground);
   transition: all 0.2s;
 }
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(191, 255, 0, 0.2);
+  border-color: color-mix(in srgb, var(--coral) 30%, transparent);
 }
 .filter-btn.active {
-  background: rgba(191, 255, 0, 0.12);
-  border-color: rgba(191, 255, 0, 0.4);
-  color: #bfff00;
+  background: color-mix(in srgb, var(--coral) 12%, transparent);
+  border-color: color-mix(in srgb, var(--coral) 40%, transparent);
+  color: var(--coral);
 }
 
 /* ─── Scrollbar ──────────── */
@@ -223,11 +269,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(191, 255, 0, 0.2);
+  background: color-mix(in srgb, var(--coral) 30%, transparent);
 }
 
 /* ─── Stagger animation ──────────── */

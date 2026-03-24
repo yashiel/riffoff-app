@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { getLoggedInUser } from "@/lib/appwrite/server";
 import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
+import { ThemeToggle } from "@/components/features/shared/ThemeToggle";
 
 export default async function PublicLayout({
   children,
@@ -17,7 +18,7 @@ export default async function PublicLayout({
   return (
     <div className="flex min-h-screen flex-col">
       {/* Navigation — clean, DICE/Shotgun-inspired */}
-      <header className="sticky top-0 z-50 border-b border-[rgba(255,255,255,0.06)] bg-background/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
         <nav className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link
@@ -54,8 +55,9 @@ export default async function PublicLayout({
               </>
             )}
 
-            {/* Currency picker — far right, after all nav items */}
-            <div className="border-l border-white/[0.06] pl-3">
+            {/* Theme toggle + Currency picker */}
+            <div className="flex items-center gap-1 border-l border-border pl-3">
+              <ThemeToggle />
               <Suspense>
                 <CurrencySelector currentCurrency={displayCurrency} />
               </Suspense>

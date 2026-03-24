@@ -68,6 +68,12 @@ export default async function RootLayout({
       className={`${outfit.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased dark`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Prevent flash of wrong theme — runs before paint */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){try{var t=localStorage.getItem('riffoff-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()
+        `}} />
+      </head>
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
         <QueryProvider>
           <AuthProvider user={authUser}>

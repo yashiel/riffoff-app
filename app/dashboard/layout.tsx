@@ -7,6 +7,7 @@ import { logout } from "@/actions/auth";
 import type { UserRole } from "@/lib/appwrite/types";
 import { Ticket, CalendarDays, Music, Settings, Shield, QrCode, LogOut, ChevronRight } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/NotificationBell";
+import { ThemeToggle } from "@/components/features/shared/ThemeToggle";
 
 interface NavItem {
   label: string;
@@ -49,13 +50,13 @@ export default async function DashboardLayout({
   );
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0c]">
+    <div className="flex min-h-screen bg-background">
       {/* ─── Sidebar — warm translucent glass ─── */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] flex-col lg:flex">
         {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0e0e12] via-[#0c0c0e] to-[#0a0a0c]" />
+        <div className="absolute inset-0 bg-sidebar" />
         {/* Right edge glow line */}
-        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-[rgba(191,255,0,0.1)] to-transparent" />
+        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-coral/10 to-transparent" />
 
         <div className="relative flex h-full flex-col">
           {/* Logo */}
@@ -100,6 +101,7 @@ export default async function DashboardLayout({
                   <p className="truncate text-[11px] text-white/30 capitalize">{role}</p>
                 </div>
                 {/* Notification bell — inline with user info */}
+                <ThemeToggle />
                 <NotificationBell />
               </div>
 
@@ -122,7 +124,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* ─── Mobile header ─── */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-white/[0.04] bg-[#0a0a0c]/90 px-4 backdrop-blur-xl lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-background/90 px-4 backdrop-blur-xl lg:hidden">
         <Link
           href="/"
           className="font-[family-name:var(--font-display)] text-lg font-extrabold"
@@ -130,12 +132,13 @@ export default async function DashboardLayout({
           <span className="gradient-text">Riff</span>Off
         </Link>
         <div className="ml-auto flex items-center gap-1">
+          <ThemeToggle />
           <NotificationBell />
           {visibleNav.slice(0, 4).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg p-2 text-white/40 transition-colors hover:bg-white/[0.04] hover:text-white/80"
+              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
               aria-label={item.label}
             >
               <item.icon className="size-4" />

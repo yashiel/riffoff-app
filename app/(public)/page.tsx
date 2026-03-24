@@ -57,7 +57,7 @@ export default async function HomePage() {
           {/* Dark overlay — ensures text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/50" />
           {/* Bottom fade into page background */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0e0e10] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
           {/* Lime tint overlay for brand identity */}
           <div className="absolute inset-0 bg-gradient-to-br from-[rgba(191,255,0,0.05)] via-transparent to-[rgba(124,58,237,0.08)]" />
         </div>

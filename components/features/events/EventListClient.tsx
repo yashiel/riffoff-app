@@ -287,7 +287,7 @@ export function EventListClient({ events }: EventListClientProps) {
                 className="rounded-md bg-transparent px-2 py-1 text-[11px] text-white/50 outline-none"
               >
                 {SORT_OPTIONS.map((so) => (
-                  <option key={so.id} value={so.id} className="bg-[#0e0e10]">{so.label}</option>
+                  <option key={so.id} value={so.id} className="bg-background">{so.label}</option>
                 ))}
               </select>
             </div>
@@ -352,7 +352,7 @@ export function EventListClient({ events }: EventListClientProps) {
                     <div className="flex h-full items-center justify-center bg-gradient-to-br from-white/[0.02] to-transparent text-3xl text-white/[0.03]">♪</div>
                   )}
                   {/* Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e10] via-[#0e0e10]/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
                   {/* Top row: status + relative time */}
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">

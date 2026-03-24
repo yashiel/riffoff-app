@@ -45,7 +45,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
             className="object-cover transition-all duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-[#1e1e22]">
+          <div className="flex h-full items-center justify-center bg-card">
             <span className="text-5xl opacity-10">♪</span>
           </div>
         )}
