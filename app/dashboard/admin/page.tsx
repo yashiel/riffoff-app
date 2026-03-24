@@ -26,7 +26,7 @@ export default async function AdminPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[28px]">Admin Dashboard</h1>
+      <h1 className="font-display text-[36px]">Admin Dashboard</h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Platform overview and moderation tools
       </p>

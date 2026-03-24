@@ -19,11 +19,11 @@ export default async function ApplicationsPage({ params }: ApplicationsPageProps
 
   return (
     <div>
-      <h2 className="font-display text-[24px]">Artist Applications</h2>
+      <h2 className="font-display text-[30px]">Artist Applications</h2>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Review and manage applications for {event.title}
       </p>
-      <div className="mt-6">
+      <div className="mt-8">
         <ApplicationList applications={serialize(applications)} />
       </div>
     </div>

@@ -25,7 +25,7 @@ export default async function ApplicationsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[28px]">My Applications</h1>
+      <h1 className="font-display text-[36px]">My Applications</h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Track your performance applications
       </p>

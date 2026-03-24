@@ -46,13 +46,13 @@ export default function AuditLogPage() {
     <div>
       <div className="flex items-center gap-2">
         <ScrollText className="size-5 text-coral" />
-        <h1 className="font-display text-[28px]">Audit Log</h1>
+        <h1 className="font-display text-[36px]">Audit Log</h1>
       </div>
       <p className="mt-1 text-[14px] text-muted-foreground">
         {total} recorded actions
       </p>
 
-      <div className="mt-6 space-y-2">
+      <div className="mt-8 space-y-2">
         {logs.length === 0 && !isPending && (
           <p className="py-8 text-center text-[13px] text-muted-foreground">No audit entries yet.</p>
         )}
@@ -94,7 +94,7 @@ export default function AuditLogPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="mt-8 flex items-center justify-center gap-2">
           <button
             onClick={() => { setPage(page - 1); fetchLogs(page - 1); }}
             disabled={page <= 1 || isPending}

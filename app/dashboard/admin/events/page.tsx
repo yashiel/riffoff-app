@@ -50,13 +50,13 @@ export default function AdminEventsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[28px]">Event Moderation</h1>
+      <h1 className="font-display text-[36px]">Event Moderation</h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
         {total} events on the platform
       </p>
 
       {/* Status filter */}
-      <div className="mt-6 flex gap-2">
+      <div className="mt-8 flex gap-2">
         {STATUS_OPTIONS.map((status) => (
           <button
             key={status}
@@ -73,7 +73,7 @@ export default function AdminEventsPage() {
       </div>
 
       {/* Table */}
-      <div className="mt-6 overflow-x-auto">
+      <div className="mt-8 overflow-x-auto">
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b border-[rgba(255,255,255,0.06)] text-left text-muted-foreground">
@@ -126,7 +126,7 @@ export default function AdminEventsPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="mt-8 flex items-center justify-center gap-2">
           <button
             onClick={() => { setPage(page - 1); fetchEvents(page - 1); }}
             disabled={page <= 1 || isPending}

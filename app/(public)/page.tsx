@@ -96,7 +96,7 @@ export default async function HomePage() {
                 { value: "3", label: "Payment methods" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="font-display text-[24px] text-coral">
+                  <p className="font-display text-[30px] text-coral">
                     {stat.value}
                   </p>
                   <p className="text-[13px] text-muted-foreground">
@@ -113,7 +113,7 @@ export default async function HomePage() {
       <section className="border-t border-[rgba(255,255,255,0.06)] py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="font-display text-[28px]">How RiffOff works</h2>
+            <h2 className="font-display text-[36px]">How RiffOff works</h2>
             <p className="mt-2 text-[14px] text-muted-foreground">
               Three steps to your next live experience
             </p>
@@ -161,7 +161,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between">
               <div>
-                <h2 className="font-display text-[28px]">
+                <h2 className="font-display text-[36px]">
                   Trending Now
                 </h2>
                 <p className="mt-1 text-[14px] text-muted-foreground">

@@ -23,7 +23,7 @@ export default async function NewEventPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="font-display text-[28px]">Create Event</h1>
+      <h1 className="font-display text-[36px]">Create Event</h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Fill in the details to create a new event
       </p>

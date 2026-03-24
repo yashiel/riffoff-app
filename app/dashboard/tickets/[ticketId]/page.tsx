@@ -106,7 +106,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           </div>
 
           {/* Event title */}
-          <h1 className="mt-3 font-display text-[24px]">
+          <h1 className="mt-3 font-display text-[30px]">
             {event?.title ?? "Event"}
           </h1>
 
@@ -155,7 +155,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
 
           {/* Trust message */}
           {isActive && !isCheckedIn && (
-            <div className="mt-6 flex items-start gap-2 text-[12px]">
+            <div className="mt-8 flex items-start gap-2 text-[12px]">
               <Shield className="mt-0.5 size-3.5 shrink-0 text-coral" />
               <p className="text-muted-foreground">
                 This ticket is cryptographically signed and verified at the door.

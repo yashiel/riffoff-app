@@ -211,7 +211,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           {/* About */}
           {event.description && (
             <div>
-              <h2 className="font-display text-[24px]">About</h2>
+              <h2 className="font-display text-[30px]">About</h2>
               <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-muted-foreground">
                 {event.description}
               </p>
@@ -221,7 +221,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           {/* Lineup */}
           {lineup.length > 0 && (
             <div>
-              <h2 className="font-display text-[24px]">Lineup</h2>
+              <h2 className="font-display text-[30px]">Lineup</h2>
               <div className="mt-4 space-y-3">
                 {lineup.map(({ artist }) => (
                   <div
@@ -243,7 +243,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           {/* Venue section */}
           {venue && (
             <div>
-              <h2 className="font-display text-[24px]">Venue</h2>
+              <h2 className="font-display text-[30px]">Venue</h2>
               <div className="mt-3">
                 <p className="text-[16px] font-medium text-white">
                   {venue.name}

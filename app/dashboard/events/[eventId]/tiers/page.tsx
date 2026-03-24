@@ -21,13 +21,13 @@ export default async function TiersPage({ params }: TiersPageProps) {
 
   return (
     <div>
-      <h2 className="font-display text-xl sm:text-[24px]">Ticket Tiers</h2>
+      <h2 className="font-display text-2xl sm:text-[36px]">Ticket Tiers</h2>
       <p className="mt-1 text-[14px] text-muted-foreground">
         Manage pricing and availability for {event.title}
       </p>
 
       {/* Existing tiers */}
-      <div className="mt-6 space-y-3">
+      <div className="mt-8 space-y-3">
         {tiers.map((tier) => (
           <TierCard key={tier.$id} tier={tier} />
         ))}

@@ -61,7 +61,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-xl sm:text-[24px]">Attendees</h2>
+          <h2 className="font-display text-2xl sm:text-[36px]">Attendees</h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
             {attendees.length} tickets · {checkedInCount} checked in
           </p>
@@ -89,7 +89,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
       </div>
 
       {/* Table */}
-      <div className="mt-6">
+      <div className="mt-8">
         {isPending ? (
           <div className="py-12 text-center text-[14px] text-muted-foreground">Loading attendees...</div>
         ) : filtered.length === 0 ? (

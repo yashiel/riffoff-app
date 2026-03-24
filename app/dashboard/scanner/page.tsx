@@ -96,7 +96,7 @@ export default function ScannerPage() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <QrCode className="size-5 text-coral" />
-        <h1 className="font-display text-[24px]">Scanner</h1>
+        <h1 className="font-display text-[30px]">Scanner</h1>
       </div>
 
       {/* Event selector */}

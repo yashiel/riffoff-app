@@ -55,7 +55,7 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[28px]">User Management</h1>
+      <h1 className="font-display text-[36px]">User Management</h1>
       <p className="mt-1 text-[14px] text-muted-foreground">
         {total} users on the platform
       </p>
@@ -73,7 +73,7 @@ export default function AdminUsersPage() {
       </form>
 
       {/* Table */}
-      <div className="mt-6 overflow-x-auto">
+      <div className="mt-8 overflow-x-auto">
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b border-[rgba(255,255,255,0.06)] text-left text-muted-foreground">
@@ -119,7 +119,7 @@ export default function AdminUsersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="mt-8 flex items-center justify-center gap-2">
           <button
             onClick={() => { setPage(page - 1); fetchUsers(page - 1); }}
             disabled={page <= 1 || isPending}
