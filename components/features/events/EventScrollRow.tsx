@@ -8,67 +8,62 @@ import type { EventWithVenue } from "@/actions/events";
 interface EventScrollRowProps {
   events: EventWithVenue[];
   convertedPrices?: Record<string, string>;
-  /** Enable infinite auto-scroll (default: true) */
-  autoScroll?: boolean;
-  /** Auto-scroll interval in ms (default: 4000) */
-  scrollInterval?: number;
+  /** Pixels per second for continuous scroll (default: 30) */
+  scrollSpeed?: number;
 }
 
 export function EventScrollRow({
   events,
   convertedPrices = {},
-  autoScroll = true,
-  scrollInterval = 4000,
+  scrollSpeed = 30,
 }: EventScrollRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const animationRef = useRef<number | null>(null);
+  const lastTimeRef = useRef<number>(0);
 
-  const cardWidth = 280; // card width + gap
+  // Duplicate events for seamless infinite loop
+  const duplicatedEvents = [...events, ...events];
 
-  const scroll = useCallback((direction: "left" | "right") => {
+  // Continuous smooth scroll via requestAnimationFrame
+  const animate = useCallback(
+    (timestamp: number) => {
+      if (!scrollRef.current) return;
+
+      if (lastTimeRef.current === 0) lastTimeRef.current = timestamp;
+      const delta = (timestamp - lastTimeRef.current) / 1000; // seconds
+      lastTimeRef.current = timestamp;
+
+      if (!isHovered) {
+        scrollRef.current.scrollLeft += scrollSpeed * delta;
+
+        // When we've scrolled past the first set, snap back seamlessly
+        const halfWidth = scrollRef.current.scrollWidth / 2;
+        if (scrollRef.current.scrollLeft >= halfWidth) {
+          scrollRef.current.scrollLeft -= halfWidth;
+        }
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    },
+    [isHovered, scrollSpeed],
+  );
+
+  useEffect(() => {
+    lastTimeRef.current = 0;
+    animationRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [animate]);
+
+  function manualScroll(direction: "left" | "right") {
     if (!scrollRef.current) return;
     scrollRef.current.scrollBy({
-      left: direction === "left" ? -cardWidth : cardWidth,
+      left: direction === "left" ? -300 : 300,
       behavior: "smooth",
     });
-  }, []);
-
-  // Update scroll button visibility
-  const updateScrollState = useCallback(() => {
-    if (!scrollRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", updateScrollState, { passive: true });
-    updateScrollState();
-    return () => el.removeEventListener("scroll", updateScrollState);
-  }, [updateScrollState]);
-
-  // Auto-scroll — pauses on hover
-  useEffect(() => {
-    if (!autoScroll || isHovered) return;
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const timer = setInterval(() => {
-      const { scrollLeft, scrollWidth, clientWidth } = el;
-      // If near the end, snap back to start
-      if (scrollLeft >= scrollWidth - clientWidth - 20) {
-        el.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        el.scrollBy({ left: cardWidth, behavior: "smooth" });
-      }
-    }, scrollInterval);
-
-    return () => clearInterval(timer);
-  }, [autoScroll, isHovered, scrollInterval]);
+  }
 
   if (events.length === 0) return null;
 
@@ -78,49 +73,38 @@ export function EventScrollRow({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Left arrow */}
-      {canScrollLeft && (
-        <button
-          onClick={() => scroll("left")}
-          className="absolute -left-2 top-[35%] z-10 flex size-10 items-center justify-center rounded-full border border-foreground/[0.06] bg-background/80 text-foreground/60 shadow-lg backdrop-blur-md transition-all hover:bg-background hover:text-foreground sm:-left-5"
-          aria-label="Scroll left"
-        >
-          <ChevronLeft className="size-5" />
-        </button>
-      )}
+      {/* Left arrow — shows on hover */}
+      <button
+        onClick={() => manualScroll("left")}
+        className="absolute left-2 top-[35%] z-10 flex size-10 items-center justify-center rounded-full border border-foreground/[0.06] bg-background/80 text-foreground/60 opacity-0 shadow-lg backdrop-blur-md transition-all hover:bg-background hover:text-foreground group-hover/scroll:opacity-100 sm:left-4"
+        aria-label="Scroll left"
+      >
+        <ChevronLeft className="size-5" />
+      </button>
 
-      {/* Right arrow */}
-      {canScrollRight && (
-        <button
-          onClick={() => scroll("right")}
-          className="absolute -right-2 top-[35%] z-10 flex size-10 items-center justify-center rounded-full border border-foreground/[0.06] bg-background/80 text-foreground/60 shadow-lg backdrop-blur-md transition-all hover:bg-background hover:text-foreground sm:-right-5"
-          aria-label="Scroll right"
-        >
-          <ChevronRight className="size-5" />
-        </button>
-      )}
+      {/* Right arrow — shows on hover */}
+      <button
+        onClick={() => manualScroll("right")}
+        className="absolute right-2 top-[35%] z-10 flex size-10 items-center justify-center rounded-full border border-foreground/[0.06] bg-background/80 text-foreground/60 opacity-0 shadow-lg backdrop-blur-md transition-all hover:bg-background hover:text-foreground group-hover/scroll:opacity-100 sm:right-4"
+        aria-label="Scroll right"
+      >
+        <ChevronRight className="size-5" />
+      </button>
 
-      {/* Scrollable row */}
+      {/* Infinite scrolling row — no scrollbar */}
       <div
         ref={scrollRef}
-        className="flex gap-5 overflow-x-auto scroll-smooth pb-2"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex gap-5 overflow-x-hidden"
       >
-        {events.map((event) => (
-          <EventCard key={event.$id} event={event} variant="scroll" convertedPrice={convertedPrices[event.$id] ?? null} />
+        {duplicatedEvents.map((event, i) => (
+          <EventCard
+            key={`${event.$id}-${i}`}
+            event={event}
+            variant="scroll"
+            convertedPrice={convertedPrices[event.$id] ?? null}
+          />
         ))}
       </div>
-
-      {/* Auto-scroll indicator — small dots */}
-      {autoScroll && (
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <div className={`h-[2px] w-8 rounded-full transition-colors ${isHovered ? "bg-foreground/10" : "bg-coral/40"}`} />
-          <span className="text-[10px] uppercase tracking-widest text-foreground/15">
-            {isHovered ? "Paused" : "Auto-scrolling"}
-          </span>
-          <div className={`h-[2px] w-8 rounded-full transition-colors ${isHovered ? "bg-foreground/10" : "bg-coral/40"}`} />
-        </div>
-      )}
     </div>
   );
 }

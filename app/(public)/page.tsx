@@ -126,8 +126,8 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          {/* Full-width carousel — breaks out of max-w container */}
-          <div className="mt-8 pl-6 sm:pl-8 lg:pl-[calc((100vw-80rem)/2+3rem)]">
+          {/* Full-width carousel — edge to edge */}
+          <div className="mt-8">
             <EventScrollRow events={serialize(upcomingEvents)} convertedPrices={convertedPrices} />
           </div>
         </section>
