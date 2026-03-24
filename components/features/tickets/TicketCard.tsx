@@ -16,7 +16,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
   return (
     <Link
       href={`/dashboard/tickets/${ticket.$id}`}
-      className="group flex gap-4 rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-all hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.02)]"
+      className="group flex gap-4 rounded-xl border border-[var(--border)] p-4 transition-all hover:border-[var(--border)] hover:bg-[rgba(255,255,255,0.02)]"
     >
       {/* Event image — small thumbnail */}
       <div className="relative size-20 shrink-0 overflow-hidden rounded-lg">
@@ -37,7 +37,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
       {/* Ticket info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="line-clamp-1 text-[15px] font-bold text-white">
+          <h3 className="line-clamp-1 text-[15px] font-bold text-foreground">
             {ticket.event?.title ?? "Event"}
           </h3>
           <StatusBadge status={isCheckedIn ? "checked in" : ticket.status} />
@@ -70,7 +70,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
               {ticket.tier.name}
             </span>
           )}
-          <span className="font-mono text-[12px] font-medium text-white/60">
+          <span className="font-mono text-[12px] font-medium text-foreground/60">
             {ticket.ticketCode}
           </span>
         </div>

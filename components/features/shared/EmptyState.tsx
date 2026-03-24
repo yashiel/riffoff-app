@@ -15,9 +15,9 @@ export function EmptyState({
   actionHref,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center rounded border border-[rgba(255,255,255,0.06)] py-20 text-center">
+    <div className="flex flex-col items-center justify-center rounded border border-[var(--border)] py-20 text-center">
       <p className="text-4xl opacity-15">♪</p>
-      <h3 className="mt-4 text-[16px] font-bold text-white">{title}</h3>
+      <h3 className="mt-4 text-[16px] font-bold text-foreground">{title}</h3>
       <p className="mt-1.5 max-w-sm text-[14px] text-muted-foreground">
         {description}
       </p>

@@ -27,7 +27,7 @@ export function TierList({ tiers, isFree, eventId, eventTitle, convertedPrices =
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Tickets</h2>
         {hasConversions && (
-          <span className="text-[11px] text-white/30">
+          <span className="text-[11px] text-foreground/30">
             Converted prices are approximate
           </span>
         )}
@@ -69,11 +69,11 @@ export function TierList({ tiers, isFree, eventId, eventTitle, convertedPrices =
                     )}
                   </div>
                   <div className="mt-0.5 flex items-baseline gap-2">
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-foreground">
                       {converted ?? formatCurrency(tier.price, tier.currency)}
                     </p>
                     {converted && (
-                      <p className="text-[11px] text-white/30">
+                      <p className="text-[11px] text-foreground/30">
                         {formatCurrency(tier.price, tier.currency)}
                       </p>
                     )}

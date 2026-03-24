@@ -64,7 +64,7 @@ export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-[rgba(255,255,255,0.06)] p-8 text-center">
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-[var(--border)] p-8 text-center">
         <p className="text-[14px] text-red-400">{error}</p>
         <button onClick={fetchToken} className="btn-ghost !text-[12px]">
           Try again
@@ -78,7 +78,7 @@ export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
       <div className="flex flex-col items-center gap-4">
         <button
           onClick={() => setIsFullscreen(true)}
-          className="relative rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[#242424] p-6 transition-all hover:border-[rgba(255,255,255,0.2)]"
+          className="relative rounded-2xl border border-[var(--border)] bg-[#242424] p-6 transition-all hover:border-[var(--border)]"
           aria-label="Expand QR code"
         >
           {isPending || !qrDataUrl ? (
@@ -96,14 +96,14 @@ export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
                 className="rounded-lg"
               />
               <div className="absolute bottom-2 right-2 rounded-full bg-black/50 p-1.5">
-                <Maximize2 className="size-3.5 text-white/60" />
+                <Maximize2 className="size-3.5 text-foreground/60" />
               </div>
             </>
           )}
         </button>
 
         <div className="text-center">
-          <p className="font-mono text-[20px] font-bold tracking-widest text-white">
+          <p className="font-mono text-[20px] font-bold tracking-widest text-foreground">
             {ticketCode}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">

@@ -69,19 +69,19 @@ export function SettingsPage({
                   isActive
                     ? isDanger
                       ? "bg-red-500/[0.08] text-red-400"
-                      : "bg-white/[0.05] text-white"
-                    : "text-white/40 hover:bg-white/[0.03] hover:text-white/70"
+                      : "bg-foreground/[0.05] text-foreground"
+                    : "text-foreground/40 hover:bg-foreground/[0.03] hover:text-foreground/70"
                 }`}
               >
                 <tab.icon className={`mt-0.5 size-4 shrink-0 transition-colors ${
                   isActive
                     ? isDanger ? "text-red-400" : "text-coral"
-                    : "group-hover:text-white/50"
+                    : "group-hover:text-foreground/50"
                 }`} />
                 <div className="min-w-0">
                   <span className="block text-[13px] font-medium leading-tight">{tab.label}</span>
                   <span className={`block text-[11px] leading-tight ${
-                    isActive ? "text-white/40" : "text-white/20"
+                    isActive ? "text-foreground/40" : "text-foreground/20"
                   }`}>{tab.description}</span>
                 </div>
               </button>
@@ -103,8 +103,8 @@ export function SettingsPage({
                   isActive
                     ? tab.id === "danger"
                       ? "bg-red-500/15 text-red-400"
-                      : "bg-white/10 text-white"
-                    : "text-white/40 hover:text-white/60"
+                      : "bg-foreground/10 text-foreground"
+                    : "text-foreground/40 hover:text-foreground/60"
                 }`}
               >
                 <tab.icon className="size-3.5" />

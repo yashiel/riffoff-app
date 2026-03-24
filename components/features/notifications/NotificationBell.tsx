@@ -84,7 +84,7 @@ export function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={toggleDropdown}
-        className="relative rounded-lg p-1.5 text-white/30 transition-colors hover:bg-white/[0.06] hover:text-white/70"
+        className="relative rounded-lg p-1.5 text-foreground/30 transition-colors hover:bg-foreground/[0.06] hover:text-foreground/70"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
       >
         <Bell className="size-4" />
@@ -97,10 +97,10 @@ export function NotificationBell() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#1e1e1e] shadow-2xl sm:w-80 lg:bottom-full lg:left-0 lg:right-auto lg:top-auto lg:mt-0 lg:mb-2">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-2xl border border-[var(--border)] bg-[#1e1e1e] shadow-2xl sm:w-80 lg:bottom-full lg:left-0 lg:right-auto lg:top-auto lg:mt-0 lg:mb-2">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] px-4 py-3">
-            <h3 className="text-[14px] font-bold text-white">Notifications</h3>
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+            <h3 className="text-[14px] font-bold text-foreground">Notifications</h3>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}

@@ -63,7 +63,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
             <div>
               <h3 className="text-[15px] font-bold text-amber-400">Account Deletion Scheduled</h3>
               <p className="mt-2 text-[13px] text-muted-foreground">
-                Your account will be permanently deleted in <strong className="text-white">{daysRemaining} days</strong> ({new Date(activeDeletion.scheduledDeleteAt).toLocaleDateString()}).
+                Your account will be permanently deleted in <strong className="text-foreground">{daysRemaining} days</strong> ({new Date(activeDeletion.scheduledDeleteAt).toLocaleDateString()}).
                 All data will be irreversibly removed.
               </p>
               <button
@@ -103,7 +103,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
               <div>
                 <p>After requesting deletion:</p>
                 <ul className="mt-1 list-disc space-y-0.5 pl-4">
-                  <li>Your account enters a <strong className="text-white">30-day grace period</strong></li>
+                  <li>Your account enters a <strong className="text-foreground">30-day grace period</strong></li>
                   <li>You can cancel during this period from Settings</li>
                   <li>After 30 days, all data is <strong className="text-red-400">permanently and irreversibly deleted</strong></li>
                   <li>This includes tickets, orders, applications, and profile data</li>

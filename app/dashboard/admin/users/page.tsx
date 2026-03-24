@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
           placeholder="Search by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
         />
       </form>
 
@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
       <div className="mt-8 overflow-x-auto">
         <table className="w-full text-[13px]">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.06)] text-left text-muted-foreground">
+            <tr className="border-b border-[var(--border)] text-left text-muted-foreground">
               <th className="pb-3 pr-4 font-medium">Name</th>
               <th className="pb-3 pr-4 font-medium">Role</th>
               <th className="pb-3 pr-4 font-medium">Joined</th>
@@ -87,10 +87,10 @@ export default function AdminUsersPage() {
             {users.map((user) => (
               <tr
                 key={user.profileId}
-                className="border-b border-[rgba(255,255,255,0.03)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                className="border-b border-[var(--border)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
               >
                 <td className="py-3 pr-4">
-                  <p className="font-medium text-white">{user.displayName ?? "No name"}</p>
+                  <p className="font-medium text-foreground">{user.displayName ?? "No name"}</p>
                   <p className="text-[11px] text-muted-foreground font-mono">{user.userId.slice(0, 12)}...</p>
                 </td>
                 <td className="py-3 pr-4">
@@ -104,7 +104,7 @@ export default function AdminUsersPage() {
                     value={user.role}
                     onChange={(e) => handleRoleChange(user.profileId, e.target.value as UserRole)}
                     disabled={isPending}
-                    className="rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-2 py-1 text-[12px] text-white outline-none"
+                    className="rounded bg-[var(--input)] border border-[var(--border)] px-2 py-1 text-[12px] text-white outline-none"
                   >
                     {ROLES.map((role) => (
                       <option key={role} value={role}>{role}</option>

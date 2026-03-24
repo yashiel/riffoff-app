@@ -73,7 +73,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           </div>
 
           {/* Trust message — DICE pattern */}
-          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] p-3.5">
+          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[var(--border)] bg-[rgba(255,255,255,0.02)] p-3.5">
             <Shield className="mt-0.5 size-4 shrink-0 text-coral" />
             <p className="text-[12px] leading-relaxed text-muted-foreground">
               RiffOff protects fans and artists. Tickets are cryptographically
@@ -112,7 +112,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                   {formatDate(event.startsAt, { timeStyle: "short" })} –{" "}
                   {formatDate(event.endsAt, { timeStyle: "short" })}
                   {!isPast && (
-                    <span className="ml-2 text-white/50">
+                    <span className="ml-2 text-foreground/50">
                       · {formatRelativeTime(event.startsAt)}
                     </span>
                   )}
@@ -124,7 +124,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
               <div className="flex items-center gap-2.5">
                 <MapPin className="size-4 text-muted-foreground" />
                 <div>
-                  <p className="text-[16px] font-medium text-white">
+                  <p className="text-[16px] font-medium text-foreground">
                     {venue.name}
                   </p>
                   {venue.address && (
@@ -155,11 +155,11 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                     return (
                       <>
                         <div className="flex items-baseline gap-2">
-                          <p className="text-[20px] font-bold text-white">
+                          <p className="text-[20px] font-bold text-foreground">
                             From {converted ?? formatCurrency(minTier.price, minTier.currency)}
                           </p>
                           {converted && (
-                            <p className="text-[13px] text-white/30">
+                            <p className="text-[13px] text-foreground/30">
                               {formatCurrency(minTier.price, minTier.currency)}
                             </p>
                           )}
@@ -183,7 +183,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
 
           {/* Tickets / RSVP section */}
           {isPast ? (
-            <div className="flex items-center gap-3 rounded-xl border border-[rgba(255,255,255,0.06)] p-6">
+            <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] p-6">
               <Clock className="size-5 text-muted-foreground" />
               <p className="font-medium text-muted-foreground">
                 This event has ended
@@ -206,7 +206,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           )}
 
           {/* Divider */}
-          <div className="border-t border-[rgba(255,255,255,0.06)]" />
+          <div className="border-t border-[var(--border)]" />
 
           {/* About */}
           {event.description && (
@@ -226,12 +226,12 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                 {lineup.map(({ artist }) => (
                   <div
                     key={artist.$id}
-                    className="flex items-center gap-3 rounded-lg border border-[rgba(255,255,255,0.06)] p-3"
+                    className="flex items-center gap-3 rounded-lg border border-[var(--border)] p-3"
                   >
                     <div className="flex size-10 items-center justify-center rounded-full bg-coral/10 text-[14px] font-bold text-coral">
                       {(artist.displayName ?? "A").charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-[15px] font-medium text-white">
+                    <span className="text-[15px] font-medium text-foreground">
                       {artist.displayName ?? "Artist"}
                     </span>
                   </div>
@@ -245,7 +245,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
             <div>
               <h2 className="font-display text-[30px]">Venue</h2>
               <div className="mt-3">
-                <p className="text-[16px] font-medium text-white">
+                <p className="text-[16px] font-medium text-foreground">
                   {venue.name}
                 </p>
                 {venue.address && (

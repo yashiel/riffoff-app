@@ -163,15 +163,15 @@ export function EventListClient({ events }: EventListClientProps) {
       {/* ─── Stats strip ─── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total Events", value: stats.total, icon: BarChart3, accent: "text-white/50" },
+          { label: "Total Events", value: stats.total, icon: BarChart3, accent: "text-foreground/50" },
           { label: "Live Now", value: stats.live, icon: Zap, accent: "text-emerald-400" },
           { label: "Upcoming", value: stats.upcoming, icon: Clock, accent: "text-coral" },
-          { label: "Past", value: stats.past, icon: TrendingUp, accent: "text-white/30" },
+          { label: "Past", value: stats.past, icon: TrendingUp, accent: "text-foreground/30" },
         ].map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5">
+          <div key={stat.label} className="rounded-2xl border border-foreground/[0.04] bg-foreground/[0.015] p-5">
             <stat.icon className={`size-5 ${stat.accent}`} />
             <p className="mt-3 font-display text-3xl leading-none tracking-tight">{stat.value}</p>
-            <p className="mt-1 text-[11px] uppercase tracking-wider text-white/25">{stat.label}</p>
+            <p className="mt-1 text-[11px] uppercase tracking-wider text-foreground/25">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -193,9 +193,9 @@ export function EventListClient({ events }: EventListClientProps) {
                   className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all ${
                     isActive
                       ? tab.id === "all"
-                        ? "bg-white/10 text-white"
+                        ? "bg-foreground/10 text-foreground"
                         : `${cfg?.bg} ${cfg?.text}`
-                      : "text-white/20 hover:text-white/40"
+                      : "text-foreground/20 hover:text-foreground/40"
                   }`}
                 >
                   {tab.icon && <tab.icon className="size-3" />}
@@ -210,13 +210,13 @@ export function EventListClient({ events }: EventListClientProps) {
           <div className="flex items-center gap-2">
             {/* Search */}
             <div className="relative flex-1 sm:w-56 sm:flex-initial">
-              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-white/15" />
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-foreground/15" />
               <input
                 type="search"
                 placeholder="Search events..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg bg-white/[0.03] border border-white/[0.05] py-2 pl-9 pr-3 text-[12px] text-white placeholder:text-white/20 outline-none focus:border-coral/30 transition-colors"
+                className="w-full rounded-lg bg-foreground/[0.03] border border-foreground/[0.05] py-2 pl-9 pr-3 text-[12px] text-white placeholder:text-foreground/20 outline-none focus:border-coral/30 transition-colors"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function EventListClient({ events }: EventListClientProps) {
               className={`rounded-lg border p-2 transition-all ${
                 showFilters || dateFilter !== "all" || sortBy !== "date-asc"
                   ? "border-coral/20 bg-coral/5 text-coral"
-                  : "border-white/[0.05] text-white/20 hover:text-white/40"
+                  : "border-foreground/[0.05] text-foreground/20 hover:text-foreground/40"
               }`}
               aria-label="Toggle filters"
             >
@@ -234,17 +234,17 @@ export function EventListClient({ events }: EventListClientProps) {
             </button>
 
             {/* View toggle */}
-            <div className="flex rounded-lg border border-white/[0.05] p-0.5">
+            <div className="flex rounded-lg border border-foreground/[0.05] p-0.5">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-white/10 text-white" : "text-white/20 hover:text-white/40"}`}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-foreground/10 text-foreground" : "text-foreground/20 hover:text-foreground/40"}`}
                 aria-label="Grid view"
               >
                 <LayoutGrid className="size-3.5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-white/10 text-white" : "text-white/20 hover:text-white/40"}`}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-foreground/10 text-foreground" : "text-foreground/20 hover:text-foreground/40"}`}
                 aria-label="List view"
               >
                 <List className="size-3.5" />
@@ -255,10 +255,10 @@ export function EventListClient({ events }: EventListClientProps) {
 
         {/* Row 2: Expanded filters (date + sort) */}
         {showFilters && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/[0.03] bg-white/[0.015] p-3 animate-fade-up">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-foreground/[0.03] bg-foreground/[0.015] p-3 animate-fade-up">
             {/* Date filter */}
             <div className="flex items-center gap-2">
-              <Calendar className="size-3.5 text-white/20" />
+              <Calendar className="size-3.5 text-foreground/20" />
               <div className="flex flex-wrap gap-1">
                 {DATE_FILTERS.map((df) => (
                   <button
@@ -267,7 +267,7 @@ export function EventListClient({ events }: EventListClientProps) {
                     className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
                       dateFilter === df.id
                         ? "bg-coral/10 text-coral"
-                        : "text-white/25 hover:text-white/50"
+                        : "text-foreground/25 hover:text-foreground/50"
                     }`}
                   >
                     {df.label}
@@ -276,15 +276,15 @@ export function EventListClient({ events }: EventListClientProps) {
               </div>
             </div>
 
-            <div className="hidden h-5 w-px bg-white/[0.06] sm:block" />
+            <div className="hidden h-5 w-px bg-foreground/[0.06] sm:block" />
 
             {/* Sort */}
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="size-3.5 text-white/20" />
+              <ArrowUpDown className="size-3.5 text-foreground/20" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="rounded-md bg-transparent px-2 py-1 text-[11px] text-white/50 outline-none"
+                className="rounded-md bg-transparent px-2 py-1 text-[11px] text-foreground/50 outline-none"
               >
                 {SORT_OPTIONS.map((so) => (
                   <option key={so.id} value={so.id} className="bg-background">{so.label}</option>
@@ -296,7 +296,7 @@ export function EventListClient({ events }: EventListClientProps) {
             {(dateFilter !== "all" || sortBy !== "date-asc") && (
               <button
                 onClick={() => { setDateFilter("all"); setSortBy("date-asc"); }}
-                className="ml-auto text-[10px] text-white/25 hover:text-coral transition-colors"
+                className="ml-auto text-[10px] text-foreground/25 hover:text-coral transition-colors"
               >
                 Clear filters
               </button>
@@ -306,7 +306,7 @@ export function EventListClient({ events }: EventListClientProps) {
       </div>
 
       {/* ─── Result count ─── */}
-      <p className="text-[11px] uppercase tracking-wider text-white/15">
+      <p className="text-[11px] uppercase tracking-wider text-foreground/15">
         {filtered.length} event{filtered.length !== 1 ? "s" : ""}
         {statusFilter !== "all" && ` · ${statusConfig[statusFilter]?.label}`}
         {dateFilter !== "all" && ` · ${DATE_FILTERS.find((d) => d.id === dateFilter)?.label}`}
@@ -315,11 +315,11 @@ export function EventListClient({ events }: EventListClientProps) {
       {/* ─── Results ─── */}
       {filtered.length === 0 ? (
         <div className="py-20 text-center">
-          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-white/[0.02] ring-1 ring-white/[0.04]">
-            <Search className="size-6 text-white/10" />
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-foreground/[0.02] ring-1 ring-white/[0.04]">
+            <Search className="size-6 text-foreground/10" />
           </div>
-          <p className="text-[14px] font-medium text-white/30">No events found</p>
-          <p className="mt-1 text-[12px] text-white/15">
+          <p className="text-[14px] font-medium text-foreground/30">No events found</p>
+          <p className="mt-1 text-[12px] text-foreground/15">
             {search ? `Nothing matching "${search}"` : "Try adjusting your filters"}
           </p>
         </div>
@@ -336,7 +336,7 @@ export function EventListClient({ events }: EventListClientProps) {
               <Link
                 key={event.$id}
                 href={`/dashboard/events/${event.$id}`}
-                className="group relative overflow-hidden rounded-2xl border border-white/[0.04] transition-all duration-300 hover:border-white/[0.1] hover:shadow-[0_0_30px_rgba(191,255,0,0.03)]"
+                className="group relative overflow-hidden rounded-2xl border border-foreground/[0.04] transition-all duration-300 hover:border-foreground/[0.1] hover:shadow-[0_0_30px_rgba(191,255,0,0.03)]"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 {/* Cover */}
@@ -360,8 +360,8 @@ export function EventListClient({ events }: EventListClientProps) {
                       <span className={`size-1.5 rounded-full ${cfg.dot}`} />
                       {cfg.label}
                     </span>
-                    <span className={`rounded-md bg-black/40 px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm ${
-                      isUpcoming ? "text-coral" : "text-white/30"
+                    <span className={`rounded-md bg-background/80 px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm ${
+                      isUpcoming ? "text-coral" : "text-foreground/30"
                     }`}>
                       {relativeTime(event.startsAt)}
                     </span>
@@ -375,17 +375,17 @@ export function EventListClient({ events }: EventListClientProps) {
 
                 {/* Info */}
                 <div className="space-y-3 p-5">
-                  <h3 className="text-[16px] font-bold leading-snug text-white/90 group-hover:text-white transition-colors line-clamp-2">
+                  <h3 className="text-[16px] font-bold leading-snug text-foreground/90 group-hover:text-white transition-colors line-clamp-2">
                     {event.title}
                   </h3>
-                  <div className="flex flex-col gap-1.5 text-[12px] text-white/30">
+                  <div className="flex flex-col gap-1.5 text-[12px] text-foreground/30">
                     <span className="flex items-center gap-2">
                       <Calendar className="size-3.5 text-coral/50" />
                       {formatDate(event.startsAt, { dateStyle: "long" })}
                     </span>
                     {event.venue && (
                       <span className="flex items-center gap-2 truncate">
-                        <MapPin className="size-3.5 shrink-0 text-white/15" />
+                        <MapPin className="size-3.5 shrink-0 text-foreground/15" />
                         <span className="truncate">{event.venue.name}</span>
                       </span>
                     )}
@@ -400,7 +400,7 @@ export function EventListClient({ events }: EventListClientProps) {
                         </span>
                       ))}
                     </div>
-                    <span className="flex items-center gap-1.5 text-[11px] text-white/15">
+                    <span className="flex items-center gap-1.5 text-[11px] text-foreground/15">
                       <Users className="size-3.5" />
                       {event.capacity.toLocaleString()}
                     </span>
@@ -412,9 +412,9 @@ export function EventListClient({ events }: EventListClientProps) {
         </div>
       ) : (
         /* ─── List View ─── */
-        <div className="overflow-hidden rounded-2xl border border-white/[0.04]">
+        <div className="overflow-hidden rounded-2xl border border-foreground/[0.04]">
           {/* Table header */}
-          <div className="hidden border-b border-white/[0.04] bg-white/[0.015] px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-white/20 sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]">
+          <div className="hidden border-b border-foreground/[0.04] bg-foreground/[0.015] px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/20 sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]">
             <span className="w-14" />
             <span>Event</span>
             <span>Date</span>
@@ -434,10 +434,10 @@ export function EventListClient({ events }: EventListClientProps) {
                 <Link
                   key={event.$id}
                   href={`/dashboard/events/${event.$id}`}
-                  className="group flex items-center gap-3 px-4 py-3 transition-all hover:bg-white/[0.02] sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]"
+                  className="group flex items-center gap-3 px-4 py-3 transition-all hover:bg-foreground/[0.02] sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]"
                 >
                   {/* Thumbnail */}
-                  <div className={`size-10 shrink-0 overflow-hidden rounded-lg bg-white/[0.03] ${isPast ? "grayscale-[30%]" : ""}`}>
+                  <div className={`size-10 shrink-0 overflow-hidden rounded-lg bg-foreground/[0.03] ${isPast ? "grayscale-[30%]" : ""}`}>
                     {event.coverimageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={event.coverimageUrl} alt="" className="h-full w-full object-cover" />
@@ -448,11 +448,11 @@ export function EventListClient({ events }: EventListClientProps) {
 
                   {/* Title + genres */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-[13px] font-semibold text-white/80 group-hover:text-white transition-colors">
+                    <h3 className="truncate text-[13px] font-semibold text-foreground/80 group-hover:text-white transition-colors">
                       {event.title}
                     </h3>
                     <div className="mt-0.5 flex gap-1 sm:hidden">
-                      <span className="text-[10px] text-white/20">
+                      <span className="text-[10px] text-foreground/20">
                         {formatDate(event.startsAt, { dateStyle: "medium" })}
                       </span>
                     </div>
@@ -460,14 +460,14 @@ export function EventListClient({ events }: EventListClientProps) {
 
                   {/* Date */}
                   <div className="hidden sm:block">
-                    <p className="text-[12px] text-white/50">{formatDate(event.startsAt, { dateStyle: "medium" })}</p>
-                    <p className={`text-[10px] ${isUpcoming ? "text-coral/50" : "text-white/15"}`}>
+                    <p className="text-[12px] text-foreground/50">{formatDate(event.startsAt, { dateStyle: "medium" })}</p>
+                    <p className={`text-[10px] ${isUpcoming ? "text-coral/50" : "text-foreground/15"}`}>
                       {relativeTime(event.startsAt)}
                     </p>
                   </div>
 
                   {/* Venue */}
-                  <p className="hidden truncate text-[12px] text-white/30 sm:block">
+                  <p className="hidden truncate text-[12px] text-foreground/30 sm:block">
                     {event.venue?.name ?? "—"}
                   </p>
 

@@ -37,7 +37,7 @@ export default async function AdminPage() {
           const Card = (
             <div
               key={stat.label}
-              className="rounded-xl border border-[rgba(255,255,255,0.06)] p-5 transition-colors hover:border-[rgba(255,255,255,0.12)]"
+              className="rounded-xl border border-[var(--border)] p-5 transition-colors hover:border-[var(--border)]"
             >
               <stat.icon className="size-5 text-coral" />
               <p className="mt-3 font-display text-[32px]">{stat.value.toLocaleString()}</p>
@@ -63,11 +63,11 @@ export default async function AdminPage() {
           <Link
             key={link.href}
             href={link.href}
-            className="flex items-start gap-3 rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-all hover:border-coral/20 hover:bg-coral/5"
+            className="flex items-start gap-3 rounded-xl border border-[var(--border)] p-4 transition-all hover:border-coral/20 hover:bg-coral/5"
           >
             <link.icon className="mt-0.5 size-5 text-coral" />
             <div>
-              <p className="text-[14px] font-bold text-white">{link.label}</p>
+              <p className="text-[14px] font-bold text-foreground">{link.label}</p>
               <p className="mt-0.5 text-[12px] text-muted-foreground">{link.description}</p>
             </div>
           </Link>

@@ -39,7 +39,7 @@ export default async function TiersPage({ params }: TiersPageProps) {
           <Plus className="size-4" />
           Add new tier
         </h3>
-        <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-card p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-card p-4">
           <TierForm eventId={eventId} />
         </div>
       </div>

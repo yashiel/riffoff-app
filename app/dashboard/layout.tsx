@@ -66,7 +66,7 @@ export default async function DashboardLayout({
               className="font-[family-name:var(--font-display)] text-xl font-extrabold tracking-tight"
             >
               <span className="gradient-text">Riff</span>
-              <span className="text-white/90">Off</span>
+              <span className="text-foreground/90">Off</span>
             </Link>
           </div>
 
@@ -76,7 +76,7 @@ export default async function DashboardLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-white/50 transition-all duration-200 hover:bg-white/[0.04] hover:text-white/90"
+                className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-foreground/50 transition-all duration-200 hover:bg-foreground/[0.04] hover:text-foreground/90"
               >
                 <item.icon className="size-[18px] transition-colors group-hover:text-coral" />
                 <span className="flex-1">{item.label}</span>
@@ -87,18 +87,18 @@ export default async function DashboardLayout({
 
           {/* User section */}
           <div className="p-3">
-            <div className="rounded-xl bg-white/[0.03] p-3">
+            <div className="rounded-xl bg-foreground/[0.03] p-3">
               <div className="flex items-center gap-3">
                 {/* Avatar with coral ring */}
                 <div className="relative shrink-0">
                   <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/30 to-coral/10 text-[12px] font-bold text-coral ring-2 ring-coral/20">
                     {initials}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#0e0e12] bg-emerald-400" />
+                  <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-sidebar bg-emerald-400" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-semibold text-white/90">{displayName}</p>
-                  <p className="truncate text-[11px] text-white/30 capitalize">{role}</p>
+                  <p className="truncate text-[13px] font-semibold text-foreground/90">{displayName}</p>
+                  <p className="truncate text-[11px] text-foreground/30 capitalize">{role}</p>
                 </div>
                 {/* Notification bell — inline with user info */}
                 <ThemeToggle />
@@ -106,11 +106,11 @@ export default async function DashboardLayout({
               </div>
 
               {/* Sign out — full-width subtle button below */}
-              <div className="mt-2.5 border-t border-white/[0.04] pt-2.5">
+              <div className="mt-2.5 border-t border-foreground/[0.04] pt-2.5">
                 <form action={logout}>
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium text-white/25 transition-all hover:bg-white/[0.04] hover:text-white/50"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium text-foreground/25 transition-all hover:bg-foreground/[0.04] hover:text-foreground/50"
                     aria-label="Log out"
                   >
                     <LogOut className="size-3" />

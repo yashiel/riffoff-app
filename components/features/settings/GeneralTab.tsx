@@ -164,7 +164,7 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
           <div className="space-y-1.5">
             <Label className="text-[12px] text-muted-foreground">Email</Label>
             <div className="flex items-center gap-2">
-              <p className="text-[14px] text-white">{userEmail}</p>
+              <p className="text-[14px] text-foreground">{userEmail}</p>
               <a href="/dashboard/settings?tab=security" className="text-[11px] text-coral hover:underline">Change</a>
             </div>
           </div>
@@ -173,12 +173,12 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
             <div className="space-y-1.5">
               <Label htmlFor="displayName" className="text-[12px] text-muted-foreground">Display name</Label>
               <input id="displayName" name="displayName" required maxLength={100} defaultValue={profile.displayName ?? ""}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)]" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]" />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="phone" className="text-[12px] text-muted-foreground">Phone (optional)</Label>
               <input id="phone" name="phone" type="tel" maxLength={20} defaultValue={profile.phone ?? ""}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)]" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]" />
             </div>
           </div>
 
@@ -186,21 +186,21 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
             <div className="space-y-1.5">
               <Label htmlFor="timezone" className="text-[12px] text-muted-foreground">Timezone</Label>
               <select id="timezone" name="timezone" defaultValue={profile.timezone ?? "UTC"}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none">
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none">
                 {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz.replace(/_/g, " ")}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="language" className="text-[12px] text-muted-foreground">Language</Label>
               <select id="language" name="language" defaultValue={profile.language ?? "en"}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none">
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none">
                 {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="currency" className="text-[12px] text-muted-foreground">Display currency</Label>
               <select id="currency" name="currency" defaultValue={currentCurrency}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white outline-none">
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none">
                 <option value="original">🌐 Original</option>
                 {SUPPORTED_CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.flag} {c.code} — {c.label}</option>)}
               </select>
@@ -215,7 +215,7 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
               </Label>
               <textarea id="bio" name="bio" rows={3} maxLength={500} defaultValue={profile.bio ?? ""}
                 placeholder={role === "organiser" ? "Tell people about your organisation..." : "Tell people about yourself..."}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] resize-none" />
             </div>
           )}
 
@@ -225,7 +225,7 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
               <Label htmlFor="artistGenres" className="text-[12px] text-muted-foreground">Genres (comma-separated)</Label>
               <input id="artistGenres" name="artistGenres" defaultValue={profile.artistGenres?.join(", ") ?? ""}
                 placeholder="Electronic, Techno, House"
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]" />
             </div>
           )}
 
@@ -235,7 +235,7 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
               <Label htmlFor="socialLinks" className="text-[12px] text-muted-foreground">Social links (one per line)</Label>
               <textarea id="socialLinks" name="socialLinks" rows={2} defaultValue={profile.socialLinks?.join("\n") ?? ""}
                 placeholder={"https://instagram.com/you\nhttps://soundcloud.com/you"}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] resize-none font-mono" />
             </div>
           )}
 
@@ -245,7 +245,7 @@ export function GeneralTab({ profile, userEmail, currentCurrency = "original" }:
               <Label htmlFor="portfolioUrls" className="text-[12px] text-muted-foreground">Portfolio links (one per line)</Label>
               <textarea id="portfolioUrls" name="portfolioUrls" rows={2} defaultValue={profile.portfolioUrls?.join("\n") ?? ""}
                 placeholder={"https://mixcloud.com/yourset\nhttps://youtube.com/watch?v=..."}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] resize-none font-mono" />
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] resize-none font-mono" />
             </div>
           )}
 

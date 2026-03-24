@@ -56,7 +56,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
         {/* Top-left badges */}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {event.isFree && (
-            <span className="rounded-full bg-emerald-500 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+            <span className="rounded-full bg-emerald-500 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-foreground">
               Free
             </span>
           )}
@@ -70,7 +70,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
           className={`absolute right-3 top-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-all ${
             wishlisted
               ? "bg-coral/90 text-black"
-              : "bg-black/40 text-white/70 hover:bg-black/60 hover:text-white"
+              : "bg-background/80 text-foreground/70 hover:bg-background/90 hover:text-foreground"
           } ${isPending ? "animate-pulse" : ""}`}
           aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
         >
@@ -109,11 +109,11 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
               <span className="text-emerald-400">Free</span>
             ) : event.minPrice && event.minPriceCurrency ? (
               <div className="flex items-baseline gap-1.5">
-                <span className="text-white">
+                <span className="text-foreground">
                   From {convertedPrice ?? formatCurrency(event.minPrice, event.minPriceCurrency)}
                 </span>
                 {convertedPrice && (
-                  <span className="text-[10px] font-normal text-white/30">
+                  <span className="text-[10px] font-normal text-foreground/30">
                     {formatCurrency(event.minPrice, event.minPriceCurrency)}
                   </span>
                 )}
@@ -127,7 +127,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
               {event.genres.slice(0, 2).map((genre) => (
                 <span
                   key={genre}
-                  className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+                  className="rounded-full bg-foreground/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
                 >
                   {genre}
                 </span>

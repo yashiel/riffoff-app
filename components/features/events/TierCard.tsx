@@ -29,10 +29,10 @@ export function TierCard({ tier }: TierCardProps) {
 
   if (isEditing) {
     return (
-      <div className="rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#242424] p-4">
+      <div className="rounded-xl border border-[var(--border)] bg-[#242424] p-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-[13px] font-medium text-muted-foreground">Editing: {tier.name}</span>
-          <button onClick={() => setIsEditing(false)} className="p-1 text-muted-foreground hover:text-white">
+          <button onClick={() => setIsEditing(false)} className="p-1 text-muted-foreground hover:text-foreground">
             <X className="size-4" />
           </button>
         </div>
@@ -46,10 +46,10 @@ export function TierCard({ tier }: TierCardProps) {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-colors hover:border-[rgba(255,255,255,0.1)]">
+    <div className="flex items-center justify-between rounded-xl border border-[var(--border)] p-4 transition-colors hover:border-[var(--border)]">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-[15px] font-bold text-white">{tier.name}</span>
+          <span className="text-[15px] font-bold text-foreground">{tier.name}</span>
           {tier.soldCount > 0 && (
             <span className="text-[12px] text-muted-foreground">
               {tier.soldCount}/{tier.quota} sold
@@ -57,7 +57,7 @@ export function TierCard({ tier }: TierCardProps) {
           )}
         </div>
         <div className="mt-0.5 flex items-center gap-3 text-[13px] text-muted-foreground">
-          <span className="font-medium text-white">
+          <span className="font-medium text-foreground">
             {formatCurrency(tier.price, tier.currency)}
           </span>
           <span>{available} available</span>
@@ -74,7 +74,7 @@ export function TierCard({ tier }: TierCardProps) {
       <div className="flex gap-1">
         <button
           onClick={() => setIsEditing(true)}
-          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-white/5 hover:text-white"
+          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
           aria-label="Edit tier"
         >
           <Edit2 className="size-4" />

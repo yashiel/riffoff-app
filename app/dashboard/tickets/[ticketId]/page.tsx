@@ -69,14 +69,14 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
       {/* Back button */}
       <Link
         href="/dashboard/tickets"
-        className="mb-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-white"
+        className="mb-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-3.5" />
         Back to tickets
       </Link>
 
       {/* Ticket card */}
-      <div className="overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#242424]">
+      <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[#242424]">
         {/* Event image banner */}
         <div className="relative aspect-[21/9] overflow-hidden">
           {event?.coverimageUrl ? (
@@ -131,7 +131,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           </div>
 
           {/* Divider */}
-          <div className="my-6 border-t border-dashed border-[rgba(255,255,255,0.1)]" />
+          <div className="my-6 border-t border-dashed border-[var(--border)]" />
 
           {/* QR Code or status message */}
           {isActive && !isCheckedIn ? (
@@ -146,7 +146,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               </p>
             </div>
           ) : (
-            <div className="rounded-xl border border-[rgba(255,255,255,0.06)] p-6 text-center">
+            <div className="rounded-xl border border-[var(--border)] p-6 text-center">
               <p className="text-[14px] text-muted-foreground">
                 This ticket is {ticket.status}
               </p>

@@ -17,7 +17,7 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
           <div className="min-w-0 flex-1">
             <h3 className="font-display text-[20px] text-emerald-400">Checked In</h3>
             <div className="mt-2 space-y-1 text-[14px]">
-              <p className="font-bold text-white">{result.ticket.attendeeName}</p>
+              <p className="font-bold text-foreground">{result.ticket.attendeeName}</p>
               <p className="text-muted-foreground">
                 {result.ticket.tierName} · {result.ticket.ticketCode}
               </p>

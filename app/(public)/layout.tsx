@@ -69,7 +69,7 @@ export default async function PublicLayout({
       <main className="flex-1">{children}</main>
 
       {/* Footer — minimal */}
-      <footer className="border-t border-[rgba(255,255,255,0.06)] py-10">
+      <footer className="border-t border-[var(--border)] py-10">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="font-display text-[16px] tracking-wider">
             <span className="text-coral">RIFF</span>OFF

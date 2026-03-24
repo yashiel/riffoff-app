@@ -68,10 +68,10 @@ export function PrivacyTab({ consents }: PrivacyTabProps) {
                 checked={consentState[opt.type] ?? false}
                 onChange={() => handleToggle(opt.type)}
                 disabled={isPending}
-                className="mt-0.5 size-4 rounded border-[rgba(255,255,255,0.2)] bg-transparent accent-coral"
+                className="mt-0.5 size-4 rounded border-[var(--border)] bg-transparent accent-coral"
               />
               <div>
-                <p className="text-[14px] font-medium text-white">{opt.label}</p>
+                <p className="text-[14px] font-medium text-foreground">{opt.label}</p>
                 <p className="text-[12px] text-muted-foreground">{opt.description}</p>
               </div>
             </label>

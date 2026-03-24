@@ -63,7 +63,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
     <div
       className={`flex gap-3 rounded-xl p-3 transition-colors ${
         isUnread
-          ? "bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.06)]"
+          ? "bg-[var(--border)] hover:bg-[var(--border)]"
           : "opacity-60 hover:opacity-80"
       } ${isPending ? "opacity-50" : ""}`}
       onClick={handleClick}
@@ -79,7 +79,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-[13px] leading-tight ${isUnread ? "font-medium text-white" : "text-muted-foreground"}`}>
+          <p className={`text-[13px] leading-tight ${isUnread ? "font-medium text-foreground" : "text-muted-foreground"}`}>
             {notification.title}
           </p>
           {isUnread && (

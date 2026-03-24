@@ -109,7 +109,7 @@ export default function ScannerPage() {
               setLastResult(null);
               setScanning(false);
             }}
-            className="w-full appearance-none rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-4 py-3 pr-10 text-[14px] font-medium text-white outline-none focus:border-coral transition-colors"
+            className="w-full appearance-none rounded-xl bg-[var(--input)] border border-[var(--border)] px-4 py-3 pr-10 text-[14px] font-medium text-white outline-none focus:border-coral transition-colors"
           >
             {events.map((event) => (
               <option key={event.eventId} value={event.eventId}>
@@ -122,7 +122,7 @@ export default function ScannerPage() {
       )}
 
       {events.length === 0 && !isPending && (
-        <div className="mt-8 rounded-xl border border-[rgba(255,255,255,0.06)] p-6 text-center">
+        <div className="mt-8 rounded-xl border border-[var(--border)] p-6 text-center">
           <QrCode className="mx-auto size-8 text-muted-foreground" />
           <p className="mt-3 text-[14px] text-muted-foreground">
             No active events to scan for. Create and publish an event first.
@@ -133,7 +133,7 @@ export default function ScannerPage() {
       {/* Tabs */}
       {selectedEventId && (
         <>
-          <div className="mt-4 flex gap-1 rounded-xl bg-[rgba(255,255,255,0.03)] p-1">
+          <div className="mt-4 flex gap-1 rounded-xl bg-[var(--border)] p-1">
             {(
               [
                 { id: "scanner" as Tab, label: "Scan", icon: QrCode },
@@ -146,8 +146,8 @@ export default function ScannerPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-medium uppercase transition-colors ${
                   activeTab === tab.id
-                    ? "bg-white/10 text-white"
-                    : "text-muted-foreground hover:text-white"
+                    ? "bg-foreground/10 text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <tab.icon className="size-3.5" />
@@ -184,7 +184,7 @@ export default function ScannerPage() {
               {stats && (
                 <div className="flex items-center justify-center gap-4 text-[13px] text-muted-foreground">
                   <span>
-                    <strong className="text-white">{stats.checkedIn}</strong> / {stats.totalTickets} checked in
+                    <strong className="text-foreground">{stats.checkedIn}</strong> / {stats.totalTickets} checked in
                   </span>
                   <span className="text-coral">
                     {stats.totalTickets > 0

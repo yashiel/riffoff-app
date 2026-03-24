@@ -34,7 +34,7 @@ export default async function SettingsRoute() {
       {/* Header */}
       <div className="mb-10">
         <h1 className="font-display text-3xl tracking-tight sm:text-[40px]">Settings</h1>
-        <p className="mt-2 text-[14px] text-white/30">
+        <p className="mt-2 text-[14px] text-foreground/30">
           Manage your account, security, and privacy preferences
         </p>
       </div>
@@ -44,13 +44,13 @@ export default async function SettingsRoute() {
           <div className="hidden w-[200px] shrink-0 md:block">
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-12 animate-pulse rounded-xl bg-white/[0.03]" />
+                <div key={i} className="h-12 animate-pulse rounded-xl bg-foreground/[0.03]" />
               ))}
             </div>
           </div>
           <div className="flex-1 space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-32 animate-pulse rounded-2xl bg-white/[0.02]" />
+              <div key={i} className="h-32 animate-pulse rounded-2xl bg-foreground/[0.02]" />
             ))}
           </div>
         </div>

@@ -110,7 +110,7 @@ export default async function HomePage() {
       </section>
 
       {/* How it works — 3-step */}
-      <section className="border-t border-[rgba(255,255,255,0.06)] py-20">
+      <section className="border-t border-[var(--border)] py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="font-display text-[36px]">How RiffOff works</h2>
@@ -140,7 +140,7 @@ export default async function HomePage() {
                 desc: "Show your QR e-ticket at the door. Instant scan, instant entry.",
               },
             ].map((item) => (
-              <div key={item.step} className="relative rounded-xl border border-[rgba(255,255,255,0.06)] p-6">
+              <div key={item.step} className="relative rounded-xl border border-[var(--border)] p-6">
                 <span className="font-display text-[48px] text-coral/15">{item.step}</span>
                 <div className="mt-2">
                   <item.icon className="size-5 text-coral" />
@@ -157,7 +157,7 @@ export default async function HomePage() {
 
       {/* Trending Events — horizontal scroll (DICE pattern) */}
       {upcomingEvents.length > 0 && (
-        <section className="border-t border-[rgba(255,255,255,0.06)] py-16">
+        <section className="border-t border-[var(--border)] py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between">
               <div>
@@ -183,7 +183,7 @@ export default async function HomePage() {
       )}
 
       {/* CTA cards — For Organisers + For Artists */}
-      <section className="border-t border-[rgba(255,255,255,0.06)] py-20">
+      <section className="border-t border-[var(--border)] py-20">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 sm:px-6 lg:px-8">
           {[
             {
@@ -203,7 +203,7 @@ export default async function HomePage() {
           ].map((card) => (
             <div
               key={card.title}
-              className="group rounded-xl border border-[rgba(255,255,255,0.06)] p-8 transition-all hover:border-coral/20 hover:bg-coral/[0.02]"
+              className="group rounded-xl border border-[var(--border)] p-8 transition-all hover:border-coral/20 hover:bg-coral/[0.02]"
             >
               <card.icon className="size-6 text-coral" />
               <h3 className="mt-4 font-display text-[20px]">{card.title}</h3>

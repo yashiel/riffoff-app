@@ -19,25 +19,25 @@ export function OrderSummary({
   const total = unitPrice * qty;
 
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#242424] p-5">
+    <div className="rounded-xl border border-[var(--border)] bg-[#242424] p-5">
       <h3 className="font-display text-[22px]">Order Summary</h3>
 
       <div className="mt-4 space-y-2.5 text-[14px]">
-        <p className="font-medium text-white">{eventTitle}</p>
+        <p className="font-medium text-foreground">{eventTitle}</p>
         <div className="flex justify-between text-muted-foreground">
           <span>
             {tierName} &times; {qty}
           </span>
-          <span className="text-white">{formatCurrency(unitPrice * qty, currency)}</span>
+          <span className="text-foreground">{formatCurrency(unitPrice * qty, currency)}</span>
         </div>
       </div>
 
-      <div className="my-4 border-t border-[rgba(255,255,255,0.06)]" />
+      <div className="my-4 border-t border-[var(--border)]" />
 
       {/* Total */}
       <div className="flex justify-between">
-        <span className="text-[16px] font-bold text-white">Total</span>
-        <span className="text-[20px] font-bold text-white">
+        <span className="text-[16px] font-bold text-foreground">Total</span>
+        <span className="text-[20px] font-bold text-foreground">
           {formatCurrency(total, currency)}
         </span>
       </div>

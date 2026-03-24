@@ -19,11 +19,11 @@ export function ScanHistory({ entries }: ScanHistoryProps) {
       {entries.map((entry) => (
         <div
           key={entry.ticketId}
-          className="flex items-center gap-3 rounded-xl border border-[rgba(255,255,255,0.03)] p-3 text-[13px]"
+          className="flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 text-[13px]"
         >
           <CheckCircle2 className="size-4 shrink-0 text-emerald-400" />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-medium text-white">{entry.attendeeName}</p>
+            <p className="truncate font-medium text-foreground">{entry.attendeeName}</p>
             <p className="text-muted-foreground">
               {entry.tierName} · {entry.ticketCode}
             </p>

@@ -57,7 +57,7 @@ export function EventFilters({ genres }: EventFiltersProps) {
             const timeout = setTimeout(() => updateParams("search", value), 400);
             return () => clearTimeout(timeout);
           }}
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none border border-[rgba(255,255,255,0.1)] focus:border-[rgba(255,255,255,0.3)] transition-colors"
+          className="w-full rounded bg-[var(--input)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none border border-[var(--border)] focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
         />
       </div>
 
@@ -79,7 +79,7 @@ export function EventFilters({ genres }: EventFiltersProps) {
 
         {/* Divider */}
         {genres.length > 0 && (
-          <div className="mx-1 h-8 w-px bg-[rgba(255,255,255,0.1)]" />
+          <div className="mx-1 h-8 w-px bg-[var(--border)]" />
         )}
 
         {/* Genre filters */}

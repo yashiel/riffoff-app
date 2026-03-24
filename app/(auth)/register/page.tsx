@@ -37,7 +37,7 @@ export default function RegisterPage() {
 
         <div className="relative py-2">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-[rgba(255,255,255,0.1)]" />
+            <span className="w-full border-t border-[var(--border)]" />
           </div>
           <div className="relative flex justify-center">
             <span className="bg-background px-3 text-[12px] uppercase tracking-wider text-muted-foreground">
@@ -67,7 +67,7 @@ export default function RegisterPage() {
               autoComplete="name"
               required
               placeholder="Your full name"
-              className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function RegisterPage() {
               autoComplete="email"
               required
               placeholder="you@example.com"
-              className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
             />
           </div>
 
@@ -98,7 +98,7 @@ export default function RegisterPage() {
               required
               minLength={8}
               placeholder="At least 8 characters"
-              className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
             />
           </div>
 

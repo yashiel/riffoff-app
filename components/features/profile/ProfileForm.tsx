@@ -80,7 +80,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       {/* Role upgrade section */}
       {profile.role === "attendee" && (
         <div className="rounded-xl border border-coral/20 bg-coral/5 p-4">
-          <h3 className="text-[15px] font-bold text-white">Upgrade Your Account</h3>
+          <h3 className="text-[15px] font-bold text-foreground">Upgrade Your Account</h3>
           <p className="mt-2 text-[13px] text-muted-foreground">
             Unlock additional features by upgrading your role.
           </p>
@@ -133,7 +133,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               type="file" accept="image/jpeg,image/png,image/webp"
               onChange={handlePhotoUpload}
               disabled={isUploading}
-              className="text-[13px] text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[rgba(255,255,255,0.1)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-white file:cursor-pointer"
+              className="text-[13px] text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[var(--border)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-white file:cursor-pointer"
             />
             {isUploading && <p className="mt-1 text-[12px] text-muted-foreground">Uploading...</p>}
           </div>
@@ -145,7 +145,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <input
             id="displayName" name="displayName" required maxLength={100}
             defaultValue={profile.displayName ?? ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
 
@@ -155,7 +155,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <input
             id="phone" name="phone" type="tel" maxLength={20}
             defaultValue={profile.phone ?? ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
 
@@ -169,7 +169,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 id="bio" name="bio" rows={4} maxLength={500}
                 defaultValue={profile.bio ?? ""}
                 placeholder="Tell people about yourself..."
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors resize-none"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none"
               />
             </div>
 
@@ -180,7 +180,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 id="artistGenres" name="artistGenres"
                 defaultValue={profile.artistGenres?.join(", ") ?? ""}
                 placeholder="e.g. Electronic, Techno, House"
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
               />
             </div>
 
@@ -191,7 +191,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 id="socialLinks" name="socialLinks" rows={3}
                 defaultValue={profile.socialLinks?.join("\n") ?? ""}
                 placeholder={"https://instagram.com/yourname\nhttps://soundcloud.com/yourname"}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors resize-none font-mono text-[13px]"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-[13px]"
               />
             </div>
 
@@ -202,7 +202,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 id="portfolioUrls" name="portfolioUrls" rows={3}
                 defaultValue={profile.portfolioUrls?.join("\n") ?? ""}
                 placeholder={"https://mixcloud.com/yourset\nhttps://youtube.com/watch?v=..."}
-                className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors resize-none font-mono text-[13px]"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-[13px]"
               />
             </div>
           </>

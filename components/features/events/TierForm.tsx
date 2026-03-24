@@ -62,7 +62,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
             id="tierName" name="name" required maxLength={100}
             defaultValue={tier?.name ?? ""}
             placeholder="e.g. Early Bird"
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
           />
         </div>
         <div className="space-y-1.5">
@@ -71,7 +71,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
             id="tierPrice" name="price" type="number" required min={0} step={0.01}
             defaultValue={tier?.price ?? ""}
             placeholder="0.00"
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
           />
         </div>
       </div>
@@ -82,7 +82,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
           <select
             id="tierCurrency" name="currency"
             defaultValue={tier?.currency ?? "MYR"}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white outline-none"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white outline-none"
           >
             <option value="MYR">MYR</option>
             <option value="USD">USD</option>
@@ -95,7 +95,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
             id="tierQuota" name="quota" type="number" required min={1}
             defaultValue={tier?.quota ?? ""}
             placeholder="100"
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
           />
         </div>
         <div className="space-y-1.5">
@@ -103,7 +103,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
           <input
             id="tierSort" name="sortOrder" type="number" min={0}
             defaultValue={tier?.sortOrder ?? 0}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white outline-none focus:border-[rgba(255,255,255,0.3)]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
           />
         </div>
       </div>
@@ -114,7 +114,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
           <input
             id="saleStarts" name="saleStartsAt" type="datetime-local"
             defaultValue={tier?.saleStartsAt ? tier.saleStartsAt.slice(0, 16) : ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white outline-none [color-scheme:dark]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white outline-none [color-scheme:dark]"
           />
         </div>
         <div className="space-y-1.5">
@@ -122,7 +122,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
           <input
             id="saleEnds" name="saleEndsAt" type="datetime-local"
             defaultValue={tier?.saleEndsAt ? tier.saleEndsAt.slice(0, 16) : ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2 text-[13px] text-white outline-none [color-scheme:dark]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[13px] text-white outline-none [color-scheme:dark]"
           />
         </div>
       </div>

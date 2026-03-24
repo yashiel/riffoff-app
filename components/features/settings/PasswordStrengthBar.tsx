@@ -17,7 +17,7 @@ export function PasswordStrengthBar({ password }: PasswordStrengthBarProps) {
           <div
             key={i}
             className={`h-1 flex-1 rounded-full transition-colors ${
-              i <= strength ? colors[strength] : "bg-[rgba(255,255,255,0.06)]"
+              i <= strength ? colors[strength] : "bg-[var(--border)]"
             }`}
           />
         ))}

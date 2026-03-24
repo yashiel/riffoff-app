@@ -96,7 +96,7 @@ export function EventForm({ event, venues }: EventFormProps) {
           id="title" name="title" required maxLength={200}
           defaultValue={event?.title ?? ""}
           placeholder="e.g. Summer Electronic Night"
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
         />
       </div>
 
@@ -107,7 +107,7 @@ export function EventForm({ event, venues }: EventFormProps) {
           id="description" name="description" rows={4} maxLength={1000}
           defaultValue={event?.description ?? ""}
           placeholder="Tell people about your event..."
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors resize-none"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none"
         />
       </div>
 
@@ -128,7 +128,7 @@ export function EventForm({ event, venues }: EventFormProps) {
           <input
             id="startsAt" name="startsAt" type="datetime-local" required
             defaultValue={event?.startsAt ? event.startsAt.slice(0, 16) : ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors [color-scheme:dark]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors [color-scheme:dark]"
           />
         </div>
         <div className="space-y-1.5">
@@ -136,7 +136,7 @@ export function EventForm({ event, venues }: EventFormProps) {
           <input
             id="endsAt" name="endsAt" type="datetime-local" required
             defaultValue={event?.endsAt ? event.endsAt.slice(0, 16) : ""}
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors [color-scheme:dark]"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors [color-scheme:dark]"
           />
         </div>
       </div>
@@ -149,7 +149,7 @@ export function EventForm({ event, venues }: EventFormProps) {
             id="capacity" name="capacity" type="number" required min={1}
             defaultValue={event?.capacity ?? ""}
             placeholder="e.g. 500"
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
         <div className="space-y-1.5">
@@ -158,7 +158,7 @@ export function EventForm({ event, venues }: EventFormProps) {
             id="genres" name="genres"
             defaultValue={event?.genres?.join(", ") ?? ""}
             placeholder="e.g. Electronic, Techno, House"
-            className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
       </div>
@@ -168,9 +168,9 @@ export function EventForm({ event, venues }: EventFormProps) {
         <input
           type="checkbox" name="isFree"
           defaultChecked={event?.isFree ?? false}
-          className="size-4 rounded border-[rgba(255,255,255,0.2)] bg-transparent accent-coral"
+          className="size-4 rounded border-[var(--border)] bg-transparent accent-coral"
         />
-        <span className="text-[14px] text-white">This is a free event (RSVP only, no tickets)</span>
+        <span className="text-[14px] text-foreground">This is a free event (RSVP only, no tickets)</span>
       </label>
 
       {/* Cover image */}
@@ -186,7 +186,7 @@ export function EventForm({ event, venues }: EventFormProps) {
           type="file" accept="image/jpeg,image/png,image/webp"
           onChange={handleImageUpload}
           disabled={isUploading}
-          className="text-[13px] text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[rgba(255,255,255,0.1)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-white file:cursor-pointer"
+          className="text-[13px] text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[var(--border)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-white file:cursor-pointer"
         />
         {isUploading && <p className="text-[12px] text-muted-foreground">Uploading...</p>}
       </div>

@@ -67,7 +67,7 @@ export default function AuditLogPage() {
           return (
             <div
               key={log.$id}
-              className="flex items-start gap-3 rounded-xl border border-[rgba(255,255,255,0.03)] p-3 text-[13px]"
+              className="flex items-start gap-3 rounded-xl border border-[var(--border)] p-3 text-[13px]"
             >
               <div className={`mt-0.5 shrink-0 font-mono text-[11px] font-bold uppercase ${color}`}>
                 {log.action.replace(/\./g, " · ")}

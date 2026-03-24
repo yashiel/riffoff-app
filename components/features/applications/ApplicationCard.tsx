@@ -29,7 +29,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
   const canReject = application.status === "submitted" || application.status === "shortlisted";
 
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-colors hover:border-[rgba(255,255,255,0.1)]">
+    <div className="rounded-xl border border-[var(--border)] p-4 transition-colors hover:border-[var(--border)]">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {/* Artist avatar */}
@@ -37,7 +37,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             {(application.artist?.displayName ?? "A").charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-[15px] font-bold text-white">
+            <p className="text-[15px] font-bold text-foreground">
               {application.artist?.displayName ?? "Unknown Artist"}
             </p>
             <p className="text-[12px] text-muted-foreground">

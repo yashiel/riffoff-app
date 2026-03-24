@@ -16,7 +16,7 @@ export default async function TicketsPage() {
   return (
     <div>
       <h1 className="font-display text-3xl tracking-tight sm:text-[40px]">My Tickets</h1>
-      <p className="mt-2 text-[14px] text-white/30">
+      <p className="mt-2 text-[14px] text-foreground/30">
         Your purchased tickets and e-passes
       </p>
 
@@ -27,7 +27,7 @@ export default async function TicketsPage() {
 
       {/* Upcoming events carousel — below tickets */}
       {upcomingEvents.length > 0 && (
-        <div className="mt-12 border-t border-white/[0.04] pt-10">
+        <div className="mt-12 border-t border-foreground/[0.04] pt-10">
           <EventCarousel
             events={serialize(upcomingEvents)}
             title="Upcoming Events"

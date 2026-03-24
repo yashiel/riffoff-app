@@ -111,7 +111,7 @@ export function QRScanner({ onScan, scanning }: QRScannerProps) {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-4 py-1.5 backdrop-blur">
           <div className="flex items-center gap-2">
             <span className="size-2 animate-pulse rounded-full bg-coral" />
-            <span className="text-[12px] font-medium text-white">Scanning...</span>
+            <span className="text-[12px] font-medium text-foreground">Scanning...</span>
           </div>
         </div>
       )}

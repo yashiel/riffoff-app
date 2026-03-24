@@ -52,13 +52,13 @@ export function ConnectedTab({ providers }: ConnectedTabProps) {
             const linked = linkedProviders.find((p) => p.provider === providerKey);
 
             return (
-              <div key={providerKey} className="flex items-center justify-between rounded-lg border border-[rgba(255,255,255,0.06)] p-4">
+              <div key={providerKey} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-4">
                 <div className="flex items-center gap-3">
                   <div className={`flex size-10 items-center justify-center rounded-full text-[16px] font-bold ${info.color}`}>
                     {info.icon}
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-white">{info.label}</p>
+                    <p className="text-[14px] font-medium text-foreground">{info.label}</p>
                     {linked ? (
                       <p className="text-[12px] text-muted-foreground">{linked.providerEmail}</p>
                     ) : (

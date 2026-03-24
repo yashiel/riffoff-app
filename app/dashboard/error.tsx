@@ -20,7 +20,7 @@ export default function DashboardError({
         {error.message || "An unexpected error occurred loading this page."}
       </p>
       {error.digest && (
-        <p className="mt-1 text-[11px] text-white/20">Error ID: {error.digest}</p>
+        <p className="mt-1 text-[11px] text-foreground/20">Error ID: {error.digest}</p>
       )}
       <button onClick={reset} className="btn-primary mt-6 !py-2 !text-[12px]">
         Try again

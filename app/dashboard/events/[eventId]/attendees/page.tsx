@@ -84,7 +84,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
           placeholder="Search by name or ticket code"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)]"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
         />
       </div>
 
@@ -101,7 +101,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="border-b border-[rgba(255,255,255,0.06)] text-left text-muted-foreground">
+                <tr className="border-b border-[var(--border)] text-left text-muted-foreground">
                   <th className="pb-3 pr-4 font-medium">Attendee</th>
                   <th className="pb-3 pr-4 font-medium">Ticket Code</th>
                   <th className="pb-3 pr-4 font-medium">Tier</th>
@@ -113,10 +113,10 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
                 {filtered.map((a) => (
                   <tr
                     key={a.ticketId}
-                    className="border-b border-[rgba(255,255,255,0.03)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                    className="border-b border-[var(--border)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
                   >
-                    <td className="py-3 pr-4 font-medium text-white">{a.attendeeName}</td>
-                    <td className="py-3 pr-4 font-mono text-white/60">{a.ticketCode}</td>
+                    <td className="py-3 pr-4 font-medium text-foreground">{a.attendeeName}</td>
+                    <td className="py-3 pr-4 font-mono text-foreground/60">{a.ticketCode}</td>
                     <td className="py-3 pr-4 text-muted-foreground">{a.tierName}</td>
                     <td className="py-3 pr-4"><StatusBadge status={a.status} /></td>
                     <td className="py-3">

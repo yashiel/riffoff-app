@@ -39,9 +39,9 @@ export function ApplyForm({ eventId, eventTitle }: ApplyFormProps) {
         </div>
       )}
 
-      <div className="rounded-xl border border-[rgba(255,255,255,0.06)] p-4">
+      <div className="rounded-xl border border-[var(--border)] p-4">
         <p className="text-[13px] text-muted-foreground">Applying to perform at</p>
-        <p className="mt-1 text-[16px] font-bold text-white">{eventTitle}</p>
+        <p className="mt-1 text-[16px] font-bold text-foreground">{eventTitle}</p>
       </div>
 
       <div className="space-y-1.5">
@@ -51,7 +51,7 @@ export function ApplyForm({ eventId, eventTitle }: ApplyFormProps) {
         <textarea
           id="notes" name="notes" rows={4} maxLength={500}
           placeholder="Introduce yourself, share your experience, why you'd be a great fit..."
-          className="w-full rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors resize-none"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none"
         />
         <p className="text-[11px] text-muted-foreground">
           The organiser will see your artist profile along with this message.

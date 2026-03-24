@@ -21,7 +21,7 @@ export default async function OrgEventsPage() {
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl tracking-tight sm:text-[40px]">My Events</h1>
-          <p className="mt-2 text-[14px] text-white/30">
+          <p className="mt-2 text-[14px] text-foreground/30">
             Manage, publish, and track your events
           </p>
         </div>

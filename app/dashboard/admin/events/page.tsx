@@ -63,8 +63,8 @@ export default function AdminEventsPage() {
             onClick={() => { setStatusFilter(status); setPage(1); fetchEvents(1, status); }}
             className={`rounded-full px-3 py-1.5 text-[12px] font-medium uppercase transition-colors ${
               statusFilter === status
-                ? "bg-white/10 text-white"
-                : "text-muted-foreground hover:text-white"
+                ? "bg-foreground/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {status}
@@ -76,7 +76,7 @@ export default function AdminEventsPage() {
       <div className="mt-8 overflow-x-auto">
         <table className="w-full text-[13px]">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.06)] text-left text-muted-foreground">
+            <tr className="border-b border-[var(--border)] text-left text-muted-foreground">
               <th className="pb-3 pr-4 font-medium">Event</th>
               <th className="pb-3 pr-4 font-medium">Organiser</th>
               <th className="pb-3 pr-4 font-medium">Status</th>
@@ -88,7 +88,7 @@ export default function AdminEventsPage() {
             {events.map((event) => (
               <tr
                 key={event.eventId}
-                className="border-b border-[rgba(255,255,255,0.03)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                className="border-b border-[var(--border)] transition-colors hover:bg-[rgba(255,255,255,0.02)]"
               >
                 <td className="py-3 pr-4">
                   <Link

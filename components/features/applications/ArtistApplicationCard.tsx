@@ -27,7 +27,7 @@ export function ArtistApplicationCard({ application }: ArtistApplicationCardProp
   }
 
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] p-4 transition-colors hover:border-[rgba(255,255,255,0.1)]">
+    <div className="rounded-xl border border-[var(--border)] p-4 transition-colors hover:border-[var(--border)]">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           {application.event ? (
@@ -38,7 +38,7 @@ export function ArtistApplicationCard({ application }: ArtistApplicationCardProp
               {application.event.title}
             </Link>
           ) : (
-            <span className="text-[15px] font-bold text-white">Unknown Event</span>
+            <span className="text-[15px] font-bold text-foreground">Unknown Event</span>
           )}
 
           <div className="mt-1 flex items-center gap-3 text-[13px] text-muted-foreground">
