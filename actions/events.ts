@@ -268,8 +268,8 @@ export async function getUpcomingEvents(): Promise<EventWithVenue[]> {
     dateRange: "all",
     page: 1,
   });
-  // Return first 6
-  return result.events.slice(0, 6);
+  // Return up to 20 for the auto-scrolling carousel
+  return result.events.slice(0, 20);
 }
 
 /** Get all unique genres from published events */
