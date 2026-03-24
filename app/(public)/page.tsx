@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import {
   ArrowRight, Zap, Headphones, QrCode, BarChart3, Shield,
-  Sparkles, Music, Ticket, Globe, Users,
+  Sparkles, Music, Ticket, Globe, Users, Star,
 } from "lucide-react";
 import { EventScrollRow } from "@/components/features/events/EventScrollRow";
 import { getUpcomingEvents } from "@/actions/events";
@@ -14,16 +14,11 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   let upcomingEvents: EventWithVenue[] = [];
-  try {
-    upcomingEvents = await getUpcomingEvents();
-  } catch {
-    // Graceful degradation
-  }
+  try { upcomingEvents = await getUpcomingEvents(); } catch {}
 
   const cookieStore = await cookies();
   const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
   let convertedPrices: Record<string, string> = {};
-
   if (displayCurrency !== "original" && upcomingEvents.length > 0) {
     try {
       const rates = await getExchangeRates("USD");
@@ -40,82 +35,69 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* ═══ HERO — Full-screen immersive with video ═══ */}
-      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-        {/* Video background */}
+      {/* ═══════════════════════════════════════════
+          HERO — Full viewport, cinematic
+          ═══════════════════════════════════════════ */}
+      <section className="relative flex min-h-[100svh] items-center overflow-hidden">
         <div className="absolute inset-0">
-          <video
-            autoPlay muted loop playsInline
-            poster="/video/hero-poster.jpg"
-            className="h-full w-full object-cover"
-          >
+          <video autoPlay muted loop playsInline poster="/video/hero-poster.jpg" className="h-full w-full object-cover">
             <source src="/video/hero-bg.webm" type="video/webm" />
           </video>
-          {/* Cinematic overlays */}
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,45,120,0.2)] via-transparent to-[rgba(0,212,255,0.1)]" />
-          {/* Bottom fade to page */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,45,120,0.12)] via-transparent to-[rgba(0,212,255,0.08)]" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 py-32 sm:px-8 lg:px-12">
+        <div className="relative mx-auto w-full max-w-7xl px-6 py-32 sm:px-8 lg:px-12">
           <div className="max-w-4xl">
-            {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur-sm">
               <Sparkles className="size-3.5 text-[#FF2D78]" />
               The anti-scalping ticketing platform
             </div>
 
-            {/* Headline — massive, dramatic */}
-            <h1 className="mt-8 font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] tracking-tight text-white">
+            <h1 className="mt-8 font-display text-[clamp(3rem,9vw,7.5rem)] leading-[0.85] tracking-tight text-white">
               Your next{" "}
-              <span className="relative">
-                <span className="bg-gradient-to-r from-[#FF2D78] via-[#BFFF00] to-[#00D4FF] bg-clip-text text-transparent">
-                  live show
-                </span>
+              <span className="bg-gradient-to-r from-[#FF2D78] via-[#FF6B35] to-[#00D4FF] bg-clip-text text-transparent">
+                live show
               </span>
-              <br />
-              starts here.
+              <br />starts here.
             </h1>
 
-            <p className="mt-8 max-w-lg text-[18px] leading-relaxed text-white/50 sm:text-[20px]">
+            <p className="mt-8 max-w-lg text-[17px] leading-relaxed text-white/45 sm:text-[19px]">
               Discover events. Get tickets. No hidden fees, no scalping.
               Built for music lovers, artists, and organisers.
             </p>
 
-            {/* CTA buttons */}
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/events"
-                className="group inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#FF2D78] to-[#FF6B35] px-8 py-4 text-[15px] font-bold uppercase tracking-wide text-white transition-all hover:gap-3.5 hover:shadow-[0_0_40px_rgba(255,45,120,0.4)]"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#FF2D78] px-8 py-4 text-[14px] font-bold uppercase tracking-wider text-white shadow-[0_4px_20px_rgba(255,45,120,0.3)] transition-all hover:shadow-[0_8px_40px_rgba(255,45,120,0.4)] hover:translate-y-[-2px]"
               >
                 Browse Events
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/register"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-8 py-4 text-[15px] font-medium text-white/80 backdrop-blur-sm transition-all hover:border-white/30 hover:text-white"
+                className="inline-flex items-center rounded-xl border border-white/12 px-7 py-4 text-[14px] font-medium text-white/70 backdrop-blur-sm transition-all hover:border-white/25 hover:text-white"
               >
                 Create Account
               </Link>
             </div>
 
-            {/* Stats — floating glass cards */}
-            <div className="mt-16 flex flex-wrap gap-4">
+            <div className="mt-16 flex flex-wrap gap-6 sm:gap-8">
               {[
                 { value: "0%", label: "Hidden fees", icon: Shield },
                 { value: "100%", label: "Fraud-proof", icon: Zap },
-                { value: "3", label: "Payment methods", icon: Globe },
+                { value: "3", label: "Payments", icon: Globe },
               ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-md"
-                >
-                  <stat.icon className="size-4 text-[#00D4FF]" />
+                <div key={stat.label} className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-white/5 backdrop-blur-sm">
+                    <stat.icon className="size-4 text-[#00D4FF]" />
+                  </div>
                   <div>
-                    <p className="font-display text-[22px] leading-none text-white">{stat.value}</p>
-                    <p className="text-[11px] text-white/40">{stat.label}</p>
+                    <p className="font-display text-[24px] leading-none text-white">{stat.value}</p>
+                    <p className="text-[11px] text-white/35">{stat.label}</p>
                   </div>
                 </div>
               ))}
@@ -123,34 +105,37 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute inset-x-0 bottom-8 flex justify-center">
-          <div className="flex flex-col items-center gap-2 text-white/20">
-            <span className="text-[10px] uppercase tracking-widest">Scroll</span>
+          <div className="flex flex-col items-center gap-2 text-white/15 animate-bounce" style={{ animationDuration: "3s" }}>
             <div className="h-8 w-px bg-gradient-to-b from-white/20 to-transparent" />
           </div>
         </div>
       </section>
 
-      {/* ═══ TRENDING EVENTS ═══ */}
+      {/* ═══════════════════════════════════════════
+          TRENDING — Dark section with accent glow
+          ═══════════════════════════════════════════ */}
       {upcomingEvents.length > 0 && (
-        <section className="py-20 sm:py-28">
+        <section className="relative py-20 sm:py-28">
+          {/* Accent glow behind section */}
+          <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[1px] w-[60%] bg-gradient-to-r from-transparent via-coral/40 to-transparent" />
+
           <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
             <div className="flex items-end justify-between">
               <div>
-                <span className="text-[12px] font-semibold uppercase tracking-widest text-coral">
-                  What&apos;s hot
-                </span>
-                <h2 className="mt-2 font-display text-[clamp(2rem,5vw,3.5rem)] leading-none tracking-tight">
+                <div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-coral">
+                  <Star className="size-3.5 fill-current" />
                   Trending Now
+                </div>
+                <h2 className="mt-3 font-display text-[clamp(1.8rem,4vw,3rem)] leading-none tracking-tight">
+                  Don&apos;t miss out
                 </h2>
               </div>
               <Link
                 href="/events"
-                className="hidden items-center gap-1.5 text-[13px] font-medium text-coral transition-all hover:gap-2.5 sm:inline-flex"
+                className="hidden items-center gap-1.5 rounded-lg border border-foreground/[0.08] px-4 py-2 text-[12px] font-semibold uppercase tracking-wider text-muted-foreground transition-all hover:border-coral/30 hover:text-coral sm:inline-flex"
               >
-                View all events
-                <ArrowRight className="size-3.5" />
+                All events <ArrowRight className="size-3" />
               </Link>
             </div>
             <div className="mt-10">
@@ -160,70 +145,54 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ═══ HOW IT WORKS — 3-step with big numbers ═══ */}
-      <section className="relative overflow-hidden border-y border-border py-24 sm:py-32">
-        {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,45,120,0.03)] via-transparent to-[rgba(0,212,255,0.03)]" />
+      {/* ═══════════════════════════════════════════
+          HOW IT WORKS — Colored card backgrounds
+          ═══════════════════════════════════════════ */}
+      <section className="relative py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-card via-background to-background" />
 
         <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="text-center">
-            <span className="text-[12px] font-semibold uppercase tracking-widest text-coral">
+            <div className="text-[12px] font-bold uppercase tracking-widest text-coral">
               Simple as 1-2-3
-            </span>
-            <h2 className="mt-2 font-display text-[clamp(2rem,5vw,3.5rem)] leading-none tracking-tight">
-              How RiffOff Works
+            </div>
+            <h2 className="mt-3 font-display text-[clamp(1.8rem,4vw,3rem)] leading-none tracking-tight">
+              How It Works
             </h2>
           </div>
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-3 sm:gap-8 lg:gap-12">
+          <div className="mt-16 grid gap-5 sm:grid-cols-3 sm:gap-6">
             {[
               {
-                step: "01",
-                icon: Headphones,
-                title: "Discover",
-                desc: "Browse events by genre, date, or location. Filter by what matters to you.",
-                color: "from-[#FF2D78]/15 to-[#FF2D78]/5",
-                iconColor: "text-[#FF2D78]",
+                step: "01", icon: Headphones, title: "Discover",
+                desc: "Browse by genre, date, or location. Filter what matters.",
+                bg: "bg-gradient-to-br from-[#FF2D78]/10 to-[#FF2D78]/[0.02]",
+                iconBg: "bg-[#FF2D78]/15", iconColor: "text-[#FF2D78]",
+                borderColor: "border-[#FF2D78]/10 hover:border-[#FF2D78]/25",
               },
               {
-                step: "02",
-                icon: Ticket,
-                title: "Get Tickets",
-                desc: "Pay with card, PayPal, or TNG eWallet. The price shown is the price you pay.",
-                color: "from-[#BFFF00]/15 to-[#BFFF00]/5",
-                iconColor: "text-[#7ab800]",
+                step: "02", icon: Ticket, title: "Get Tickets",
+                desc: "Card, PayPal, or TNG eWallet. Price shown = price paid.",
+                bg: "bg-gradient-to-br from-[#00D4FF]/10 to-[#00D4FF]/[0.02]",
+                iconBg: "bg-[#00D4FF]/15", iconColor: "text-[#00D4FF]",
+                borderColor: "border-[#00D4FF]/10 hover:border-[#00D4FF]/25",
               },
               {
-                step: "03",
-                icon: QrCode,
-                title: "Walk In",
-                desc: "Show your QR e-ticket at the door. Instant scan, zero queues.",
-                color: "from-[#00D4FF]/15 to-[#00D4FF]/5",
-                iconColor: "text-[#00D4FF]",
+                step: "03", icon: QrCode, title: "Walk In",
+                desc: "QR e-ticket at the door. Instant scan, zero queues.",
+                bg: "bg-gradient-to-br from-[#BFFF00]/10 to-[#BFFF00]/[0.02]",
+                iconBg: "bg-[#BFFF00]/15", iconColor: "text-[#BFFF00]",
+                borderColor: "border-[#BFFF00]/10 hover:border-[#BFFF00]/25",
               },
             ].map((item) => (
-              <div
-                key={item.step}
-                className="group relative overflow-hidden rounded-3xl border border-foreground/[0.06] p-8 transition-all hover:border-foreground/[0.12] sm:p-10"
-              >
-                {/* Background gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 transition-opacity group-hover:opacity-100`} />
-
-                <div className="relative">
-                  {/* Step number — watermark */}
-                  <span className="font-display text-[80px] leading-none text-foreground/[0.04] sm:text-[100px]">
-                    {item.step}
-                  </span>
-
-                  <div className="-mt-8 sm:-mt-10">
-                    <div className={`inline-flex size-12 items-center justify-center rounded-2xl bg-foreground/[0.04] ${item.iconColor}`}>
-                      <item.icon className="size-6" />
-                    </div>
-                    <h3 className="mt-5 font-display text-[24px]">{item.title}</h3>
-                    <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
-                      {item.desc}
-                    </p>
+              <div key={item.step} className={`group relative overflow-hidden rounded-2xl border ${item.borderColor} ${item.bg} p-8 transition-all sm:p-10`}>
+                <span className="font-display text-[72px] leading-none text-foreground/[0.03]">{item.step}</span>
+                <div className="-mt-6">
+                  <div className={`inline-flex size-12 items-center justify-center rounded-xl ${item.iconBg}`}>
+                    <item.icon className={`size-5 ${item.iconColor}`} />
                   </div>
+                  <h3 className="mt-5 font-display text-[22px]">{item.title}</h3>
+                  <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -231,78 +200,62 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ═══ CTA CARDS — Organisers + Artists ═══ */}
+      {/* ═══════════════════════════════════════════
+          CTA — Organisers + Artists
+          ═══════════════════════════════════════════ */}
       <section className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="text-center">
-            <span className="text-[12px] font-semibold uppercase tracking-widest text-coral">
-              Join the platform
-            </span>
-            <h2 className="mt-2 font-display text-[clamp(2rem,5vw,3.5rem)] leading-none tracking-tight">
+            <div className="text-[12px] font-bold uppercase tracking-widest text-coral">Join the platform</div>
+            <h2 className="mt-3 font-display text-[clamp(1.8rem,4vw,3rem)] leading-none tracking-tight">
               Built for Everyone
             </h2>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:gap-8">
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 sm:gap-6">
             {[
               {
-                icon: BarChart3,
-                title: "For Organisers",
-                desc: "Create events, manage ticket tiers, track sales in real-time, and scan tickets at the door — all from one dashboard.",
-                cta: "Start organising",
-                href: "/register",
-                gradient: "from-[#FF2D78]/10 via-transparent to-transparent",
-                borderHover: "hover:border-[#FF2D78]/30",
+                icon: BarChart3, title: "For Organisers",
+                desc: "Create events, manage tiers, track sales, scan tickets — one dashboard.",
+                cta: "Start organising", href: "/register",
+                bg: "bg-gradient-to-br from-[#FF2D78]/8 to-transparent",
+                border: "border-[#FF2D78]/10 hover:border-[#FF2D78]/25",
               },
               {
-                icon: Music,
-                title: "For Artists",
-                desc: "Apply to perform at events, build your artist profile, upload riders, and connect directly with organisers.",
-                cta: "Join as artist",
-                href: "/register",
-                gradient: "from-[#00D4FF]/10 via-transparent to-transparent",
-                borderHover: "hover:border-[#00D4FF]/30",
+                icon: Music, title: "For Artists",
+                desc: "Apply to perform, build your profile, upload riders, connect with organisers.",
+                cta: "Join as artist", href: "/register",
+                bg: "bg-gradient-to-br from-[#00D4FF]/8 to-transparent",
+                border: "border-[#00D4FF]/10 hover:border-[#00D4FF]/25",
               },
             ].map((card) => (
-              <div
-                key={card.title}
-                className={`group relative overflow-hidden rounded-3xl border border-foreground/[0.06] p-10 transition-all ${card.borderHover} lg:p-12`}
-              >
-                {/* Background gradient on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 transition-opacity group-hover:opacity-100`} />
-
-                <div className="relative">
-                  <card.icon className="size-8 text-coral" />
-                  <h3 className="mt-6 font-display text-[28px]">{card.title}</h3>
-                  <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
-                    {card.desc}
-                  </p>
-                  <Link
-                    href={card.href}
-                    className="mt-8 inline-flex items-center gap-2 text-[15px] font-semibold text-coral transition-all group-hover:gap-3"
-                  >
-                    {card.cta}
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
+              <div key={card.title} className={`group overflow-hidden rounded-2xl border ${card.border} ${card.bg} p-10 transition-all lg:p-12`}>
+                <card.icon className="size-7 text-coral" />
+                <h3 className="mt-6 font-display text-[26px]">{card.title}</h3>
+                <p className="mt-3 max-w-sm text-[14px] leading-relaxed text-muted-foreground">{card.desc}</p>
+                <Link href={card.href} className="mt-8 inline-flex items-center gap-2 text-[14px] font-semibold text-coral transition-all group-hover:gap-3">
+                  {card.cta} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ TRUST BAR ═══ */}
-      <section className="border-t border-border py-16">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-8 px-6 sm:gap-12 sm:px-8 lg:justify-between lg:px-12">
+      {/* ═══════════════════════════════════════════
+          TRUST BAR
+          ═══════════════════════════════════════════ */}
+      <section className="border-t border-foreground/[0.05] py-14">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-8 px-6 text-muted-foreground sm:gap-10 sm:px-8 lg:justify-between lg:px-12">
           {[
-            { icon: Shield, text: "Anti-scalping protection" },
-            { icon: Zap, text: "Instant QR check-in" },
-            { icon: Globe, text: "Multi-currency support" },
-            { icon: Users, text: "40+ events across Asia" },
+            { icon: Shield, text: "Anti-scalping" },
+            { icon: Zap, text: "QR check-in" },
+            { icon: Globe, text: "Multi-currency" },
+            { icon: Users, text: "40+ events" },
           ].map((item) => (
-            <div key={item.text} className="flex items-center gap-2.5 text-muted-foreground">
-              <item.icon className="size-4 text-coral/60" />
-              <span className="text-[13px] font-medium">{item.text}</span>
+            <div key={item.text} className="flex items-center gap-2">
+              <item.icon className="size-4 text-coral/50" />
+              <span className="text-[12px] font-semibold uppercase tracking-wider">{item.text}</span>
             </div>
           ))}
         </div>

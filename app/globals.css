@@ -50,83 +50,81 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   LIGHT MODE — "Neon Coral Reef"
-   Snow white canvas, HOT MAGENTA accent (#FF2D78),
-   Electric cyan secondary, bold color blocks
+   "LIGHT" MODE — Warm Charcoal (still dark, warmer tone)
+   For users who want softer contrast
    ═══════════════════════════════════════════════════ */
 :root {
-  --background: #fefefe;
-  --foreground: #0a0a0b;
-  --card: #ffffff;
-  --card-foreground: #0a0a0b;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0b;
-  --primary: #0a0a0b;
-  --primary-foreground: #fefefe;
-  --secondary: #f5f5f7;
-  --secondary-foreground: #0a0a0b;
-  --muted: #f0f0f2;
-  --muted-foreground: #64748b;
-  --accent: #f5f5f7;
-  --accent-foreground: #0a0a0b;
+  --background: #1a1a1e;
+  --foreground: #eeeef0;
+  --card: #222226;
+  --card-foreground: #eeeef0;
+  --popover: #222226;
+  --popover-foreground: #eeeef0;
+  --primary: #eeeef0;
+  --primary-foreground: #1a1a1e;
+  --secondary: #2a2a2f;
+  --secondary-foreground: #eeeef0;
+  --muted: #2a2a2f;
+  --muted-foreground: #8888a0;
+  --accent: #2a2a2f;
+  --accent-foreground: #eeeef0;
   --destructive: #ef4444;
-  --border: rgba(0, 0, 0, 0.07);
-  --input: rgba(0, 0, 0, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.04);
   --ring: #FF2D78;
   --chart-1: #FF2D78;
   --chart-2: #00D4FF;
-  --chart-3: #7c3aed;
+  --chart-3: #BFFF00;
   --chart-4: #FF6B35;
-  --chart-5: #BFFF00;
-  --radius: 0.5rem;
+  --chart-5: #A855F7;
+  --radius: 0.625rem;
   --coral: #FF2D78;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #0a0a0b;
+  --sidebar: #161619;
+  --sidebar-foreground: #eeeef0;
   --sidebar-primary: #FF2D78;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f5f7;
-  --sidebar-accent-foreground: #0a0a0b;
-  --sidebar-border: rgba(0, 0, 0, 0.05);
+  --sidebar-accent: #2a2a2f;
+  --sidebar-accent-foreground: #eeeef0;
+  --sidebar-border: rgba(255, 255, 255, 0.05);
   --sidebar-ring: #FF2D78;
 }
 
 /* ═══════════════════════════════════════════════════
-   DARK MODE — "Electric Nightlife"
-   Deep ink black, ELECTRIC LIME (#BFFF00),
-   Hot magenta secondary, neon glow energy
+   DARK MODE — Deep Ink (colder, higher contrast)
+   The "true dark" for nighttime use
    ═══════════════════════════════════════════════════ */
 .dark {
   --background: #08080a;
-  --foreground: #f0f0f2;
-  --card: #111113;
-  --card-foreground: #f0f0f2;
-  --popover: #111113;
-  --popover-foreground: #f0f0f2;
-  --primary: #f0f0f2;
+  --foreground: #f4f4f6;
+  --card: #0f0f12;
+  --card-foreground: #f4f4f6;
+  --popover: #0f0f12;
+  --popover-foreground: #f4f4f6;
+  --primary: #f4f4f6;
   --primary-foreground: #08080a;
-  --secondary: #19191d;
-  --secondary-foreground: #f0f0f2;
-  --muted: #19191d;
-  --muted-foreground: #6b6b78;
-  --accent: #19191d;
-  --accent-foreground: #f0f0f2;
+  --secondary: #16161a;
+  --secondary-foreground: #f4f4f6;
+  --muted: #16161a;
+  --muted-foreground: #6b6b7a;
+  --accent: #16161a;
+  --accent-foreground: #f4f4f6;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.07);
-  --input: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.03);
   --ring: #BFFF00;
   --chart-1: #BFFF00;
   --chart-2: #FF2D78;
   --chart-3: #00D4FF;
   --chart-4: #FF6B35;
-  --chart-5: #7c3aed;
+  --chart-5: #A855F7;
   --coral: #BFFF00;
-  --sidebar: #0a0a0c;
-  --sidebar-foreground: #f0f0f2;
+  --sidebar: #060608;
+  --sidebar-foreground: #f4f4f6;
   --sidebar-primary: #BFFF00;
   --sidebar-primary-foreground: #08080a;
-  --sidebar-accent: #19191d;
-  --sidebar-accent-foreground: #f0f0f2;
-  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-accent: #16161a;
+  --sidebar-accent-foreground: #f4f4f6;
+  --sidebar-border: rgba(255, 255, 255, 0.04);
   --sidebar-ring: #BFFF00;
 }
 
@@ -144,22 +142,18 @@
   }
 }
 
-/* ─── Display font utility ──────────── */
+/* ─── Display font ──────────── */
 .font-display {
   font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
-/* ─── Accent color for dates + highlights ──────────── */
-.text-coral {
-  color: var(--coral);
-}
-.bg-coral {
-  background-color: var(--coral);
-}
+/* ─── Accent ──────────── */
+.text-coral { color: var(--coral); }
+.bg-coral { background-color: var(--coral); }
 
-/* ─── Logo gradient — magenta→cyan in light, lime→magenta in dark ──────────── */
+/* ─── Logo gradient ──────────── */
 .gradient-text {
   background: linear-gradient(135deg, #FF2D78 0%, #00D4FF 100%);
   -webkit-background-clip: text;
@@ -167,7 +161,7 @@
   background-clip: text;
 }
 .dark .gradient-text {
-  background: linear-gradient(135deg, #BFFF00 0%, #FF2D78 100%);
+  background: linear-gradient(135deg, #BFFF00 0%, #00D4FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -183,17 +177,17 @@
   font-weight: 600;
   text-transform: uppercase;
   font-size: 13px;
-  letter-spacing: 0.03em;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
 }
 .btn-ghost:hover {
-  background: color-mix(in srgb, var(--coral) 8%, transparent);
+  background: color-mix(in srgb, var(--coral) 10%, transparent);
   border-color: color-mix(in srgb, var(--coral) 40%, transparent);
   color: var(--coral);
   transform: translateY(-1px);
 }
 
-/* ─── Primary CTA — bold and punchy ──────────── */
+/* ─── Primary CTA ──────────── */
 .btn-primary {
   background: var(--coral);
   color: #ffffff;
@@ -205,25 +199,18 @@
   letter-spacing: 0.04em;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
-  position: relative;
-  overflow: hidden;
 }
-.dark .btn-primary {
-  color: #08080a;
-}
+.dark .btn-primary { color: #08080a; }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px color-mix(in srgb, var(--coral) 35%, transparent);
-}
-.btn-primary:active {
-  transform: translateY(0);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--coral) 30%, transparent);
 }
 
 /* ─── Genre pill ──────────── */
 .genre-pill {
   display: inline-flex;
   align-items: center;
-  background: color-mix(in srgb, var(--coral) 6%, transparent);
+  background: color-mix(in srgb, var(--coral) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--coral) 15%, transparent);
   border-radius: 20px;
   padding: 5px 14px;
@@ -235,19 +222,17 @@
   transition: all 0.2s;
 }
 .genre-pill:hover {
-  background: color-mix(in srgb, var(--coral) 12%, transparent);
+  background: color-mix(in srgb, var(--coral) 15%, transparent);
   border-color: color-mix(in srgb, var(--coral) 30%, transparent);
 }
 
-/* ─── Subtle card hover ──────────── */
+/* ─── Card hover ──────────── */
 .event-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .event-card:hover {
   transform: translateY(-4px);
-}
-.event-card:hover img {
-  opacity: 0.95;
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--coral) 10%, transparent);
 }
 
 /* ─── Filter button ──────────── */
@@ -265,73 +250,22 @@
 }
 .filter-btn:hover {
   border-color: color-mix(in srgb, var(--coral) 30%, transparent);
-  background: color-mix(in srgb, var(--coral) 4%, transparent);
 }
 .filter-btn.active {
-  background: color-mix(in srgb, var(--coral) 10%, transparent);
+  background: color-mix(in srgb, var(--coral) 12%, transparent);
   border-color: var(--coral);
   color: var(--coral);
 }
 
 /* ─── Scrollbar ──────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--coral) 20%, transparent);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--coral) 40%, transparent);
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--coral) 30%, transparent); }
 
-/* ─── Light mode cards — crisp floating shadows ──────────── */
-:root .event-card {
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.04);
-}
-:root .event-card:hover {
-  box-shadow: 0 8px 30px rgba(255,45,120,0.08), 0 16px 40px rgba(0,0,0,0.06);
-}
-.dark .event-card {
-  box-shadow: none;
-}
-.dark .event-card:hover {
-  box-shadow: 0 8px 30px rgba(191,255,0,0.06);
-}
-
-/* ─── Light mode sidebar border ──────────── */
-:root aside {
-  border-right: 1px solid rgba(0,0,0,0.05);
-}
-
-/* ─── Noise texture overlay (subtle grain for depth) ──────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.015;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-}
-
-/* ─── Stagger animation ──────────── */
+/* ─── Animations ──────────── */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-up {
-  animation: fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-/* ─── Glow pulse for live indicators ──────────── */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
+.animate-fade-up { animation: fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
