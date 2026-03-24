@@ -43,7 +43,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   return (
     <div className="mx-auto max-w-lg py-8">
       <h1 className="font-display text-[36px]">Apply to Perform</h1>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         Submit your application to the event organiser
       </p>
       <div className="mt-8">

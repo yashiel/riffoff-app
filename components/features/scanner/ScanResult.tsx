@@ -51,7 +51,7 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
           <h3 className={`font-display text-[20px] ${textColor}`}>
             {isWarning ? "Already Scanned" : "Invalid Ticket"}
           </h3>
-          <p className="mt-1 text-[14px] text-muted-foreground">{result.reason}</p>
+          <p className="mt-2 text-[14px] text-muted-foreground">{result.reason}</p>
           <p className="mt-1 text-[12px] uppercase text-muted-foreground">{result.code}</p>
         </div>
       </div>

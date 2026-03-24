@@ -62,7 +62,7 @@ export default function AttendeesPage({ params }: AttendeesPageProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-display text-2xl sm:text-[36px]">Attendees</h2>
-          <p className="mt-1 text-[14px] text-muted-foreground">
+          <p className="mt-2 text-[14px] text-muted-foreground">
             {attendees.length} tickets · {checkedInCount} checked in
           </p>
         </div>

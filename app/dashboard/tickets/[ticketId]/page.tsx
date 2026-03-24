@@ -141,7 +141,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               <p className="text-[16px] font-bold text-blue-400">
                 Checked in
               </p>
-              <p className="mt-1 text-[13px] text-muted-foreground">
+              <p className="mt-2 text-[13px] text-muted-foreground">
                 {ticket.checkedInAt && formatDate(ticket.checkedInAt)}
               </p>
             </div>

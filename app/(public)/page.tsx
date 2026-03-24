@@ -164,7 +164,7 @@ export default async function HomePage() {
                 <h2 className="font-display text-[36px]">
                   Trending Now
                 </h2>
-                <p className="mt-1 text-[14px] text-muted-foreground">
+                <p className="mt-2 text-[14px] text-muted-foreground">
                   Popular events coming up near you
                 </p>
               </div>

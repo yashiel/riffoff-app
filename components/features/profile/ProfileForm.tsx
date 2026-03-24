@@ -81,7 +81,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       {profile.role === "attendee" && (
         <div className="rounded-xl border border-coral/20 bg-coral/5 p-4">
           <h3 className="text-[15px] font-bold text-white">Upgrade Your Account</h3>
-          <p className="mt-1 text-[13px] text-muted-foreground">
+          <p className="mt-2 text-[13px] text-muted-foreground">
             Unlock additional features by upgrading your role.
           </p>
           <div className="mt-3 flex gap-2">

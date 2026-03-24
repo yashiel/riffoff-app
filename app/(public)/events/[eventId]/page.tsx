@@ -249,7 +249,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                   {venue.name}
                 </p>
                 {venue.address && (
-                  <p className="mt-1 text-[14px] text-muted-foreground">
+                  <p className="mt-2 text-[14px] text-muted-foreground">
                     {venue.address}
                   </p>
                 )}

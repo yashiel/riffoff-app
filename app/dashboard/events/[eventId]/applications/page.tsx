@@ -20,7 +20,7 @@ export default async function ApplicationsPage({ params }: ApplicationsPageProps
   return (
     <div>
       <h2 className="font-display text-[30px]">Artist Applications</h2>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         Review and manage applications for {event.title}
       </p>
       <div className="mt-8">

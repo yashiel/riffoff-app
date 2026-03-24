@@ -48,7 +48,7 @@ export default function AuditLogPage() {
         <ScrollText className="size-5 text-coral" />
         <h1 className="font-display text-[36px]">Audit Log</h1>
       </div>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         {total} recorded actions
       </p>
 

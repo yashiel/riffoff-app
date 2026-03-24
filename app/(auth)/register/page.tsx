@@ -15,7 +15,7 @@ export default function RegisterPage() {
     <div>
       <div className="text-center">
         <h1 className="font-display text-[36px]">Create account</h1>
-        <p className="mt-1 text-[14px] text-muted-foreground">
+        <p className="mt-2 text-[14px] text-muted-foreground">
           Join RiffOff to discover events and buy tickets
         </p>
       </div>

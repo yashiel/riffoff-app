@@ -27,12 +27,12 @@ export default async function AdminPage() {
   return (
     <div>
       <h1 className="font-display text-[36px]">Admin Dashboard</h1>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         Platform overview and moderation tools
       </p>
 
       {/* Stats grid */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((stat) => {
           const Card = (
             <div
@@ -54,7 +54,7 @@ export default async function AdminPage() {
       </div>
 
       {/* Quick links */}
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
+      <div className="mt-8 grid gap-5 sm:grid-cols-3">
         {[
           { label: "Manage Users", description: "View, search, and change user roles", href: "/dashboard/admin/users", icon: Users },
           { label: "Moderate Events", description: "Review and cancel events", href: "/dashboard/admin/events", icon: CalendarDays },

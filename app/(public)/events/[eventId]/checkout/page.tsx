@@ -100,7 +100,7 @@ export default function CheckoutPage({ searchParams, params }: CheckoutPageProps
   return (
     <div className="mx-auto max-w-lg px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
-      <p className="mt-1 text-muted-foreground">Complete your ticket purchase</p>
+      <p className="mt-2 text-muted-foreground">Complete your ticket purchase</p>
 
       <div className="mt-6 space-y-6">
         {/* Reservation timer */}

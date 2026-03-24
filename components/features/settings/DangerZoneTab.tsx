@@ -62,7 +62,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
             <Clock className="mt-0.5 size-5 text-amber-400" />
             <div>
               <h3 className="text-[15px] font-bold text-amber-400">Account Deletion Scheduled</h3>
-              <p className="mt-1 text-[13px] text-muted-foreground">
+              <p className="mt-2 text-[13px] text-muted-foreground">
                 Your account will be permanently deleted in <strong className="text-white">{daysRemaining} days</strong> ({new Date(activeDeletion.scheduledDeleteAt).toLocaleDateString()}).
                 All data will be irreversibly removed.
               </p>

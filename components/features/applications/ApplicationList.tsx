@@ -37,7 +37,7 @@ export function ApplicationList({ applications }: ApplicationListProps) {
       {[...grouped.entries()].map(([status, apps]) => (
         <div key={status}>
           <div className="mb-3 flex items-center gap-2">
-            <h3 className="font-display text-[18px]">
+            <h3 className="font-display text-[22px]">
               {STATUS_LABELS[status] ?? status}
             </h3>
             <span className="rounded-full bg-white/5 px-2 py-0.5 text-[12px] text-muted-foreground">

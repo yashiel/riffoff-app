@@ -14,7 +14,7 @@ export function ScannerStats({ stats }: ScannerStatsProps) {
 
   return (
     <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] p-5">
-      <h3 className="font-display text-[18px]">{stats.eventTitle}</h3>
+      <h3 className="font-display text-[22px]">{stats.eventTitle}</h3>
       <p className="mt-1 flex items-center gap-1.5 text-[13px] text-coral">
         <Clock className="size-3" />
         {formatDate(stats.startsAt, { dateStyle: "medium", timeStyle: "short" })}

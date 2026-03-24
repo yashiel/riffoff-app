@@ -51,7 +51,7 @@ export default function AdminEventsPage() {
   return (
     <div>
       <h1 className="font-display text-[36px]">Event Moderation</h1>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         {total} events on the platform
       </p>
 

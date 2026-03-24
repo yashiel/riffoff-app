@@ -20,7 +20,7 @@ export function OrderSummary({
 
   return (
     <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#242424] p-5">
-      <h3 className="font-display text-[18px]">Order Summary</h3>
+      <h3 className="font-display text-[22px]">Order Summary</h3>
 
       <div className="mt-4 space-y-2.5 text-[14px]">
         <p className="font-medium text-white">{eventTitle}</p>

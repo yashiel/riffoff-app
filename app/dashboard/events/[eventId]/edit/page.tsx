@@ -53,7 +53,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="font-display text-xl sm:text-[36px]">Edit Event</h1>
-      <p className="mt-1 text-[13px] text-muted-foreground">
+      <p className="mt-2 text-[13px] text-muted-foreground">
         Update details for {event.title}
       </p>
       <div className="mt-8">

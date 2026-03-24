@@ -56,12 +56,12 @@ export default function AdminUsersPage() {
   return (
     <div>
       <h1 className="font-display text-[36px]">User Management</h1>
-      <p className="mt-1 text-[14px] text-muted-foreground">
+      <p className="mt-2 text-[14px] text-muted-foreground">
         {total} users on the platform
       </p>
 
       {/* Search */}
-      <form onSubmit={handleSearch} className="relative mt-6 max-w-sm">
+      <form onSubmit={handleSearch} className="relative mt-8 max-w-sm">
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"

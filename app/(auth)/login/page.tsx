@@ -15,7 +15,7 @@ export default function LoginPage() {
     <div>
       <div className="text-center">
         <h1 className="font-display text-[36px]">Welcome back</h1>
-        <p className="mt-1 text-[14px] text-muted-foreground">
+        <p className="mt-2 text-[14px] text-muted-foreground">
           Sign in to your RiffOff account
         </p>
       </div>
