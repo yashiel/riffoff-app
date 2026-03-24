@@ -7,6 +7,7 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
   // Event
   draft: "secondary",
   published: "success",
+  completed: "default",
   cancelled: "destructive",
   // Ticket
   active: "success",

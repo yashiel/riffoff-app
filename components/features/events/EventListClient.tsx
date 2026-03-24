@@ -18,6 +18,7 @@ interface EventListClientProps {
 const STATUS_TABS = [
   { id: "all", label: "All", icon: Zap },
   { id: "published", label: "Live", icon: Eye },
+  { id: "completed", label: "Completed", icon: Clock },
   { id: "draft", label: "Drafts", icon: EyeOff },
   { id: "cancelled", label: "Cancelled", icon: null },
 ] as const;
@@ -45,9 +46,18 @@ type SortOption = (typeof SORT_OPTIONS)[number]["id"];
 
 const statusConfig: Record<string, { dot: string; bg: string; text: string; label: string }> = {
   published: { dot: "bg-emerald-400", bg: "bg-emerald-400/8", text: "text-emerald-400", label: "Live" },
+  completed: { dot: "bg-blue-400/60", bg: "bg-blue-400/[0.06]", text: "text-blue-400/60", label: "Completed" },
   draft: { dot: "bg-amber-400", bg: "bg-amber-400/8", text: "text-amber-400", label: "Draft" },
   cancelled: { dot: "bg-red-400/60", bg: "bg-red-400/8", text: "text-red-400/60", label: "Cancelled" },
 };
+
+/** Derive display status — published events past their end date show as "completed" */
+function getDisplayStatus(event: EventWithVenue): string {
+  if (event.status === "published" && new Date(event.endsAt) < new Date()) {
+    return "completed";
+  }
+  return event.status;
+}
 
 /* ─── Date filter logic ─── */
 function matchesDateFilter(date: string, filter: DateFilter): boolean {
@@ -114,22 +124,26 @@ export function EventListClient({ events }: EventListClientProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
-  /* ─── Compute stats ─── */
+  /* ─── Compute stats using display status ─── */
   const stats = useMemo(() => {
-    const live = events.filter((e) => e.status === "published").length;
-    const upcoming = events.filter((e) => new Date(e.startsAt) > new Date()).length;
-    const past = events.filter((e) => new Date(e.startsAt) < new Date()).length;
+    const now = new Date();
+    const live = events.filter((e) => e.status === "published" && new Date(e.endsAt) >= now).length;
+    const upcoming = events.filter((e) => e.status === "published" && new Date(e.startsAt) > now).length;
+    const past = events.filter((e) => e.status === "published" && new Date(e.endsAt) < now).length;
     return { total: events.length, live, upcoming, past };
   }, [events]);
 
-  /* ─── Counts per status ─── */
+  /* ─── Counts per display status ─── */
   const counts: Record<string, number> = { all: events.length };
-  for (const e of events) counts[e.status] = (counts[e.status] || 0) + 1;
+  for (const e of events) {
+    const ds = getDisplayStatus(e);
+    counts[ds] = (counts[ds] || 0) + 1;
+  }
 
   /* ─── Filter + Sort ─── */
   const filtered = useMemo(() => {
     let result = events.filter((event) => {
-      if (statusFilter !== "all" && event.status !== statusFilter) return false;
+      if (statusFilter !== "all" && getDisplayStatus(event) !== statusFilter) return false;
       if (!matchesDateFilter(event.startsAt, dateFilter)) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -313,7 +327,8 @@ export function EventListClient({ events }: EventListClientProps) {
         /* ─── Grid View ─── */
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((event, i) => {
-            const cfg = statusConfig[event.status] ?? statusConfig.draft;
+            const displayStatus = getDisplayStatus(event);
+            const cfg = statusConfig[displayStatus] ?? statusConfig.draft;
             const isUpcoming = new Date(event.startsAt) > new Date();
             const isPast = new Date(event.startsAt) < new Date();
 
@@ -410,7 +425,8 @@ export function EventListClient({ events }: EventListClientProps) {
 
           <div className="divide-y divide-white/[0.02]">
             {filtered.map((event, i) => {
-              const cfg = statusConfig[event.status] ?? statusConfig.draft;
+              const displayStatus = getDisplayStatus(event);
+            const cfg = statusConfig[displayStatus] ?? statusConfig.draft;
               const isUpcoming = new Date(event.startsAt) > new Date();
               const isPast = new Date(event.startsAt) < new Date();
 

@@ -597,6 +597,53 @@ export async function unpublishEvent(
   }
 }
 
+/** Mark event as completed (published → completed, after event ends) */
+export async function completeEvent(
+  eventId: string,
+): Promise<EventFormResult> {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return { error: "Please log in" };
+
+  const user = await sessionClient.account.get();
+  const { databases } = await createAdminClient();
+
+  const event = (await databases.getDocument(
+    DATABASE_ID,
+    COLLECTIONS.EVENTS,
+    eventId,
+  )) as unknown as EventDoc;
+
+  const isAdmin = await isCurrentUserAdmin();
+  if (event.organiserId !== user.$id && !isAdmin) return { error: "Not authorized" };
+  if (event.status !== "published") return { error: "Only published events can be marked as completed" };
+
+  try {
+    await databases.updateDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId, {
+      status: "completed",
+    });
+
+    await databases.createDocument(
+      DATABASE_ID,
+      COLLECTIONS.AUDIT_LOGS,
+      ID.unique(),
+      {
+        actorId: user.$id,
+        action: "event.completed",
+        entityType: "event",
+        entityId: eventId,
+        metadata: JSON.stringify({ title: event.title }),
+      },
+    );
+
+    revalidatePath(`/dashboard/events/${eventId}`);
+    revalidatePath("/dashboard/events");
+    revalidatePath("/events");
+    return { eventId };
+  } catch {
+    return { error: "Failed to complete event" };
+  }
+}
+
 /** Get events owned by the current organiser (admins see all) */
 export async function getOrganiserEvents(): Promise<EventWithVenue[]> {
   const sessionClient = await createSessionClient();

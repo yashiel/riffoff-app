@@ -4,7 +4,7 @@ import type { Models } from "node-appwrite";
 export type UserRole = "attendee" | "artist" | "organiser" | "admin";
 
 /** Event status — matches Appwrite enum */
-export type EventStatus = "draft" | "published" | "cancelled";
+export type EventStatus = "draft" | "published" | "cancelled" | "completed";
 
 /** Reservation status — matches Appwrite enum */
 export type ReservationStatus = "held" | "converted" | "expired" | "cancelled";

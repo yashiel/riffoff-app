@@ -12,7 +12,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { formatDate, formatCurrency } from "@/lib/utils";
-import { publishEvent, cancelEvent, unpublishEvent } from "@/actions/events";
+import { publishEvent, cancelEvent, unpublishEvent, completeEvent } from "@/actions/events";
 import { Query } from "node-appwrite";
 import type { EventDoc, VenueDoc } from "@/lib/appwrite/types";
 
@@ -77,6 +77,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
   const statusColors: Record<string, string> = {
     draft: "bg-amber-400/10 text-amber-400 border-amber-400/20",
     published: "bg-emerald-400/10 text-emerald-400 border-emerald-400/20",
+    completed: "bg-blue-400/10 text-blue-400 border-blue-400/20",
     cancelled: "bg-red-400/10 text-red-400 border-red-400/20",
   };
 
@@ -155,13 +156,20 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
               </form>
             )}
             {event.status === "published" && (
-              <form action={async () => { "use server"; await unpublishEvent(eventId); }}>
-                <button type="submit" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-amber-400/10 px-3.5 py-2 text-[12px] font-medium text-amber-400 transition-colors hover:bg-amber-400/20">
-                  <EyeOff className="size-3" /> Unpublish
-                </button>
-              </form>
+              <>
+                <form action={async () => { "use server"; await unpublishEvent(eventId); }}>
+                  <button type="submit" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-amber-400/10 px-3.5 py-2 text-[12px] font-medium text-amber-400 transition-colors hover:bg-amber-400/20">
+                    <EyeOff className="size-3" /> Unpublish
+                  </button>
+                </form>
+                <form action={async () => { "use server"; await completeEvent(eventId); }}>
+                  <button type="submit" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-400/10 px-3.5 py-2 text-[12px] font-medium text-blue-400 transition-colors hover:bg-blue-400/20">
+                    <Clock className="size-3" /> Mark Complete
+                  </button>
+                </form>
+              </>
             )}
-            {event.status !== "cancelled" && (
+            {event.status !== "cancelled" && event.status !== "completed" && (
               <form action={async () => { "use server"; await cancelEvent(eventId); }}>
                 <button type="submit" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-[12px] font-medium text-red-400/60 transition-colors hover:bg-red-400/10 hover:text-red-400">
                   <XCircle className="size-3" /> Cancel
