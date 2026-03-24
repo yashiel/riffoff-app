@@ -50,83 +50,84 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   LIGHT MODE — Vivid Stage
-   Bright white, punchy violet accent, sharp shadows
-   Inspired by Linear + Vercel light modes
+   LIGHT MODE — "Neon Coral Reef"
+   Snow white canvas, HOT MAGENTA accent (#FF2D78),
+   Electric cyan secondary, bold color blocks
    ═══════════════════════════════════════════════════ */
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
+  --background: #fefefe;
+  --foreground: #0a0a0b;
   --card: #ffffff;
-  --card-foreground: #09090b;
+  --card-foreground: #0a0a0b;
   --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #09090b;
-  --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #09090b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #09090b;
-  --destructive: #dc2626;
-  --border: rgba(0, 0, 0, 0.08);
-  --input: rgba(0, 0, 0, 0.04);
-  --ring: #7c3aed;
-  --chart-1: #7c3aed;
-  --chart-2: #16a34a;
-  --chart-3: #0891b2;
-  --chart-4: #2563eb;
-  --chart-5: #d97706;
-  --radius: 0.25rem;
-  --coral: #7c3aed;
+  --popover-foreground: #0a0a0b;
+  --primary: #0a0a0b;
+  --primary-foreground: #fefefe;
+  --secondary: #f5f5f7;
+  --secondary-foreground: #0a0a0b;
+  --muted: #f0f0f2;
+  --muted-foreground: #64748b;
+  --accent: #f5f5f7;
+  --accent-foreground: #0a0a0b;
+  --destructive: #ef4444;
+  --border: rgba(0, 0, 0, 0.07);
+  --input: rgba(0, 0, 0, 0.03);
+  --ring: #FF2D78;
+  --chart-1: #FF2D78;
+  --chart-2: #00D4FF;
+  --chart-3: #7c3aed;
+  --chart-4: #FF6B35;
+  --chart-5: #BFFF00;
+  --radius: 0.5rem;
+  --coral: #FF2D78;
   --sidebar: #fafafa;
-  --sidebar-foreground: #09090b;
-  --sidebar-primary: #7c3aed;
+  --sidebar-foreground: #0a0a0b;
+  --sidebar-primary: #FF2D78;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f4f5;
-  --sidebar-accent-foreground: #09090b;
-  --sidebar-border: rgba(0, 0, 0, 0.06);
-  --sidebar-ring: #7c3aed;
+  --sidebar-accent: #f5f5f7;
+  --sidebar-accent-foreground: #0a0a0b;
+  --sidebar-border: rgba(0, 0, 0, 0.05);
+  --sidebar-ring: #FF2D78;
 }
 
 /* ═══════════════════════════════════════════════════
-   DARK MODE — Electric Nightlife
-   Near-black, electric lime, violet secondary
+   DARK MODE — "Electric Nightlife"
+   Deep ink black, ELECTRIC LIME (#BFFF00),
+   Hot magenta secondary, neon glow energy
    ═══════════════════════════════════════════════════ */
 .dark {
-  --background: #0e0e10;
+  --background: #08080a;
   --foreground: #f0f0f2;
-  --card: #18181b;
+  --card: #111113;
   --card-foreground: #f0f0f2;
-  --popover: #18181b;
+  --popover: #111113;
   --popover-foreground: #f0f0f2;
   --primary: #f0f0f2;
-  --primary-foreground: #0e0e10;
-  --secondary: #1e1e22;
+  --primary-foreground: #08080a;
+  --secondary: #19191d;
   --secondary-foreground: #f0f0f2;
-  --muted: #1e1e22;
+  --muted: #19191d;
   --muted-foreground: #6b6b78;
-  --accent: #1e1e22;
+  --accent: #19191d;
   --accent-foreground: #f0f0f2;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.07);
   --input: rgba(255, 255, 255, 0.04);
-  --ring: #bfff00;
-  --chart-1: #bfff00;
-  --chart-2: #7c3aed;
-  --chart-3: #06b6d4;
-  --chart-4: #3b82f6;
-  --chart-5: #f59e0b;
-  --coral: #bfff00;
-  --sidebar: #0c0c0e;
+  --ring: #BFFF00;
+  --chart-1: #BFFF00;
+  --chart-2: #FF2D78;
+  --chart-3: #00D4FF;
+  --chart-4: #FF6B35;
+  --chart-5: #7c3aed;
+  --coral: #BFFF00;
+  --sidebar: #0a0a0c;
   --sidebar-foreground: #f0f0f2;
-  --sidebar-primary: #bfff00;
-  --sidebar-primary-foreground: #0e0e10;
-  --sidebar-accent: #1e1e22;
+  --sidebar-primary: #BFFF00;
+  --sidebar-primary-foreground: #08080a;
+  --sidebar-accent: #19191d;
   --sidebar-accent-foreground: #f0f0f2;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-ring: #bfff00;
+  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-ring: #BFFF00;
 }
 
 @layer base {
@@ -158,16 +159,17 @@
   background-color: var(--coral);
 }
 
-/* ─── Logo gradient ──────────── */
+/* ─── Logo gradient — magenta→cyan in light, lime→magenta in dark ──────────── */
 .gradient-text {
-  background: linear-gradient(135deg, var(--coral) 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #FF2D78 0%, #00D4FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .dark .gradient-text {
-  background: linear-gradient(135deg, #bfff00 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #BFFF00 0%, #FF2D78 100%);
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
@@ -176,135 +178,160 @@
   background: transparent;
   border: 1px solid var(--border);
   color: var(--foreground);
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
   text-transform: uppercase;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .btn-ghost:hover {
-  background: var(--input);
-  border-color: color-mix(in srgb, var(--coral) 30%, transparent);
+  background: color-mix(in srgb, var(--coral) 8%, transparent);
+  border-color: color-mix(in srgb, var(--coral) 40%, transparent);
   color: var(--coral);
+  transform: translateY(-1px);
 }
 
-/* ─── Primary CTA ──────────── */
+/* ─── Primary CTA — bold and punchy ──────────── */
 .btn-primary {
   background: var(--coral);
-  color: var(--primary-foreground);
-  border-radius: 6px;
-  padding: 12px 24px;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 12px 28px;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
+  position: relative;
+  overflow: hidden;
 }
 .dark .btn-primary {
-  color: #0e0e10;
+  color: #08080a;
 }
 .btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--coral) 25%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--coral) 35%, transparent);
+}
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 /* ─── Genre pill ──────────── */
 .genre-pill {
   display: inline-flex;
   align-items: center;
-  background: color-mix(in srgb, var(--chart-2) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--chart-2) 20%, transparent);
+  background: color-mix(in srgb, var(--coral) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--coral) 15%, transparent);
   border-radius: 20px;
-  padding: 4px 12px;
+  padding: 5px 14px;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted-foreground);
+  letter-spacing: 0.06em;
+  color: var(--coral);
   transition: all 0.2s;
 }
 .genre-pill:hover {
-  background: color-mix(in srgb, var(--chart-2) 15%, transparent);
-  border-color: color-mix(in srgb, var(--chart-2) 40%, transparent);
-}
-.genre-pill.active {
   background: color-mix(in srgb, var(--coral) 12%, transparent);
-  border-color: color-mix(in srgb, var(--coral) 40%, transparent);
-  color: var(--coral);
+  border-color: color-mix(in srgb, var(--coral) 30%, transparent);
 }
 
 /* ─── Subtle card hover ──────────── */
 .event-card {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .event-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 .event-card:hover img {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 /* ─── Filter button ──────────── */
 .filter-btn {
   background: var(--input);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 16px;
+  border-radius: 10px;
+  padding: 10px 18px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--foreground);
   transition: all 0.2s;
 }
 .filter-btn:hover {
   border-color: color-mix(in srgb, var(--coral) 30%, transparent);
+  background: color-mix(in srgb, var(--coral) 4%, transparent);
 }
 .filter-btn.active {
-  background: color-mix(in srgb, var(--coral) 12%, transparent);
-  border-color: color-mix(in srgb, var(--coral) 40%, transparent);
+  background: color-mix(in srgb, var(--coral) 10%, transparent);
+  border-color: var(--coral);
   color: var(--coral);
 }
 
 /* ─── Scrollbar ──────────── */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: color-mix(in srgb, var(--coral) 20%, transparent);
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--coral) 30%, transparent);
+  background: color-mix(in srgb, var(--coral) 40%, transparent);
 }
 
-/* ─── Light mode card shadows (crisp, elevated) ──────────── */
-:root .event-card,
-:root [class*="rounded-2xl"][class*="border-foreground"] {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+/* ─── Light mode cards — crisp floating shadows ──────────── */
+:root .event-card {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.04);
 }
 :root .event-card:hover {
-  box-shadow: 0 4px 16px rgba(124,58,237,0.08), 0 8px 32px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 30px rgba(255,45,120,0.08), 0 16px 40px rgba(0,0,0,0.06);
 }
-.dark .event-card,
-.dark [class*="rounded-2xl"][class*="border-foreground"] {
+.dark .event-card {
   box-shadow: none;
 }
+.dark .event-card:hover {
+  box-shadow: 0 8px 30px rgba(191,255,0,0.06);
+}
 
-/* ─── Light mode sidebar ──────────── */
+/* ─── Light mode sidebar border ──────────── */
 :root aside {
-  border-right: 1px solid rgba(0,0,0,0.06);
+  border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+/* ─── Noise texture overlay (subtle grain for depth) ──────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
 /* ─── Stagger animation ──────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-up {
-  animation: fade-up 0.4s ease-out both;
+  animation: fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ─── Glow pulse for live indicators ──────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

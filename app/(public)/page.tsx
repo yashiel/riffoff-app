@@ -54,7 +54,7 @@ export default async function HomePage() {
           {/* Cinematic overlays */}
           <div className="absolute inset-0 bg-black/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(124,58,237,0.15)] via-transparent to-[rgba(191,255,0,0.08)]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,45,120,0.2)] via-transparent to-[rgba(0,212,255,0.1)]" />
           {/* Bottom fade to page */}
           <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         </div>
@@ -63,7 +63,7 @@ export default async function HomePage() {
           <div className="max-w-4xl">
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur-sm">
-              <Sparkles className="size-3.5 text-[#bfff00]" />
+              <Sparkles className="size-3.5 text-[#FF2D78]" />
               The anti-scalping ticketing platform
             </div>
 
@@ -71,7 +71,7 @@ export default async function HomePage() {
             <h1 className="mt-8 font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] tracking-tight text-white">
               Your next{" "}
               <span className="relative">
-                <span className="bg-gradient-to-r from-[#bfff00] via-[#7c3aed] to-[#06b6d4] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#FF2D78] via-[#BFFF00] to-[#00D4FF] bg-clip-text text-transparent">
                   live show
                 </span>
               </span>
@@ -88,7 +88,7 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/events"
-                className="group inline-flex items-center gap-2.5 rounded-xl bg-[#bfff00] px-8 py-4 text-[15px] font-bold uppercase tracking-wide text-black transition-all hover:gap-3.5 hover:shadow-[0_0_40px_rgba(191,255,0,0.3)]"
+                className="group inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#FF2D78] to-[#FF6B35] px-8 py-4 text-[15px] font-bold uppercase tracking-wide text-white transition-all hover:gap-3.5 hover:shadow-[0_0_40px_rgba(255,45,120,0.4)]"
               >
                 Browse Events
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -112,7 +112,7 @@ export default async function HomePage() {
                   key={stat.label}
                   className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-md"
                 >
-                  <stat.icon className="size-4 text-[#bfff00]" />
+                  <stat.icon className="size-4 text-[#00D4FF]" />
                   <div>
                     <p className="font-display text-[22px] leading-none text-white">{stat.value}</p>
                     <p className="text-[11px] text-white/40">{stat.label}</p>
@@ -163,7 +163,7 @@ export default async function HomePage() {
       {/* ═══ HOW IT WORKS — 3-step with big numbers ═══ */}
       <section className="relative overflow-hidden border-y border-border py-24 sm:py-32">
         {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-coral/[0.02] via-transparent to-[rgba(124,58,237,0.02)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,45,120,0.03)] via-transparent to-[rgba(0,212,255,0.03)]" />
 
         <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="text-center">
@@ -182,24 +182,24 @@ export default async function HomePage() {
                 icon: Headphones,
                 title: "Discover",
                 desc: "Browse events by genre, date, or location. Filter by what matters to you.",
-                color: "from-violet-500/20 to-violet-500/5",
-                iconColor: "text-violet-400",
+                color: "from-[#FF2D78]/15 to-[#FF2D78]/5",
+                iconColor: "text-[#FF2D78]",
               },
               {
                 step: "02",
                 icon: Ticket,
                 title: "Get Tickets",
                 desc: "Pay with card, PayPal, or TNG eWallet. The price shown is the price you pay.",
-                color: "from-coral/20 to-coral/5",
-                iconColor: "text-coral",
+                color: "from-[#BFFF00]/15 to-[#BFFF00]/5",
+                iconColor: "text-[#7ab800]",
               },
               {
                 step: "03",
                 icon: QrCode,
                 title: "Walk In",
                 desc: "Show your QR e-ticket at the door. Instant scan, zero queues.",
-                color: "from-cyan-500/20 to-cyan-500/5",
-                iconColor: "text-cyan-400",
+                color: "from-[#00D4FF]/15 to-[#00D4FF]/5",
+                iconColor: "text-[#00D4FF]",
               },
             ].map((item) => (
               <div
@@ -251,8 +251,8 @@ export default async function HomePage() {
                 desc: "Create events, manage ticket tiers, track sales in real-time, and scan tickets at the door — all from one dashboard.",
                 cta: "Start organising",
                 href: "/register",
-                gradient: "from-coral/10 via-transparent to-transparent",
-                borderHover: "hover:border-coral/30",
+                gradient: "from-[#FF2D78]/10 via-transparent to-transparent",
+                borderHover: "hover:border-[#FF2D78]/30",
               },
               {
                 icon: Music,
@@ -260,8 +260,8 @@ export default async function HomePage() {
                 desc: "Apply to perform at events, build your artist profile, upload riders, and connect directly with organisers.",
                 cta: "Join as artist",
                 href: "/register",
-                gradient: "from-violet-500/10 via-transparent to-transparent",
-                borderHover: "hover:border-violet-400/30",
+                gradient: "from-[#00D4FF]/10 via-transparent to-transparent",
+                borderHover: "hover:border-[#00D4FF]/30",
               },
             ].map((card) => (
               <div
