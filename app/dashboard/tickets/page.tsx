@@ -1,4 +1,5 @@
 import { TicketList } from "@/components/features/tickets/TicketList";
+import { TicketListRefresher } from "@/components/features/tickets/TicketListRefresher";
 import { EventCarousel } from "@/components/features/events/EventCarousel";
 import { getUserTickets } from "@/actions/tickets";
 import { getUpcomingEvents } from "@/actions/events";
@@ -13,8 +14,13 @@ export default async function TicketsPage() {
     getUpcomingEvents().catch(() => []),
   ]);
 
+  const uncheckedCount = tickets.filter((t: any) => t.status === "active" && !t.checkedInAt).length;
+
   return (
     <div>
+      {/* Auto-refresh when tickets might get scanned */}
+      <TicketListRefresher uncheckedCount={uncheckedCount} />
+
       <h1 className="font-display text-2xl tracking-tight sm:text-3xl lg:text-[40px]">My Tickets</h1>
       <p className="mt-2 text-base text-muted-foreground/80">
         Your purchased tickets and e-passes

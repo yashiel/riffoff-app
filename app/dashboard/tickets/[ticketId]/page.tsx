@@ -5,6 +5,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { QRDisplay } from "@/components/features/tickets/QRDisplay";
 import { WalletButtons } from "@/components/features/tickets/WalletButtons";
+import { TicketLiveStatus } from "@/components/features/tickets/TicketLiveStatus";
 import { formatDate } from "@/lib/utils";
 import type { TicketDoc, EventDoc, TicketTierDoc, VenueDoc } from "@/lib/appwrite/types";
 
@@ -72,6 +73,9 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
 
   return (
     <div className="mx-auto w-full max-w-[480px]">
+      {/* Real-time check-in status polling — refreshes page when scanned */}
+      <TicketLiveStatus ticketId={ticketId} initialCheckedIn={isCheckedIn} />
+
       {/* Back */}
       <Link
         href="/dashboard/tickets"
