@@ -63,100 +63,71 @@ export function useGateStream(eventId: string) {
   const [devices, setDevices] = useState<DeviceEntry[]>([]);
   const [broadcasts, setBroadcasts] = useState<BroadcastMessage[]>([]);
 
-  const esRef = useRef<EventSource | null>(null);
   const retryCountRef = useRef(0);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const connect = useCallback(() => {
-    if (esRef.current) {
-      esRef.current.close();
-      esRef.current = null;
-    }
+  // Polling approach — Vercel serverless can't hold SSE connections.
+  // Poll every 5s for stats, feed, devices, broadcasts via a single JSON endpoint.
+  const poll = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `/api/events/${encodeURIComponent(eventId)}/gate-stats`,
+        { cache: "no-store" },
+      );
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          setConnectionState("reconnecting");
+          return;
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
 
-    const url = `/api/gate/stream?role=dashboard&eventId=${encodeURIComponent(eventId)}`;
-    const es = new EventSource(url);
-    esRef.current = es;
-
-    es.addEventListener("connected", () => {
+      const data = await res.json();
       setConnectionState("connected");
       retryCountRef.current = 0;
-    });
 
-    es.addEventListener("stats", (e) => {
-      try {
-        setStats(JSON.parse(e.data));
-      } catch { /* malformed */ }
-    });
-
-    es.addEventListener("feed", (e) => {
-      try {
-        const entries: FeedEntry[] = JSON.parse(e.data);
+      if (data.stats) setStats(data.stats);
+      if (data.feed) {
         setFeed((prev) => {
           const existing = new Set(prev.map((f) => f.id));
-          const newEntries = entries.filter((f) => !existing.has(f.id));
+          const newEntries = (data.feed as FeedEntry[]).filter(
+            (f) => !existing.has(f.id),
+          );
+          if (newEntries.length === 0) return prev;
           return [...newEntries, ...prev].slice(0, 50);
         });
-      } catch { /* malformed */ }
-    });
-
-    es.addEventListener("devices", (e) => {
-      try {
-        setDevices(JSON.parse(e.data));
-      } catch { /* malformed */ }
-    });
-
-    es.addEventListener("broadcast", (e) => {
-      try {
-        const msg: BroadcastMessage = JSON.parse(e.data);
+      }
+      if (data.devices) setDevices(data.devices);
+      if (data.broadcasts) {
         setBroadcasts((prev) => {
           const ids = new Set(prev.map((m) => m.id));
-          if (ids.has(msg.id)) return prev;
-          return [msg, ...prev].slice(0, 20);
+          const newMsgs = (data.broadcasts as BroadcastMessage[]).filter(
+            (m) => !ids.has(m.id),
+          );
+          if (newMsgs.length === 0) return prev;
+          return [...newMsgs, ...prev].slice(0, 20);
         });
-      } catch { /* malformed */ }
-    });
-
-    es.onopen = () => {
-      setConnectionState("connected");
-      retryCountRef.current = 0;
-    };
-
-    es.onerror = () => {
-      es.close();
-      esRef.current = null;
-
-      // If we were connected before, this is likely a normal server-side
-      // timeout (Vercel 25s limit). Reconnect quickly without showing error.
-      const wasConnected = retryCountRef.current === 0;
-      if (wasConnected) {
-        // Silent reconnect — don't flash "Reconnecting..."
-        retryTimerRef.current = setTimeout(connect, 500);
-      } else {
-        // Genuine error — show reconnecting state with backoff
-        setConnectionState("reconnecting");
-        const delay = Math.min(
-          1000 * Math.pow(2, retryCountRef.current) + Math.random() * 1000,
-          30_000,
-        );
-        retryCountRef.current++;
-        retryTimerRef.current = setTimeout(connect, delay);
       }
-    };
+    } catch {
+      setConnectionState("reconnecting");
+      retryCountRef.current++;
+    }
   }, [eventId]);
 
   useEffect(() => {
-    connect();
+    // Initial fetch
+    poll();
+
+    // Poll every 5s
+    const interval = setInterval(poll, 5000);
 
     return () => {
-      if (esRef.current) {
-        esRef.current.close();
-        esRef.current = null;
-      }
+      clearInterval(interval);
       if (retryTimerRef.current) {
         clearTimeout(retryTimerRef.current);
       }
     };
-  }, [connect]);
+  }, [poll]);
 
   // Backward compat: `connected` boolean
   const connected = connectionState === "connected";

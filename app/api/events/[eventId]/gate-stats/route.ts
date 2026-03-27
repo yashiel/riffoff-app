@@ -119,8 +119,79 @@ export async function GET(
       return NextResponse.json({ error: "Not authorized" }, { status: 404 });
     }
 
-    const stats = await getGateStats(eventId);
-    return NextResponse.json(stats);
+    const gateStatsData = await getGateStats(eventId);
+
+    // Also fetch feed, devices, broadcasts for the polling dashboard
+    const [recentCheckins, sessions, messages] = await Promise.all([
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.GATE_CHECKINS, [
+        Query.equal("eventId", eventId),
+        Query.orderDesc("scannedAt"),
+        Query.limit(10),
+      ]).catch(() => ({ documents: [] })),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.GATE_SESSIONS, [
+        Query.equal("eventId", eventId),
+        Query.equal("status", "active"),
+        Query.limit(100),
+      ]).catch(() => ({ documents: [] })),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.GATE_MESSAGES, [
+        Query.equal("eventId", eventId),
+        Query.orderDesc("$createdAt"),
+        Query.limit(5),
+      ]).catch(() => ({ documents: [] })),
+    ]);
+
+    // Build feed entries
+    const gates = await databases.listDocuments(DATABASE_ID, COLLECTIONS.GATES, [
+      Query.equal("eventId", eventId),
+      Query.limit(100),
+    ]).catch(() => ({ documents: [] }));
+
+    const feed = await Promise.all(
+      recentCheckins.documents.map(async (doc) => {
+        let ticketCode = "";
+        try {
+          const ticket = await databases.getDocument(DATABASE_ID, COLLECTIONS.TICKETS, doc.ticketId as string);
+          ticketCode = (ticket.ticketCode as string) || "";
+        } catch { /* ticket might be deleted */ }
+        const gate = gates.documents.find((g) => g.$id === doc.gateId);
+        return {
+          id: doc.$id,
+          ticketCode,
+          gateName: (gate?.name as string) || "Unknown",
+          status: doc.status === "confirmed" ? "valid" : doc.status === "conflicted" ? "duplicate" : "invalid",
+          timestamp: doc.scannedAt as string,
+        };
+      }),
+    );
+
+    const devices = sessions.documents.map((s) => ({
+      sessionId: s.$id,
+      deviceId: s.deviceId as string,
+      gateId: s.gateId as string,
+      status: s.status as string,
+      lastSeenAt: s.lastSeenAt as string,
+      userAgent: (s.userAgent as string) || "",
+      screenSize: (s.screenSize as string) || "",
+      timezone: (s.timezone as string) || "",
+      language: (s.language as string) || "",
+      deviceFingerprint: (s.deviceFingerprint as string) || "",
+      issuedBy: (s.issuedBy as string) || "",
+      createdAt: s.$createdAt as string,
+    }));
+
+    const broadcasts = messages.documents.map((msg) => ({
+      id: msg.$id,
+      message: msg.message as string,
+      gateId: (msg.gateId as string) || null,
+      createdAt: msg.$createdAt as string,
+    }));
+
+    return NextResponse.json({
+      stats: gateStatsData,
+      feed,
+      devices,
+      broadcasts,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch gate stats";
     return NextResponse.json({ error: message }, { status: 500 });
