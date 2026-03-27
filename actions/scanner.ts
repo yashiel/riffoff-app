@@ -56,23 +56,14 @@ export interface ScannerEventStats {
 
 // ─── Validate & Check-In ─────────────────────────────
 
-/** Validate a QR token and check the attendee in */
+/** Validate a QR token and check the attendee in.
+ *  Accepts EITHER a signed token (from refreshQR) OR a raw ticket ID / ticket code.
+ *  This dual-path approach ensures scanning works regardless of QR format. */
 export async function validateAndCheckIn(
   qrToken: string,
   eventId: string,
 ): Promise<ScanResult> {
-  // 1. Verify the QR token signature + expiry
-  const payload = verifyTicketToken(qrToken);
-  if (!payload) {
-    return { valid: false, reason: "Invalid or expired QR code", code: "INVALID_TOKEN" };
-  }
-
-  // 2. Verify token is for this event
-  if (payload.eventId !== eventId) {
-    return { valid: false, reason: "Ticket is for a different event", code: "WRONG_EVENT" };
-  }
-
-  // 3. Auth — scanner must be logged in
+  // 0. Auth — scanner must be logged in
   const sessionClient = await createSessionClient();
   if (!sessionClient) {
     return { valid: false, reason: "Scanner not authenticated", code: "NOT_AUTHORIZED" };
@@ -81,7 +72,7 @@ export async function validateAndCheckIn(
   const user = await sessionClient.account.get();
   const { databases } = await createAdminClient();
 
-  // 4. Verify scanner is the event organiser (or has scanner role)
+  // 1. Verify scanner is the event organiser (or admin)
   let event: EventDoc;
   try {
     event = (await databases.getDocument(
@@ -98,16 +89,62 @@ export async function validateAndCheckIn(
     return { valid: false, reason: "Not authorized to scan for this event", code: "NOT_AUTHORIZED" };
   }
 
-  // 5. Look up the ticket
-  let ticket: TicketDoc;
-  try {
-    ticket = (await databases.getDocument(
-      DATABASE_ID,
-      COLLECTIONS.TICKETS,
-      payload.ticketId,
-    )) as unknown as TicketDoc;
-  } catch {
-    return { valid: false, reason: "Ticket not found", code: "TICKET_NOT_FOUND" };
+  // 2. Try to resolve the ticket — signed token first, then raw ID, then ticket code
+  let ticket: TicketDoc | null = null;
+
+  // Path A: Signed token (format: base64.base64)
+  const payload = verifyTicketToken(qrToken);
+  if (payload) {
+    if (payload.eventId !== eventId) {
+      return { valid: false, reason: "Ticket is for a different event", code: "WRONG_EVENT" };
+    }
+    try {
+      ticket = (await databases.getDocument(
+        DATABASE_ID,
+        COLLECTIONS.TICKETS,
+        payload.ticketId,
+      )) as unknown as TicketDoc;
+    } catch {
+      return { valid: false, reason: "Ticket not found", code: "TICKET_NOT_FOUND" };
+    }
+  }
+
+  // Path B: Raw ticket ID (document ID like "qa-ticket-1" or UUID)
+  if (!ticket) {
+    try {
+      const doc = await databases.getDocument(
+        DATABASE_ID,
+        COLLECTIONS.TICKETS,
+        qrToken.trim(),
+      );
+      ticket = doc as unknown as TicketDoc;
+    } catch {
+      // Not a valid document ID — try ticket code lookup
+    }
+  }
+
+  // Path C: Ticket code (e.g., "RIFF-XXXXXX")
+  if (!ticket) {
+    try {
+      const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
+        Query.equal("ticketCode", qrToken.trim().toUpperCase()),
+        Query.limit(1),
+      ]);
+      if (result.documents.length > 0) {
+        ticket = result.documents[0] as unknown as TicketDoc;
+      }
+    } catch {
+      // Lookup failed
+    }
+  }
+
+  if (!ticket) {
+    return { valid: false, reason: "Ticket not found — invalid QR code or ticket code", code: "TICKET_NOT_FOUND" };
+  }
+
+  // 3. Verify ticket belongs to this event
+  if (ticket.eventId !== eventId) {
+    return { valid: false, reason: "Ticket is for a different event", code: "WRONG_EVENT" };
   }
 
   // 6. Check ticket status
