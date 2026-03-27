@@ -4,6 +4,9 @@ import { validateSession, updateLastSeen } from "@/lib/gate/session";
 import { createAdminClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 
+// Vercel: allow up to 30s for this SSE endpoint
+export const maxDuration = 30;
+
 /**
  * GET /api/gate/stream?token=<sessionId>&role=scanner|dashboard
  *
@@ -370,8 +373,23 @@ export async function GET(request: NextRequest) {
       // Initial poll immediately
       await poll();
 
-      // Poll every 3 seconds
-      const interval = setInterval(poll, 3000);
+      // Poll every 3 seconds, but close after ~25s to stay within
+      // Vercel serverless function timeout. Client will auto-reconnect.
+      const MAX_DURATION_MS = 25_000;
+      const startTime = Date.now();
+      const interval = setInterval(async () => {
+        if (Date.now() - startTime > MAX_DURATION_MS) {
+          // Graceful close — send a reconnect hint
+          send("heartbeat", { serverTime: new Date().toISOString(), reconnect: true });
+          clearInterval(interval);
+          cancelled = true;
+          try {
+            controller.close();
+          } catch { /* already closed */ }
+          return;
+        }
+        await poll();
+      }, 3000);
 
       // Cleanup on client disconnect
       request.signal.addEventListener("abort", () => {

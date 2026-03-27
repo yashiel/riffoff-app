@@ -6,6 +6,7 @@ import { getGateStats } from "../gate-stats/route";
 import type { EventDoc } from "@/lib/appwrite/types";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function GET(
   request: NextRequest,
@@ -54,7 +55,22 @@ export async function GET(
         // Continue polling even if initial fetch fails
       }
 
+      // Poll every 2s but close after ~25s to stay within Vercel function timeout.
+      // Client auto-reconnects via EventSource.
+      const MAX_DURATION_MS = 25_000;
+      const startTime = Date.now();
+      let cancelled = false;
+
       const interval = setInterval(async () => {
+        if (cancelled) return;
+
+        if (Date.now() - startTime > MAX_DURATION_MS) {
+          clearInterval(interval);
+          cancelled = true;
+          try { controller.close(); } catch { /* already closed */ }
+          return;
+        }
+
         try {
           const stats = await getGateStats(eventId);
           if (stats.total.checkedIn !== lastCount) {
@@ -69,8 +85,9 @@ export async function GET(
       }, 2000);
 
       request.signal.addEventListener("abort", () => {
+        cancelled = true;
         clearInterval(interval);
-        controller.close();
+        try { controller.close(); } catch { /* already closed */ }
       });
     },
   });

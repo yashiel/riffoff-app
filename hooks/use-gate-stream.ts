@@ -122,17 +122,25 @@ export function useGateStream(eventId: string) {
     };
 
     es.onerror = () => {
-      setConnectionState("reconnecting");
       es.close();
       esRef.current = null;
 
-      // Exponential backoff with jitter
-      const delay = Math.min(
-        1000 * Math.pow(2, retryCountRef.current) + Math.random() * 1000,
-        30_000,
-      );
-      retryCountRef.current++;
-      retryTimerRef.current = setTimeout(connect, delay);
+      // If we were connected before, this is likely a normal server-side
+      // timeout (Vercel 25s limit). Reconnect quickly without showing error.
+      const wasConnected = retryCountRef.current === 0;
+      if (wasConnected) {
+        // Silent reconnect — don't flash "Reconnecting..."
+        retryTimerRef.current = setTimeout(connect, 500);
+      } else {
+        // Genuine error — show reconnecting state with backoff
+        setConnectionState("reconnecting");
+        const delay = Math.min(
+          1000 * Math.pow(2, retryCountRef.current) + Math.random() * 1000,
+          30_000,
+        );
+        retryCountRef.current++;
+        retryTimerRef.current = setTimeout(connect, delay);
+      }
     };
   }, [eventId]);
 
