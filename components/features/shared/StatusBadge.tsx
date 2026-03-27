@@ -37,6 +37,11 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
   needs_response: "destructive",
   won: "success",
   lost: "destructive",
+  // User Roles
+  attendee: "info",
+  artist: "success",
+  organiser: "warning",
+  admin: "destructive",
 };
 
 const VARIANT_CLASSES: Record<StatusVariant, string> = {

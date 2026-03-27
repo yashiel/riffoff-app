@@ -4,6 +4,8 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { generateTicketCode, generateNonce, hashNonce } from "./codes";
+import { notifyTicketPurchased } from "@/actions/notifications";
+import { sendTicketConfirmationEmail } from "@/lib/email";
 import type { TicketDoc, OrderDoc } from "@/lib/appwrite/types";
 
 /**
@@ -133,7 +135,50 @@ export async function issueTicketsForOrder(
     );
   }
 
-  // 8. Audit log
+  // 8. Send notification + email (non-blocking)
+  const firstTicket = tickets[0];
+  if (firstTicket) {
+    // Get event title for the notification
+    let eventTitle = "your event";
+    let tierName = "";
+    let userEmail = "";
+    let userName = "";
+    try {
+      const event = await databases.getDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId);
+      eventTitle = (event as unknown as { title: string }).title;
+      if (tierId) {
+        const tierDoc = await databases.getDocument(DATABASE_ID, COLLECTIONS.TICKET_TIERS, tierId);
+        tierName = (tierDoc as unknown as { name: string }).name;
+      }
+      // Get user info for email
+      const { users } = await createAdminClient();
+      const user = await users.get(order.userId);
+      userEmail = user.email;
+      userName = user.name || "";
+    } catch {
+      // Non-critical — continue without email
+    }
+
+    // In-app notification
+    void notifyTicketPurchased(order.userId, eventTitle, firstTicket.ticketCode, firstTicket.$id);
+
+    // Email confirmation (non-blocking)
+    if (userEmail) {
+      void sendTicketConfirmationEmail(userEmail, {
+        userName,
+        eventTitle,
+        eventDate: "", // Will be filled from event doc if available
+        venue: "",
+        tierName,
+        ticketCode: firstTicket.ticketCode,
+        quantity: qty,
+        totalAmount: String(order.amount),
+        currency: order.currency,
+      });
+    }
+  }
+
+  // 9. Audit log
   await databases.createDocument(
     DATABASE_ID,
     COLLECTIONS.AUDIT_LOGS,

@@ -15,32 +15,38 @@ export async function createPayPalOrder(
   const apiUrl = getPayPalApiUrl();
   const amountStr = (input.amountCents / 100).toFixed(2);
 
+  const requestBody = {
+    intent: "CAPTURE",
+    purchase_units: [
+      {
+        reference_id: input.orderId,
+        amount: {
+          currency_code: input.currency,
+          value: amountStr,
+        },
+      },
+    ],
+  };
+
   const response = await fetch(`${apiUrl}/v2/checkout/orders`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
+      Prefer: "return=representation",
     },
-    body: JSON.stringify({
-      intent: "CAPTURE",
-      purchase_units: [
-        {
-          reference_id: input.orderId,
-          amount: {
-            currency_code: input.currency,
-            value: amountStr,
-          },
-        },
-      ],
-    }),
+    body: JSON.stringify(requestBody),
   });
 
+  const responseBody = await response.text();
+
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`PayPal create order failed: ${error}`);
+    console.error(`[PayPal] Error ${response.status}:`, responseBody);
+    throw new Error(`PayPal create order failed (${response.status}): ${responseBody}`);
   }
 
-  return response.json();
+  const data = JSON.parse(responseBody);
+  return data;
 }
 
 export async function capturePayPalOrder(

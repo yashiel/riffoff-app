@@ -6,7 +6,9 @@ import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
-import { notifyEventCancelled } from "@/actions/notifications";
+import { notifyEventCancelled, notifyEventPublished } from "@/actions/notifications";
+import { sendEventPublishedEmail, sendEventCancelledEmail } from "@/lib/email";
+import { serialize } from "@/lib/utils";
 import type {
   EventDoc,
   VenueDoc,
@@ -131,7 +133,7 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
   });
 
   return {
-    events: eventsWithVenue,
+    events: serialize(eventsWithVenue),
     total: result.total,
     page,
     pageSize: PAGE_SIZE,
@@ -169,7 +171,7 @@ export async function getEventById(
       }
     }
 
-    return event;
+    return serialize(event);
   } catch {
     return null;
   }
@@ -250,13 +252,13 @@ export async function getEventWithDetails(
       }
     }
 
-    return {
+    return serialize({
       event,
       venue,
       tiers,
       lineup,
       rsvpCount: rsvpResult.total,
-    };
+    });
   } catch {
     return null;
   }
@@ -272,18 +274,17 @@ export async function getUpcomingEvents(): Promise<EventWithVenue[]> {
   return result.events.slice(0, 20);
 }
 
-/** Get all unique genres from published events */
+/** Get all unique genres used across events (for autocomplete suggestions) */
 export async function getAvailableGenres(): Promise<string[]> {
   const { databases } = await createAdminClient();
 
+  // Pull genres from all events for better suggestions
   const result = await databases.listDocuments(
     DATABASE_ID,
     COLLECTIONS.EVENTS,
     [
-      Query.equal("status", "published"),
-      Query.greaterThanEqual("startsAt", new Date().toISOString()),
       Query.select(["genres"]),
-      Query.limit(100),
+      Query.limit(200),
     ],
   );
 
@@ -291,7 +292,7 @@ export async function getAvailableGenres(): Promise<string[]> {
   for (const doc of result.documents) {
     const event = doc as unknown as EventDoc;
     for (const genre of event.genres) {
-      genreSet.add(genre);
+      if (genre.trim()) genreSet.add(genre.trim());
     }
   }
 
@@ -310,6 +311,7 @@ const createEventSchema = z.object({
   capacity: z.number().int().min(1),
   isFree: z.boolean(),
   coverimageUrl: z.string().optional(),
+  videoUrl: z.string().max(500).optional(),
 });
 
 export type EventFormResult = { error?: string; eventId?: string };
@@ -345,6 +347,7 @@ export async function createEvent(
         status: "draft",
         capacity: parsed.data.capacity,
         coverimageUrl: parsed.data.coverimageUrl ?? null,
+        videoUrl: parsed.data.videoUrl ?? null,
         isFree: parsed.data.isFree,
       },
     );
@@ -367,6 +370,7 @@ const updateEventSchema = z.object({
   capacity: z.number().int().min(1).optional(),
   isFree: z.boolean().optional(),
   coverimageUrl: z.string().optional(),
+  videoUrl: z.string().max(500).optional(),
 });
 
 /** Update an event (organiser only) */
@@ -473,6 +477,18 @@ export async function publishEvent(
       },
     );
 
+    // Notify organizer that event is live
+    void notifyEventPublished(user.$id, event.title, eventId);
+
+    // Send email confirmation (non-blocking)
+    void sendEventPublishedEmail(user.email, {
+      userName: user.name || "",
+      eventTitle: event.title,
+      eventDate: event.startsAt,
+      venue: "",
+      eventUrl: `${process.env.NEXT_PUBLIC_APP_URL || ""}/events/${eventId}`,
+    });
+
     revalidatePath(`/dashboard/events/${eventId}`);
     revalidatePath("/dashboard/events");
     revalidatePath("/events");
@@ -527,10 +543,26 @@ export async function cancelEvent(
       [Query.equal("eventId", eventId), Query.limit(500)],
     );
     const ownerIds = [...new Set(ticketHolders.documents.map((t) => (t as unknown as { ownerId: string }).ownerId))];
-    await Promise.all(
-      ownerIds.map((ownerId) =>
-        notifyEventCancelled(ownerId, event.title, eventId),
-      ),
+
+    // Notify + email each ticket holder (non-blocking)
+    const { users } = await createAdminClient();
+    void Promise.all(
+      ownerIds.map(async (ownerId) => {
+        // In-app notification
+        void notifyEventCancelled(ownerId, event.title, eventId);
+        // Email
+        try {
+          const ownerUser = await users.get(ownerId);
+          if (ownerUser.email) {
+            void sendEventCancelledEmail(ownerUser.email, {
+              userName: ownerUser.name || "",
+              eventTitle: event.title,
+            });
+          }
+        } catch {
+          // Non-critical
+        }
+      }),
     );
 
     revalidatePath(`/dashboard/events/${eventId}`);
@@ -675,10 +707,10 @@ export async function getOrganiserEvents(): Promise<EventWithVenue[]> {
     }
   }
 
-  return events.map((event) => ({
+  return serialize(events.map((event) => ({
     ...event,
     venue: venueMap.get(event.venueId) ?? null,
-  }));
+  })));
 }
 
 // ─── Helpers ───────────────────────────────────────

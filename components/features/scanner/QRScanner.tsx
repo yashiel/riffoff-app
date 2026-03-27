@@ -86,7 +86,7 @@ export function QRScanner({ onScan, scanning }: QRScannerProps) {
       {!isStarted && !error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#1c1c1c]">
           <Camera className="size-12 text-muted-foreground" />
-          <p className="mt-3 text-[14px] text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground">
             {scanning ? "Starting camera..." : "Press Start to begin scanning"}
           </p>
         </div>
@@ -96,10 +96,10 @@ export function QRScanner({ onScan, scanning }: QRScannerProps) {
       {error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#1c1c1c] p-6">
           <CameraOff className="size-12 text-red-400" />
-          <p className="mt-3 text-center text-[14px] text-red-400">{error}</p>
+          <p className="mt-3 text-center text-base text-red-400">{error}</p>
           <button
             onClick={startScanner}
-            className="btn-primary mt-4 !py-2 !text-[12px]"
+            className="btn-primary mt-4 !py-2 !text-base"
           >
             Retry Camera
           </button>
@@ -111,7 +111,7 @@ export function QRScanner({ onScan, scanning }: QRScannerProps) {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-4 py-1.5 backdrop-blur">
           <div className="flex items-center gap-2">
             <span className="size-2 animate-pulse rounded-full bg-coral" />
-            <span className="text-[12px] font-medium text-foreground">Scanning...</span>
+            <span className="text-base font-medium text-foreground">Scanning...</span>
           </div>
         </div>
       )}

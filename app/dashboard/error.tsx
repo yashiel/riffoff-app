@@ -16,13 +16,13 @@ export default function DashboardError({
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center">
       <h2 className="font-display text-xl">Something went wrong</h2>
-      <p className="mt-2 max-w-md text-center text-[13px] text-muted-foreground">
+      <p className="mt-2 max-w-md text-center text-base text-muted-foreground">
         {error.message || "An unexpected error occurred loading this page."}
       </p>
       {error.digest && (
-        <p className="mt-1 text-[11px] text-foreground/20">Error ID: {error.digest}</p>
+        <p className="mt-1 text-sm text-muted-foreground/60">Error ID: {error.digest}</p>
       )}
-      <button onClick={reset} className="btn-primary mt-6 !py-2 !text-[12px]">
+      <button onClick={reset} className="btn-primary mt-6 !py-2 !text-base">
         Try again
       </button>
     </div>

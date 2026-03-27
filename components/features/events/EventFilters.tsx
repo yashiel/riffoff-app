@@ -2,11 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const DATE_OPTIONS = [
-  { label: "All dates", value: "all" },
+  { label: "All", value: "all" },
   { label: "Today", value: "today" },
   { label: "This weekend", value: "weekend" },
   { label: "This week", value: "week" },
@@ -15,9 +15,17 @@ const DATE_OPTIONS = [
 
 interface EventFiltersProps {
   genres: string[];
+  /** Render only the search bar (for hero section) */
+  heroMode?: boolean;
+  /** Render only the date + genre pills (for pills strip) */
+  pillsOnly?: boolean;
 }
 
-export function EventFilters({ genres }: EventFiltersProps) {
+export function EventFilters({
+  genres,
+  heroMode = false,
+  pillsOnly = false,
+}: EventFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -39,30 +47,50 @@ export function EventFilters({ genres }: EventFiltersProps) {
         router.push(`/events?${params.toString()}`);
       });
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
-  return (
-    <div className={cn("space-y-5", isPending && "opacity-50")}>
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="search"
-          placeholder="Search for an event, artist or venue"
-          defaultValue={currentSearch}
-          aria-label="Search events"
-          onChange={(e) => {
-            const value = e.target.value;
-            const timeout = setTimeout(() => updateParams("search", value), 400);
-            return () => clearTimeout(timeout);
-          }}
-          className="w-full rounded bg-[var(--input)] py-2.5 pl-10 pr-4 text-[14px] text-white placeholder:text-muted-foreground outline-none border border-[var(--border)] focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
-        />
-      </div>
+  const hasActiveFilters =
+    currentSearch || currentGenre || currentDate !== "all";
 
-      {/* Date + Genre filters row */}
-      <div className="flex flex-wrap gap-2">
+  // ─── Hero mode: just the search bar ───
+  if (heroMode) {
+    return (
+      <div className={cn(isPending && "opacity-60 pointer-events-none")}>
+        <div className="relative">
+          <Search
+            className="absolute left-5 top-1/2 size-5 -translate-y-1/2 text-white/30"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            placeholder="Search events, artists, or venues..."
+            defaultValue={currentSearch}
+            aria-label="Search events"
+            onChange={(e) => {
+              const value = e.target.value;
+              const timeout = setTimeout(
+                () => updateParams("search", value),
+                400
+              );
+              return () => clearTimeout(timeout);
+            }}
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.06] py-4 pl-13 pr-5 text-base text-foreground placeholder:text-white/30 outline-none backdrop-blur-sm transition-all focus:border-coral/40 focus:bg-white/[0.08] focus:ring-2 focus:ring-coral/15"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Pills-only mode: date + genre filters ───
+  if (pillsOnly) {
+    return (
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2",
+          isPending && "opacity-60 pointer-events-none"
+        )}
+      >
         {/* Date filters */}
         {DATE_OPTIONS.map((option) => (
           <button
@@ -70,7 +98,7 @@ export function EventFilters({ genres }: EventFiltersProps) {
             onClick={() => updateParams("date", option.value)}
             className={cn(
               "filter-btn",
-              currentDate === option.value && "active",
+              currentDate === option.value && "active"
             )}
           >
             {option.label}
@@ -79,7 +107,7 @@ export function EventFilters({ genres }: EventFiltersProps) {
 
         {/* Divider */}
         {genres.length > 0 && (
-          <div className="mx-1 h-8 w-px bg-[var(--border)]" />
+          <div className="mx-1 h-7 w-px bg-border" aria-hidden="true" />
         )}
 
         {/* Genre filters */}
@@ -91,12 +119,104 @@ export function EventFilters({ genres }: EventFiltersProps) {
             }
             className={cn(
               "genre-pill cursor-pointer",
-              currentGenre === genre && "active",
+              currentGenre === genre && "active"
             )}
           >
             {genre}
           </button>
         ))}
+
+        {/* Clear all */}
+        {hasActiveFilters && (
+          <button
+            onClick={() => {
+              startTransition(() => {
+                router.push("/events");
+              });
+            }}
+            className="ml-1 flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          >
+            <X className="size-3" aria-hidden="true" />
+            Clear all
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  // ─── Default: full search + pills (fallback) ───
+  return (
+    <div
+      className={cn("space-y-4", isPending && "opacity-60 pointer-events-none")}
+    >
+      <div className="relative max-w-lg">
+        <Search
+          className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          placeholder="Search events, artists, or venues..."
+          defaultValue={currentSearch}
+          aria-label="Search events"
+          onChange={(e) => {
+            const value = e.target.value;
+            const timeout = setTimeout(
+              () => updateParams("search", value),
+              400
+            );
+            return () => clearTimeout(timeout);
+          }}
+          className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-4 text-base placeholder:text-muted-foreground/60 outline-none transition-all focus:border-coral/40 focus:ring-2 focus:ring-coral/10"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {DATE_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => updateParams("date", option.value)}
+            className={cn(
+              "filter-btn",
+              currentDate === option.value && "active"
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+
+        {genres.length > 0 && (
+          <div className="mx-1 h-7 w-px bg-border" aria-hidden="true" />
+        )}
+
+        {genres.map((genre) => (
+          <button
+            key={genre}
+            onClick={() =>
+              updateParams("genre", currentGenre === genre ? "" : genre)
+            }
+            className={cn(
+              "genre-pill cursor-pointer",
+              currentGenre === genre && "active"
+            )}
+          >
+            {genre}
+          </button>
+        ))}
+
+        {hasActiveFilters && (
+          <button
+            onClick={() => {
+              startTransition(() => {
+                router.push("/events");
+              });
+            }}
+            className="ml-1 flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          >
+            <X className="size-3" aria-hidden="true" />
+            Clear all
+          </button>
+        )}
       </div>
     </div>
   );

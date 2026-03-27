@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Plus, ArrowLeft } from "lucide-react";
 import { getEventTiers } from "@/actions/tiers";
 import { getEventById } from "@/actions/events";
-import { TierCard } from "@/components/features/events/TierCard";
+import { SortableTierList } from "@/components/features/events/SortableTierList";
 import { TierForm } from "@/components/features/events/TierForm";
 import { serialize } from "@/lib/utils";
 
@@ -21,21 +22,27 @@ export default async function TiersPage({ params }: TiersPageProps) {
 
   return (
     <div>
+      <Link
+        href={`/dashboard/events/${eventId}`}
+        className="mb-4 inline-flex items-center gap-1.5 text-base text-muted-foreground transition-colors hover:text-coral"
+      >
+        <ArrowLeft className="size-3.5" />
+        Back to {event.title}
+      </Link>
+
       <h2 className="font-display text-2xl sm:text-[36px]">Ticket Tiers</h2>
-      <p className="mt-2 text-[14px] text-muted-foreground">
-        Manage pricing and availability for {event.title}
+      <p className="mt-2 text-base text-muted-foreground">
+        Drag to reorder · Manage pricing for {event.title}
       </p>
 
-      {/* Existing tiers */}
-      <div className="mt-8 space-y-3">
-        {tiers.map((tier) => (
-          <TierCard key={tier.$id} tier={tier} />
-        ))}
+      {/* Sortable tier list with drag-and-drop */}
+      <div className="mt-8">
+        <SortableTierList tiers={tiers} eventId={eventId} />
       </div>
 
       {/* Add new tier form */}
       <div className="mt-8">
-        <h3 className="mb-3 flex items-center gap-1.5 text-[14px] font-medium text-muted-foreground">
+        <h3 className="mb-3 flex items-center gap-1.5 text-base font-medium text-muted-foreground">
           <Plus className="size-4" />
           Add new tier
         </h3>

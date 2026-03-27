@@ -5,6 +5,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { signTicketToken } from "@/lib/tickets/sign";
 import { generateNonce, hashNonce } from "@/lib/tickets/codes";
+import { serialize } from "@/lib/utils";
 import type {
   TicketDoc,
   EventDoc,
@@ -88,7 +89,7 @@ export async function getUserTickets(): Promise<TicketWithDetails[]> {
     if (v) venueMap.set(v.$id, v as unknown as VenueDoc);
   }
 
-  return tickets.map((ticket) => {
+  return serialize(tickets.map((ticket) => {
     const event = eventMap.get(ticket.eventId) ?? null;
     return {
       ...ticket,
@@ -96,7 +97,7 @@ export async function getUserTickets(): Promise<TicketWithDetails[]> {
       tier: tierMap.get(ticket.tierId) ?? null,
       venue: event ? venueMap.get(event.venueId) ?? null : null,
     };
-  });
+  }));
 }
 
 /**

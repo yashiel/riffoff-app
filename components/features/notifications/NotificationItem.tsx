@@ -79,17 +79,17 @@ export function NotificationItem({ notification }: NotificationItemProps) {
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-[13px] leading-tight ${isUnread ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+          <p className={`text-base leading-tight ${isUnread ? "font-medium text-foreground" : "text-muted-foreground"}`}>
             {notification.title}
           </p>
           {isUnread && (
             <span className="mt-1 size-1.5 shrink-0 rounded-full bg-coral" />
           )}
         </div>
-        <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground line-clamp-2">
+        <p className="mt-0.5 text-base leading-relaxed text-muted-foreground line-clamp-2">
           {notification.body}
         </p>
-        <p className="mt-1 text-[11px] text-muted-foreground/60">{timeAgo}</p>
+        <p className="mt-1 text-sm text-muted-foreground/60">{timeAgo}</p>
       </div>
     </div>
   );

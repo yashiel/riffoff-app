@@ -1,9 +1,18 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Calendar, MapPin, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Heart,
+  ArrowRight,
+  Users,
+  Sparkles,
+  Ticket,
+} from "lucide-react";
 import { EmptyState } from "@/components/features/shared/EmptyState";
+import { toggleWishlist } from "@/actions/wishlist";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { EventWithVenue } from "@/actions/events";
 
@@ -13,26 +22,12 @@ interface EventGridProps {
   convertedPrices?: Record<string, string>;
 }
 
-/** Group events by month (e.g., "Mar 2026") */
-function groupByMonth(events: EventWithVenue[]): Map<string, EventWithVenue[]> {
-  const groups = new Map<string, EventWithVenue[]>();
-  for (const event of events) {
-    const date = new Date(event.startsAt);
-    const key = date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-    const existing = groups.get(key) ?? [];
-    existing.push(event);
-    groups.set(key, existing);
-  }
-  return groups;
-}
-
-export function EventGrid({ events, wishlistedIds = [], convertedPrices = {} }: EventGridProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeMonth, setActiveMonth] = useState<string | null>(null);
+export function EventGrid({
+  events,
+  wishlistedIds = [],
+  convertedPrices = {},
+}: EventGridProps) {
   const wishlistSet = new Set(wishlistedIds);
-
-  const grouped = useMemo(() => groupByMonth(events), [events]);
-  const months = useMemo(() => [...grouped.keys()], [grouped]);
 
   if (events.length === 0) {
     return (
@@ -43,156 +38,315 @@ export function EventGrid({ events, wishlistedIds = [], convertedPrices = {} }: 
     );
   }
 
-  function scrollTo(direction: "left" | "right") {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.clientWidth * 0.7;
-    scrollRef.current.scrollBy({
-      left: direction === "right" ? amount : -amount,
-      behavior: "smooth",
-    });
-  }
-
-  function scrollToMonth(month: string) {
-    const el = document.getElementById(`month-${month.replace(/\s/g, "-")}`);
-    if (el && scrollRef.current) {
-      const containerLeft = scrollRef.current.getBoundingClientRect().left;
-      const elLeft = el.getBoundingClientRect().left;
-      scrollRef.current.scrollBy({
-        left: elLeft - containerLeft - 24,
-        behavior: "smooth",
-      });
-    }
-    setActiveMonth(month);
-  }
+  // Layout: 1 hero + 2 side cards + rest in 3-col grid
+  const [hero, ...rest] = events;
+  const sidePair = rest.slice(0, 2);
+  const gridEvents = rest.slice(2);
 
   return (
-    <div>
-      {/* ─── Month navigation bar ─── */}
-      <div className="flex items-center gap-3 mb-6">
-        <button
-          onClick={() => scrollTo("left")}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/[0.08] text-foreground/40 transition-all hover:border-coral/30 hover:text-coral"
-          aria-label="Scroll left"
-        >
-          <ChevronLeft className="size-4" />
-        </button>
-
-        <div className="flex flex-1 gap-2 overflow-x-auto scrollbar-none py-1">
-          {months.map((month) => {
-            const isActive = activeMonth === month || (!activeMonth && month === months[0]);
-            const count = grouped.get(month)?.length ?? 0;
-            return (
-              <button
-                key={month}
-                onClick={() => scrollToMonth(month)}
-                className={`group flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-                  isActive
-                    ? "bg-coral text-[#08080a] dark:text-[#08080a]"
-                    : "bg-foreground/[0.04] text-foreground/50 hover:bg-foreground/[0.08] hover:text-foreground/80"
-                }`}
-              >
-                {month}
-                <span className={`text-[11px] ${isActive ? "text-[#08080a]/60 dark:text-[#08080a]/60" : "text-foreground/25"}`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+    <div className="space-y-6">
+      {/* ═══ Row 1: Bento — hero left (2/3) + 2 stacked right (1/3) ═══ */}
+      <div className="grid gap-4 lg:grid-cols-[2fr_1fr] lg:grid-rows-2">
+        {/* Hero — spans 2 rows */}
+        <div className="lg:row-span-2">
+          <HeroCard
+            event={hero}
+            initialWishlisted={wishlistSet.has(hero.$id)}
+            convertedPrice={convertedPrices[hero.$id] ?? null}
+          />
         </div>
 
-        <button
-          onClick={() => scrollTo("right")}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/[0.08] text-foreground/40 transition-all hover:border-coral/30 hover:text-coral"
-          aria-label="Scroll right"
-        >
-          <ChevronRight className="size-4" />
-        </button>
+        {/* Side cards — one per row */}
+        {sidePair.map((event) => (
+          <SideCard
+            key={event.$id}
+            event={event}
+            initialWishlisted={wishlistSet.has(event.$id)}
+            convertedPrice={convertedPrices[event.$id] ?? null}
+          />
+        ))}
       </div>
 
-      {/* ─── Horizontal timeline ─── */}
-      <div
-        ref={scrollRef}
-        className="relative overflow-x-auto overflow-y-visible pb-6 scrollbar-none"
-        onScroll={() => {
-          // Update active month based on scroll position
-          if (!scrollRef.current) return;
-          const container = scrollRef.current;
-          const containerLeft = container.getBoundingClientRect().left;
-          for (const month of months) {
-            const el = document.getElementById(`month-${month.replace(/\s/g, "-")}`);
-            if (el) {
-              const elLeft = el.getBoundingClientRect().left;
-              if (elLeft >= containerLeft - 100) {
-                setActiveMonth(month);
-                break;
-              }
-            }
-          }
-        }}
-      >
-        {/* Timeline track line */}
-        <div className="absolute top-[18px] left-0 right-0 h-[2px] bg-foreground/[0.06]" />
-
-        <div className="flex gap-0">
-          {[...grouped.entries()].map(([month, monthEvents]) => (
-            <div
-              key={month}
-              id={`month-${month.replace(/\s/g, "-")}`}
-              className="flex shrink-0 flex-col"
-            >
-              {/* Month marker on timeline */}
-              <div className="relative mb-8 pl-6">
-                <div className="absolute left-6 top-[14px] size-3 rounded-full bg-coral shadow-[0_0_12px_rgba(var(--coral-rgb,191,255,0),0.4)]" />
-                <div className="absolute left-[22px] top-[22px] h-8 w-[2px] bg-gradient-to-b from-coral/40 to-transparent" />
-                <span className="ml-6 font-display text-[16px] tracking-wider text-foreground/70">
-                  {month}
-                </span>
-              </div>
-
-              {/* Event cards for this month */}
-              <div className="flex gap-4 px-6">
-                {monthEvents.map((event) => (
-                  <TimelineEventCard
-                    key={event.$id}
-                    event={event}
-                    wishlisted={wishlistSet.has(event.$id)}
-                    convertedPrice={convertedPrices[event.$id] ?? null}
-                  />
-                ))}
-              </div>
-            </div>
+      {/* ═══ Row 2+: Standard 3-column grid ═══ */}
+      {gridEvents.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {gridEvents.map((event) => (
+            <GridCard
+              key={event.$id}
+              event={event}
+              initialWishlisted={wishlistSet.has(event.$id)}
+              convertedPrice={convertedPrices[event.$id] ?? null}
+            />
           ))}
         </div>
-      </div>
-
-      {/* ─── Hint ─── */}
-      <p className="mt-4 text-center text-[11px] text-foreground/20">
-        ← Scroll to explore events across time →
-      </p>
+      )}
     </div>
   );
 }
 
-/** Individual event card for the timeline */
-function TimelineEventCard({
+/* ─────────────────────────────────────────────────
+   WishlistButton
+   ───────────────────────────────────────────────── */
+function WishlistButton({
+  eventId,
+  initialWishlisted,
+  className,
+}: {
+  eventId: string;
+  initialWishlisted: boolean;
+  className?: string;
+}) {
+  const [wishlisted, setWishlisted] = useState(initialWishlisted);
+  const [isPending, startTransition] = useTransition();
+
+  function handleClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    startTransition(async () => {
+      const result = await toggleWishlist(eventId);
+      if (!result.error) setWishlisted(result.wishlisted);
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={isPending}
+      className={`flex size-9 items-center justify-center rounded-full backdrop-blur-md transition-all ${
+        wishlisted
+          ? "bg-coral/20 text-coral"
+          : "bg-black/30 text-white/50 hover:bg-black/50 hover:text-white"
+      } ${isPending ? "animate-pulse" : ""} ${className ?? ""}`}
+      aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
+    >
+      <Heart className={`size-4 ${wishlisted ? "fill-current" : ""}`} />
+    </button>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   HeroCard — large 2/3 width, spans 2 rows
+   ───────────────────────────────────────────────── */
+function HeroCard({
   event,
-  wishlisted,
+  initialWishlisted,
   convertedPrice,
 }: {
   event: EventWithVenue;
-  wishlisted: boolean;
+  initialWishlisted: boolean;
+  convertedPrice: string | null;
+}) {
+  const isFree = event.isFree;
+  const hasPrice = !isFree && event.minPrice && event.minPrice > 0;
+
+  return (
+    <Link
+      href={`/events/${event.$id}`}
+      className="group relative block h-full overflow-hidden rounded-2xl"
+    >
+      <div className="relative h-full min-h-[320px] sm:min-h-[400px] lg:min-h-0">
+        {event.coverimageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={event.coverimageUrl}
+            alt={event.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]" />
+        )}
+
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
+
+        {/* Top bar */}
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
+          <span className="flex items-center gap-1.5 rounded-full bg-coral px-3 py-1 text-sm font-bold uppercase tracking-wider text-white dark:text-[#08080a]">
+            <Sparkles className="size-3" aria-hidden="true" />
+            Featured
+          </span>
+          <WishlistButton
+            eventId={event.$id}
+            initialWishlisted={initialWishlisted}
+          />
+        </div>
+
+        {/* Content — bottom */}
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+          {/* Genres */}
+          <div className="flex flex-wrap gap-1.5">
+            {event.genres.slice(0, 3).map((g) => (
+              <span
+                key={g}
+                className="rounded-full bg-white/10 px-2.5 py-0.5 text-sm font-medium uppercase tracking-wider text-white/60 backdrop-blur-sm"
+              >
+                {g}
+              </span>
+            ))}
+          </div>
+
+          <h2
+            className="mt-3 font-display text-[clamp(1.5rem,3vw,2.5rem)] leading-[0.95] text-white"
+            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}
+          >
+            {event.title}
+          </h2>
+
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-base text-white/60 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]">
+            <span className="flex items-center gap-1.5">
+              <Calendar className="size-3 text-coral" aria-hidden="true" />
+              {formatDate(event.startsAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </span>
+            {event.venue && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="size-3" aria-hidden="true" />
+                {event.venue.name}
+              </span>
+            )}
+          </div>
+
+          {/* Price + CTA */}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-base font-bold text-white">
+              {isFree ? (
+                <span className="text-emerald-400">Free Entry</span>
+              ) : hasPrice ? (
+                <span>
+                  From{" "}
+                  {convertedPrice ??
+                    formatCurrency(
+                      event.minPrice!,
+                      event.minPriceCurrency ?? "MYR"
+                    )}
+                </span>
+              ) : null}
+            </div>
+            <span className="flex items-center gap-1 text-base font-semibold text-coral transition-transform group-hover:translate-x-0.5">
+              <Ticket className="size-3.5" aria-hidden="true" />
+              Get Tickets
+              <ArrowRight className="size-3.5" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   SideCard — compact horizontal card for side column
+   ───────────────────────────────────────────────── */
+function SideCard({
+  event,
+  initialWishlisted,
+  convertedPrice,
+}: {
+  event: EventWithVenue;
+  initialWishlisted: boolean;
   convertedPrice: string | null;
 }) {
   const isFree = event.isFree;
   const hasPrice = !isFree && event.minPrice && event.minPrice > 0;
   const eventDate = new Date(event.startsAt);
   const day = eventDate.getDate();
-  const dayName = eventDate.toLocaleDateString("en-US", { weekday: "short" });
+  const monthShort = eventDate
+    .toLocaleDateString("en-US", { month: "short" })
+    .toUpperCase();
 
   return (
     <Link
       href={`/events/${event.$id}`}
-      className="group flex w-[280px] shrink-0 flex-col overflow-hidden rounded-2xl border border-foreground/[0.04] bg-card transition-all duration-300 hover:border-coral/20 hover:shadow-[0_8px_30px_rgba(var(--coral-rgb,191,255,0),0.08)] sm:w-[300px]"
+      className="event-card group flex overflow-hidden rounded-2xl border border-border bg-card"
+    >
+      {/* Image — left side */}
+      <div className="relative w-[120px] shrink-0 overflow-hidden sm:w-[140px]">
+        {event.coverimageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={event.coverimageUrl}
+            alt={event.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-muted/80 text-2xl text-muted-foreground/50">
+            ♪
+          </div>
+        )}
+        {/* Date overlay */}
+        <div className="absolute bottom-2 left-2 flex flex-col items-center rounded-lg bg-background/80 px-2 py-1 backdrop-blur-sm">
+          <span className="text-[9px] font-bold leading-none text-coral">
+            {monthShort}
+          </span>
+          <span className="text-[16px] font-bold leading-tight text-foreground">
+            {day}
+          </span>
+        </div>
+      </div>
+
+      {/* Content — right side */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between p-3.5">
+        <div>
+          <h3 className="line-clamp-2 text-base font-bold leading-tight text-foreground transition-colors group-hover:text-coral">
+            {event.title}
+          </h3>
+          <p className="mt-1.5 flex items-center gap-1 truncate text-sm text-muted-foreground">
+            <MapPin className="size-3 shrink-0" aria-hidden="true" />
+            {event.venue?.name ?? "TBA"}
+          </p>
+        </div>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="text-base font-semibold tabular-nums">
+            {isFree ? (
+              <span className="text-emerald-400">Free</span>
+            ) : hasPrice ? (
+              <span>
+                {convertedPrice ??
+                  formatCurrency(
+                    event.minPrice!,
+                    event.minPriceCurrency ?? "MYR"
+                  )}
+              </span>
+            ) : (
+              <span className="text-muted-foreground">TBA</span>
+            )}
+          </span>
+          {event.genres[0] && (
+            <span className="genre-pill !px-2 !py-0.5 !text-[8px]">
+              {event.genres[0]}
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   GridCard — standard card, 3-per-row
+   ───────────────────────────────────────────────── */
+function GridCard({
+  event,
+  initialWishlisted,
+  convertedPrice,
+}: {
+  event: EventWithVenue;
+  initialWishlisted: boolean;
+  convertedPrice: string | null;
+}) {
+  const isFree = event.isFree;
+  const hasPrice = !isFree && event.minPrice && event.minPrice > 0;
+  const eventDate = new Date(event.startsAt);
+  const day = eventDate.getDate();
+  const monthShort = eventDate.toLocaleDateString("en-US", { month: "short" });
+
+  return (
+    <Link
+      href={`/events/${event.$id}`}
+      className="event-card group block overflow-hidden rounded-2xl border border-border bg-card"
     >
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden">
@@ -204,67 +358,77 @@ function TimelineEventCard({
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-foreground/[0.03] text-4xl text-foreground/[0.04]">♪</div>
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted/80 to-muted/50 text-3xl text-muted-foreground/50">
+            ♪
+          </div>
         )}
 
-        {/* Date badge — overlaid top-left */}
+        {/* Date badge */}
         <div className="absolute left-3 top-3 flex flex-col items-center rounded-xl bg-background/80 px-2.5 py-1.5 backdrop-blur-sm">
-          <span className="text-[10px] font-bold uppercase leading-none text-coral">{dayName}</span>
-          <span className="text-[20px] font-bold leading-tight text-foreground">{day}</span>
+          <span className="text-sm font-bold uppercase leading-none text-coral">
+            {monthShort}
+          </span>
+          <span className="text-[18px] font-bold leading-tight text-foreground">
+            {day}
+          </span>
         </div>
 
-        {/* Heart — top-right */}
-        <button
-          className={`absolute right-3 top-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-all ${
-            wishlisted
-              ? "bg-coral/20 text-coral"
-              : "bg-background/40 text-foreground/50 hover:text-foreground"
-          }`}
-          onClick={(e) => e.preventDefault()}
-          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          <Heart className={`size-4 ${wishlisted ? "fill-current" : ""}`} />
-        </button>
+        {/* Free badge */}
+        {isFree && (
+          <div className="absolute bottom-3 left-3 rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-sm font-bold uppercase tracking-wide text-white">
+            Free
+          </div>
+        )}
 
-        {/* Gradient overlay bottom */}
+        {/* Heart */}
+        <WishlistButton
+          eventId={event.$id}
+          initialWishlisted={initialWishlisted}
+          className="absolute right-3 top-3"
+        />
+
+        {/* Gradient */}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="text-[14px] font-bold leading-tight text-foreground line-clamp-2 group-hover:text-coral transition-colors">
+      <div className="space-y-2 p-4 pt-3">
+        <h3 className="line-clamp-2 text-base font-bold leading-tight text-foreground transition-colors group-hover:text-coral">
           {event.title}
         </h3>
 
-        {/* Time + Venue */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-[12px] text-coral/80">
-            <Calendar className="size-3" />
-            {formatDate(event.startsAt, { timeStyle: "short" })}
-          </div>
-          {event.venue && (
-            <div className="flex items-center gap-1.5 text-[12px] text-foreground/40">
-              <MapPin className="size-3" />
-              <span className="truncate">{event.venue.name}</span>
-            </div>
-          )}
+        <div className="flex items-center gap-1.5 text-base text-coral/80">
+          <Calendar className="size-3" aria-hidden="true" />
+          {formatDate(event.startsAt, {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
         </div>
 
-        {/* Price + Genres */}
-        <div className="mt-auto flex items-end justify-between pt-2">
-          <div className="text-[13px] font-semibold">
+        {event.venue && (
+          <div className="flex items-center gap-1.5 text-base text-muted-foreground">
+            <MapPin className="size-3" aria-hidden="true" />
+            <span className="truncate">{event.venue.name}</span>
+          </div>
+        )}
+
+        {/* Price + genres */}
+        <div className="flex items-center justify-between border-t border-border pt-2.5">
+          <div className="text-base font-semibold">
             {isFree ? (
               <span className="text-emerald-400">Free</span>
             ) : hasPrice ? (
-              <span>
-                {formatCurrency(event.minPrice!, event.minPriceCurrency ?? "MYR")}
-                {convertedPrice && (
-                  <span className="ml-1 text-[10px] font-normal text-foreground/30">
-                    {convertedPrice}
-                  </span>
-                )}
+              <span className="tabular-nums">
+                From{" "}
+                {convertedPrice ??
+                  formatCurrency(
+                    event.minPrice!,
+                    event.minPriceCurrency ?? "MYR"
+                  )}
               </span>
-            ) : null}
+            ) : (
+              <span className="text-muted-foreground">Price TBA</span>
+            )}
           </div>
           <div className="flex gap-1">
             {event.genres.slice(0, 2).map((g) => (

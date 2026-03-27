@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://riffoff.com";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://riffoff.live";
 const SITE_NAME = "RiffOff";
 const DEFAULT_DESCRIPTION =
   "Discover music events, buy tickets, and connect with artists. The platform for small-to-mid scale music events.";

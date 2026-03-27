@@ -16,12 +16,12 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
           <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-emerald-400" />
           <div className="min-w-0 flex-1">
             <h3 className="font-display text-[20px] text-emerald-400">Checked In</h3>
-            <div className="mt-2 space-y-1 text-[14px]">
+            <div className="mt-2 space-y-1 text-base">
               <p className="font-bold text-foreground">{result.ticket.attendeeName}</p>
               <p className="text-muted-foreground">
                 {result.ticket.tierName} · {result.ticket.ticketCode}
               </p>
-              <p className="text-[12px] text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {new Date(result.ticket.checkedInAt).toLocaleTimeString()}
               </p>
             </div>
@@ -51,13 +51,13 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
           <h3 className={`font-display text-[20px] ${textColor}`}>
             {isWarning ? "Already Scanned" : "Invalid Ticket"}
           </h3>
-          <p className="mt-2 text-[14px] text-muted-foreground">{result.reason}</p>
-          <p className="mt-1 text-[12px] uppercase text-muted-foreground">{result.code}</p>
+          <p className="mt-2 text-base text-muted-foreground">{result.reason}</p>
+          <p className="mt-1 text-base uppercase text-muted-foreground">{result.code}</p>
         </div>
       </div>
       <button
         onClick={onDismiss}
-        className={`mt-4 w-full rounded-full py-2.5 text-[12px] font-bold uppercase ${
+        className={`mt-4 w-full rounded-full py-2.5 text-base font-bold uppercase ${
           isWarning
             ? "bg-amber-500 text-black hover:bg-amber-400"
             : "bg-red-500 text-white hover:bg-red-400"

@@ -6,6 +6,8 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { notifyApplicationStatusChanged } from "@/actions/notifications";
+import { sendApplicationStatusEmail } from "@/lib/email";
+import { serialize } from "@/lib/utils";
 import type {
   ApplicationDoc,
   ApplicationStatus,
@@ -70,10 +72,10 @@ export async function getEventApplications(
     }
   }
 
-  return applications.map((app) => ({
+  return serialize(applications.map((app) => ({
     ...app,
     artist: profileMap.get(app.artistId) ?? null,
-  }));
+  })));
 }
 
 /** Valid status transitions */
@@ -154,6 +156,21 @@ export async function updateApplicationStatus(
         application.eventId,
         newStatus,
       );
+
+      // Send email (non-blocking)
+      try {
+        const { users } = await createAdminClient();
+        const artistUser = await users.get(application.artistId);
+        if (artistUser.email) {
+          void sendApplicationStatusEmail(artistUser.email, {
+            userName: artistUser.name || "",
+            eventTitle: event.title,
+            status: newStatus,
+          });
+        }
+      } catch {
+        // Non-critical
+      }
     }
 
     revalidatePath(`/dashboard/events/${application.eventId}/applications`);

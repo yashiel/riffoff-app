@@ -1,13 +1,15 @@
 "use server";
 
+import { randomInt } from "crypto";
 import { ID, OAuthProvider, Query } from "node-appwrite";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS, SESSION_COOKIE_NAME } from "@/lib/appwrite/config";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { ensureProfile } from "./profiles";
+import { checkAuthRateLimit } from "@/lib/security/rate-limit";
 import type { VerificationCodeDoc } from "@/lib/appwrite/types";
 
 const PENDING_COOKIE = "riffoff-pending-verification";
@@ -20,11 +22,15 @@ const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+/** Only these roles can be selected during signup. "admin" is BLOCKED. */
+const ALLOWED_SIGNUP_ROLES = ["attendee", "artist", "organiser"] as const;
+
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required").max(120),
   email: z.email(),
   password: z.string().min(8, "Password must be at least 8 characters"),
   termsAccepted: z.literal("on", { message: "You must accept the terms" }),
+  role: z.enum(ALLOWED_SIGNUP_ROLES).default("attendee"),
 });
 
 const verifySchema = z.object({
@@ -53,6 +59,13 @@ export async function login(
   }
 
   const { email, password } = parsed.data;
+
+  // Rate limit by email to prevent brute force
+  const rateLimitResult = checkAuthRateLimit(email);
+  if (!rateLimitResult.allowed) {
+    const retryMinutes = Math.ceil(rateLimitResult.retryAfterMs / 60000);
+    return { error: `Too many login attempts. Try again in ${retryMinutes} minute${retryMinutes > 1 ? "s" : ""}.` };
+  }
 
   try {
     const { account } = await createAdminClient();
@@ -88,13 +101,14 @@ export async function register(
     email: formData.get("email"),
     password: formData.get("password"),
     termsAccepted: formData.get("termsAccepted"),
+    role: formData.get("role") || "attendee",
   });
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  const { name, email, password } = parsed.data;
+  const { name, email, password, role } = parsed.data;
 
   try {
     const { account, databases } = await createAdminClient();
@@ -121,10 +135,11 @@ export async function register(
       },
     );
 
-    // Send verification email
+    // Send verification email — don't block registration if email fails
     const emailResult = await sendVerificationEmail(email, code, name);
     if (!emailResult.success) {
-      return { error: emailResult.error ?? "Failed to send verification email" };
+      console.error("[AUTH] Email send failed during registration:", emailResult.error);
+      // Still proceed — user can request a resend on the verify page
     }
 
     // Store pending verification data in httpOnly cookie
@@ -134,6 +149,7 @@ export async function register(
       userId: user.$id,
       email,
       name,
+      role,
     }), {
       path: "/",
       httpOnly: true,
@@ -165,6 +181,13 @@ export async function verifyOTP(
   const parsed = verifySchema.safeParse({ email, code });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+
+  // Rate limit OTP verification to prevent brute force
+  const rateLimitResult = checkAuthRateLimit(`otp:${email}`);
+  if (!rateLimitResult.allowed) {
+    const retryMinutes = Math.ceil(rateLimitResult.retryAfterMs / 60000);
+    return { error: `Too many verification attempts. Try again in ${retryMinutes} minute${retryMinutes > 1 ? "s" : ""}.` };
   }
 
   const { databases, account } = await createAdminClient();
@@ -238,12 +261,17 @@ export async function verifyOTP(
 
   let userId = verificationDoc.userId;
   let userName: string | undefined;
+  let signupRole: "attendee" | "artist" | "organiser" = "attendee";
 
   if (pendingCookie) {
     try {
       const pending = JSON.parse(pendingCookie);
       userId = pending.userId;
       userName = pending.name;
+      // Only allow safe roles — block any tampering (e.g. "admin")
+      if (pending.role === "artist" || pending.role === "organiser") {
+        signupRole = pending.role;
+      }
     } catch {}
   }
 
@@ -260,8 +288,11 @@ export async function verifyOTP(
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    // Create profile
-    await ensureProfile(userId, userName);
+    // Create profile with signup role
+    await ensureProfile(userId, userName, signupRole);
+
+    // Send welcome email (non-blocking)
+    void sendWelcomeEmail(email, userName || "");
 
     // Log consent for terms acceptance
     await databases.createDocument(
@@ -395,8 +426,10 @@ export async function resendOTP(
 
 export async function loginWithProvider(provider: "google" | "facebook") {
   const { account } = await createAdminClient();
-  const headerStore = await headers();
-  const origin = headerStore.get("origin") || process.env.NEXT_PUBLIC_APP_URL;
+
+  // Always use the configured app URL — never trust the Origin header
+  // to prevent open redirect via attacker-controlled origin
+  const origin = process.env.NEXT_PUBLIC_APP_URL;
 
   const oauthProvider =
     provider === "google" ? OAuthProvider.Google : OAuthProvider.Facebook;
@@ -431,5 +464,5 @@ export async function logout() {
 // ─── Helpers ─────────
 
 function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return randomInt(100000, 999999).toString();
 }

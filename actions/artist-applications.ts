@@ -7,6 +7,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { notifyApplicationSubmitted } from "@/actions/notifications";
 import { getProfileByUserId } from "@/actions/profiles";
+import { serialize } from "@/lib/utils";
 import type { ApplicationDoc, EventDoc, VenueDoc } from "@/lib/appwrite/types";
 
 // ─── Types ───────────────────────────────────────────
@@ -216,12 +217,12 @@ export async function getMyApplications(): Promise<ArtistApplicationWithEvent[]>
     }
   }
 
-  return applications.map((app) => {
+  return serialize(applications.map((app) => {
     const event = eventMap.get(app.eventId) ?? null;
     return {
       ...app,
       event,
       venue: event ? venueMap.get(event.venueId) ?? null : null,
     };
-  });
+  }));
 }

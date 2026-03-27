@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
   compress: true,
   // Strict mode for catching issues early
   reactStrictMode: true,
+  // Allow larger Server Action bodies for file uploads (default 1MB)
+  serverExternalPackages: [],
   // Power header reveals framework — disable in production
   poweredByHeader: false,
   // Optimize package imports

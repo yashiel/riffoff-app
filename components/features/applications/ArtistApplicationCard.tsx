@@ -33,15 +33,15 @@ export function ArtistApplicationCard({ application }: ArtistApplicationCardProp
           {application.event ? (
             <Link
               href={`/events/${application.eventId}`}
-              className="text-[15px] font-bold text-white hover:text-coral transition-colors"
+              className="text-base font-bold text-white hover:text-coral transition-colors"
             >
               {application.event.title}
             </Link>
           ) : (
-            <span className="text-[15px] font-bold text-foreground">Unknown Event</span>
+            <span className="text-base font-bold text-foreground">Unknown Event</span>
           )}
 
-          <div className="mt-1 flex items-center gap-3 text-[13px] text-muted-foreground">
+          <div className="mt-1 flex items-center gap-3 text-base text-muted-foreground">
             {application.event && (
               <span className="flex items-center gap-1">
                 <Calendar className="size-3 text-coral" />
@@ -60,18 +60,18 @@ export function ArtistApplicationCard({ application }: ArtistApplicationCardProp
       </div>
 
       {application.notes && (
-        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           {application.notes}
         </p>
       )}
 
-      <div className="mt-3 flex items-center justify-between text-[12px] text-muted-foreground">
+      <div className="mt-3 flex items-center justify-between text-base text-muted-foreground">
         <span>Applied {formatDate(application.submittedAt, { dateStyle: "medium" })}</span>
         {canWithdraw && (
           <button
             onClick={handleWithdraw}
             disabled={isPending}
-            className="inline-flex items-center gap-1 rounded bg-red-500/10 px-3 py-1 text-[11px] font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+            className="inline-flex items-center gap-1 rounded bg-red-500/10 px-3 py-1 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
           >
             <X className="size-3" />
             {isPending ? "Withdrawing..." : "Withdraw"}

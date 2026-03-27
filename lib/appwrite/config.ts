@@ -17,6 +17,12 @@ export const COLLECTIONS = {
   USER_CONSENTS: "user-consents",
   DELETION_REQUESTS: "deletion-requests",
   VERIFICATION_CODES: "verification-codes",
+  GATES: "gates",
+  GATE_SESSIONS: "gate-sessions",
+  GATE_CHECKINS: "gate-checkins",
+  SIGNING_KEYS: "signing-keys",
+  GATE_ACCESS_PINS: "gate-access-pins",
+  GATE_MESSAGES: "gate-messages",
 } as const;
 
 export const BUCKETS = {

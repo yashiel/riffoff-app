@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { createPayPalOrder } from "@/lib/payments/paypal/orders";
-import { createAdminClient } from "@/lib/appwrite/server";
+import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import type { OrderDoc } from "@/lib/appwrite/types";
 
@@ -11,6 +11,13 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify user is authenticated
+    const sessionClient = await createSessionClient();
+    if (!sessionClient) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const user = await sessionClient.account.get();
+
     const body = await request.json();
     const parsed = schema.safeParse(body);
 
@@ -25,11 +32,21 @@ export async function POST(request: NextRequest) {
       parsed.data.orderId,
     )) as unknown as OrderDoc;
 
+    // Verify the order belongs to the authenticated user
+    if (order.userId !== user.$id) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
     if (order.status !== "pending") {
       return NextResponse.json(
         { error: "Order is not pending" },
         { status: 400 },
       );
+    }
+
+    // If a PayPal order was already created for this order, reuse it
+    if (order.providerRef && !order.providerRef.startsWith("pending_")) {
+      return NextResponse.json({ id: order.providerRef });
     }
 
     const paypalOrder = await createPayPalOrder({

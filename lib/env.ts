@@ -47,6 +47,9 @@ const envSchema = z.object({
 
   // CSRF — minimum 32 chars for HMAC security
   CSRF_SECRET: z.string().min(32).optional(),
+
+  // Gate scanner
+  GATE_KEY_ENCRYPTION_KEY: z.string().min(32).optional(),
 });
 
 // ─── Server-only secret leak detection ───────────────
@@ -64,6 +67,7 @@ const SERVER_ONLY_PREFIXES = [
   "CSRF_SECRET",
   "RESEND_API_KEY",
   "TWILIO_AUTH_TOKEN",
+  "GATE_KEY_ENCRYPTION_KEY",
 ];
 
 function checkNoServerSecretLeaks() {

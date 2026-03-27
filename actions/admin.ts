@@ -164,7 +164,9 @@ export async function changeUserRole(
         entityType: "profile",
         entityId: profileId,
         metadata: JSON.stringify({
+          actorName: auth.profile.displayName ?? user.name ?? "Admin",
           targetUserId: target.userId,
+          targetName: target.displayName ?? "Unknown user",
           previousRole: target.role,
           newRole,
         }),
@@ -269,6 +271,13 @@ export async function adminCancelEvent(
       status: "cancelled",
     });
 
+    // Fetch event title for audit context
+    let eventTitle = "Unknown event";
+    try {
+      const ev = await databases.getDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId);
+      eventTitle = (ev as unknown as { title: string }).title ?? eventTitle;
+    } catch { /* use fallback */ }
+
     await databases.createDocument(
       DATABASE_ID,
       COLLECTIONS.AUDIT_LOGS,
@@ -278,7 +287,11 @@ export async function adminCancelEvent(
         action: "admin.event_cancelled",
         entityType: "event",
         entityId: eventId,
-        metadata: JSON.stringify({ reason }),
+        metadata: JSON.stringify({
+          actorName: auth.profile.displayName ?? user.name ?? "Admin",
+          title: eventTitle,
+          reason,
+        }),
       },
     );
 
@@ -291,10 +304,20 @@ export async function adminCancelEvent(
 
 // ─── Audit Log ───────────────────────────────────────
 
+export interface AuditLogRow {
+  id: string;
+  actorId: string | null;
+  action: string;
+  entityType: string;
+  entityId: string;
+  metadata: string | null;
+  createdAt: string;
+}
+
 export async function getAuditLogs(
   page = 1,
   actionFilter?: string,
-): Promise<{ logs: AuditLogDoc[]; total: number }> {
+): Promise<{ logs: AuditLogRow[]; total: number }> {
   const auth = await requireAdmin();
   if (!auth) return { logs: [], total: 0 };
 
@@ -309,7 +332,7 @@ export async function getAuditLogs(
   ];
 
   if (actionFilter) {
-    queries.push(Query.search("action", actionFilter));
+    queries.push(Query.startsWith("action", actionFilter));
   }
 
   const result = await databases.listDocuments(
@@ -318,8 +341,18 @@ export async function getAuditLogs(
     queries,
   );
 
-  return {
-    logs: result.documents as unknown as AuditLogDoc[],
-    total: result.total,
-  };
+  const logs: AuditLogRow[] = result.documents.map((doc) => {
+    const d = doc as unknown as AuditLogDoc;
+    return {
+      id: d.$id,
+      actorId: d.actorId,
+      action: d.action,
+      entityType: d.entityType,
+      entityId: d.entityId,
+      metadata: d.metadata,
+      createdAt: d.$createdAt,
+    };
+  });
+
+  return { logs, total: result.total };
 }

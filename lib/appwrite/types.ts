@@ -104,6 +104,7 @@ export interface EventDoc extends Models.Document {
   status: EventStatus;
   capacity: number;
   coverimageUrl: string | null;
+  videoUrl: string | null;
   isFree: boolean;
 }
 

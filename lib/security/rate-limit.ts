@@ -81,8 +81,8 @@ export function checkRateLimit(
 export function checkAuthRateLimit(identifier: string): RateLimitResult {
   return checkRateLimit(identifier, {
     prefix: "auth",
-    maxRequests: 5,
-    windowMs: 15 * 60 * 1000,
+    maxRequests: 10,
+    windowMs: 5 * 60 * 1000,
   });
 }
 

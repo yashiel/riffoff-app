@@ -42,14 +42,14 @@ export function EventCarousel({ events, title, subtitle }: EventCarouselProps) {
         <div className="mb-4 flex items-end justify-between">
           <div>
             {title && <h2 className="font-display text-[20px]">{title}</h2>}
-            {subtitle && <p className="mt-0.5 text-[12px] text-foreground/30">{subtitle}</p>}
+            {subtitle && <p className="mt-0.5 text-base text-muted-foreground/80">{subtitle}</p>}
           </div>
           {/* Arrow controls */}
           <div className="flex gap-1.5">
             <button
               onClick={() => scroll("left")}
               disabled={!canScrollLeft}
-              className="flex size-8 items-center justify-center rounded-lg border border-foreground/[0.08] bg-foreground/[0.03] text-foreground/40 transition-all hover:bg-foreground/[0.06] hover:text-foreground/80 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-foreground/40"
+              className="flex size-8 items-center justify-center rounded-lg border border-border bg-muted/80 text-muted-foreground transition-all hover:bg-muted hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
               aria-label="Scroll left"
             >
               <ChevronLeft className="size-4" />
@@ -57,7 +57,7 @@ export function EventCarousel({ events, title, subtitle }: EventCarouselProps) {
             <button
               onClick={() => scroll("right")}
               disabled={!canScrollRight}
-              className="flex size-8 items-center justify-center rounded-lg border border-foreground/[0.08] bg-foreground/[0.03] text-foreground/40 transition-all hover:bg-foreground/[0.06] hover:text-foreground/80 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-foreground/40"
+              className="flex size-8 items-center justify-center rounded-lg border border-border bg-muted/80 text-muted-foreground transition-all hover:bg-muted hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
               aria-label="Scroll right"
             >
               <ChevronRight className="size-4" />

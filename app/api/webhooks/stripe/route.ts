@@ -41,9 +41,7 @@ export async function POST(request: NextRequest) {
         session.id,
       );
 
-      if (alreadyProcessed) {
-        console.log(`Stripe webhook: order ${orderId} already processed (idempotent)`);
-      }
+      // alreadyProcessed check ensures idempotent webhook handling
       break;
     }
 

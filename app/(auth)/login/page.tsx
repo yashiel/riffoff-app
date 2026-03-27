@@ -15,7 +15,7 @@ export default function LoginPage() {
     <div>
       <div className="text-center">
         <h1 className="font-display text-[36px]">Welcome back</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">
+        <p className="mt-2 text-base text-muted-foreground">
           Sign in to your RiffOff account
         </p>
       </div>
@@ -24,12 +24,12 @@ export default function LoginPage() {
         {/* OAuth */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <form action={() => loginWithProvider("google")}>
-            <button type="submit" className="btn-ghost w-full !text-[13px]">
+            <button type="submit" className="btn-ghost w-full !text-base">
               Google
             </button>
           </form>
           <form action={() => loginWithProvider("facebook")}>
-            <button type="submit" className="btn-ghost w-full !text-[13px]">
+            <button type="submit" className="btn-ghost w-full !text-base">
               Facebook
             </button>
           </form>
@@ -40,7 +40,7 @@ export default function LoginPage() {
             <span className="w-full border-t border-[var(--border)]" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-background px-3 text-[12px] uppercase tracking-wider text-muted-foreground">
+            <span className="bg-background px-3 text-base uppercase tracking-wider text-muted-foreground">
               Or continue with email
             </span>
           </div>
@@ -50,14 +50,14 @@ export default function LoginPage() {
           {state.error && (
             <div
               role="alert"
-              className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400"
+              className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-base text-red-400"
             >
               {state.error}
             </div>
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-[13px] text-muted-foreground">
+            <Label htmlFor="email" className="text-base text-muted-foreground">
               Email
             </Label>
             <input
@@ -67,12 +67,12 @@ export default function LoginPage() {
               autoComplete="email"
               required
               placeholder="you@example.com"
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-[13px] text-muted-foreground">
+            <Label htmlFor="password" className="text-base text-muted-foreground">
               Password
             </Label>
             <input
@@ -83,7 +83,7 @@ export default function LoginPage() {
               required
               minLength={8}
               placeholder="Enter your password"
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
             />
           </div>
 
@@ -97,7 +97,7 @@ export default function LoginPage() {
         </form>
       </div>
 
-      <p className="mt-6 text-center text-[13px] text-muted-foreground">
+      <p className="mt-6 text-center text-base text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link href="/register" className="text-coral hover:underline">
           Sign up

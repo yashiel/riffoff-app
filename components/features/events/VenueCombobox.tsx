@@ -81,7 +81,7 @@ export function VenueCombobox({ venues, defaultVenueId, onChange }: VenueCombobo
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
           placeholder="Search or type a new venue..."
-          className="w-full rounded bg-[var(--input)] border border-[var(--border)] py-2.5 pl-10 pr-10 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+          className="w-full rounded bg-[var(--input)] border border-[var(--border)] py-2.5 pl-10 pr-10 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           autoComplete="off"
         />
         <button
@@ -101,25 +101,25 @@ export function VenueCombobox({ venues, defaultVenueId, onChange }: VenueCombobo
               key={venue.$id}
               type="button"
               onClick={() => selectVenue(venue)}
-              className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-[13px] transition-colors hover:bg-foreground/[0.05] ${
-                selectedId === venue.$id ? "bg-foreground/[0.05] text-coral" : "text-foreground"
+              className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-base transition-colors hover:bg-muted ${
+                selectedId === venue.$id ? "bg-muted text-coral" : "text-foreground"
               }`}
             >
               <MapPin className="size-3.5 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{venue.name}</p>
-                <p className="truncate text-[11px] text-muted-foreground">{venue.address}</p>
+                <p className="truncate text-sm text-muted-foreground">{venue.address}</p>
               </div>
             </button>
           ))}
 
           {showCreateOption && (
             <>
-              {filtered.length > 0 && <div className="mx-3 my-1 border-t border-foreground/[0.06]" />}
+              {filtered.length > 0 && <div className="mx-3 my-1 border-t border-border" />}
               <button
                 type="button"
                 onClick={createNew}
-                className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-[13px] text-coral transition-colors hover:bg-coral/[0.05]"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-base text-coral transition-colors hover:bg-coral/[0.05]"
               >
                 <Plus className="size-3.5 shrink-0" />
                 <span>Create &ldquo;{query.trim()}&rdquo; as new venue</span>
@@ -131,7 +131,7 @@ export function VenueCombobox({ venues, defaultVenueId, onChange }: VenueCombobo
 
       {/* Status indicator */}
       {query.trim() && (
-        <p className="mt-1 text-[11px] text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           {selectedId ? (
             <span className="text-emerald-400/60">✓ Existing venue selected</span>
           ) : query.trim().length > 2 ? (

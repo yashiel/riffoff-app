@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Calendar, MapPin, Shield } from "lucide-react";
+import { ArrowLeft, Shield, CheckCircle2, Clock } from "lucide-react";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
-import { StatusBadge } from "@/components/features/shared/StatusBadge";
 import { QRDisplay } from "@/components/features/tickets/QRDisplay";
+import { WalletButtons } from "@/components/features/tickets/WalletButtons";
 import { formatDate } from "@/lib/utils";
 import type { TicketDoc, EventDoc, TicketTierDoc, VenueDoc } from "@/lib/appwrite/types";
 
@@ -21,14 +20,12 @@ export async function generateMetadata({ params }: TicketDetailPageProps) {
 export default async function TicketDetailPage({ params }: TicketDetailPageProps) {
   const { ticketId } = await params;
 
-  // Auth check
   const sessionClient = await createSessionClient();
   if (!sessionClient) notFound();
   const user = await sessionClient.account.get();
 
   const { databases } = await createAdminClient();
 
-  // Fetch ticket
   let ticket: TicketDoc;
   try {
     ticket = (await databases.getDocument(
@@ -40,10 +37,8 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
     notFound();
   }
 
-  // Ownership check — return 404 (AUTHZ-04)
   if (ticket.ownerId !== user.$id) notFound();
 
-  // Fetch related data
   const [eventResult, tierResult] = await Promise.all([
     databases.getDocument(DATABASE_ID, COLLECTIONS.EVENTS, ticket.eventId).catch(() => null),
     ticket.tierId
@@ -64,102 +59,173 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
   const isActive = ticket.status === "active";
   const isCheckedIn = !!ticket.checkedInAt;
 
+  const eventDate = event ? new Date(event.startsAt) : null;
+  const day = eventDate?.getDate();
+  const monthShort = eventDate?.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+  const yearFull = eventDate?.getFullYear();
+  const weekdayShort = eventDate?.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+  const time = eventDate?.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
+  // Venue city extraction (e.g. "National Stadium Singapore" → "Singapore")
+  const venueCity = venue?.address?.split(",").pop()?.trim() ?? "";
+  const venueName = venue?.name ?? "";
+
   return (
-    <div className="mx-auto max-w-lg">
-      {/* Back button */}
+    <div className="mx-auto w-full max-w-[480px]">
+      {/* Back */}
       <Link
         href="/dashboard/tickets"
-        className="mb-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-1.5 text-base text-muted-foreground transition-colors hover:text-foreground sm:mb-8"
       >
         <ArrowLeft className="size-3.5" />
         Back to tickets
       </Link>
 
-      {/* Ticket card */}
-      <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[#242424]">
-        {/* Event image banner */}
-        <div className="relative aspect-[21/9] overflow-hidden">
-          {event?.coverimageUrl ? (
-            <Image
-              src={event.coverimageUrl}
-              alt={event?.title ?? "Event"}
-              fill
-              className="object-cover"
-            />
+      {/* ── Boarding Pass ── */}
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:rounded-3xl">
+
+        {/* ── Header bar ── */}
+        <div className="flex items-center justify-between border-b border-border bg-coral/5 px-4 py-3 dark:bg-coral/10 sm:px-6">
+          <div className="flex items-center gap-2">
+            <span className="font-[family-name:var(--font-display)] text-base font-extrabold tracking-tight sm:text-base">
+              <span className="text-coral">Riff</span>
+              <span className="text-muted-foreground">Off</span>
+            </span>
+            <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground/80">
+              Event Pass
+            </span>
+          </div>
+          {/* Status chip */}
+          {isCheckedIn ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+              <CheckCircle2 className="size-3" />
+              Used
+            </span>
+          ) : isActive ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-sm font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-40" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
+              </span>
+              Valid
+            </span>
           ) : (
-            <div className="flex h-full items-center justify-center bg-[#2a2a2a]">
-              <span className="text-5xl opacity-10">♪</span>
-            </div>
+            <span className="rounded-full bg-muted/80 px-2.5 py-0.5 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+              {ticket.status}
+            </span>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#242424] via-transparent to-transparent" />
         </div>
 
-        <div className="p-6">
-          {/* Status */}
-          <div className="flex items-center justify-between">
-            <StatusBadge status={isCheckedIn ? "checked in" : ticket.status} />
-            {tier && (
-              <span className="text-[13px] font-medium text-muted-foreground">
-                {tier.name}
-              </span>
-            )}
-          </div>
+        {/* ── Main body ── */}
+        <div className="px-4 pb-0 pt-4 sm:px-6 sm:pt-5">
 
-          {/* Event title */}
-          <h1 className="mt-3 font-display text-[30px]">
+          {/* Event name — the hero */}
+          <h1 className="font-display text-lg leading-tight sm:text-xl">
             {event?.title ?? "Event"}
           </h1>
 
-          {/* Date + Venue */}
-          <div className="mt-3 space-y-1.5">
-            {event && (
-              <div className="flex items-center gap-2">
-                <Calendar className="size-3.5 text-coral" />
-                <span className="text-[14px] text-coral">
-                  {formatDate(event.startsAt, { dateStyle: "full", timeStyle: "short" })}
-                </span>
-              </div>
-            )}
-            {venue && (
-              <div className="flex items-center gap-2">
-                <MapPin className="size-3.5 text-muted-foreground" />
-                <span className="text-[14px] text-muted-foreground">
-                  {venue.name}
-                </span>
-              </div>
-            )}
+          {/* ── Boarding pass grid: FROM → TO style ── */}
+          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-5">
+            {/* Date */}
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Date</p>
+              <p className="mt-0.5 text-base font-bold tabular-nums text-foreground sm:text-[17px]">
+                {day} {monthShort} {yearFull}
+              </p>
+              <p className="text-sm text-muted-foreground">{weekdayShort}</p>
+            </div>
+
+            {/* Time */}
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Time</p>
+              <p className="mt-0.5 text-base font-bold text-foreground sm:text-[17px]">{time}</p>
+              <p className="text-sm text-muted-foreground">Doors open</p>
+            </div>
+
+            {/* Venue */}
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Venue</p>
+              <p className="mt-0.5 truncate text-base font-semibold text-foreground sm:text-base">{venueName}</p>
+              {venueCity && <p className="truncate text-sm text-muted-foreground">{venueCity}</p>}
+            </div>
+
+            {/* Tier / Section */}
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Section</p>
+              <p className="mt-0.5 text-base font-semibold text-foreground sm:text-base">{tier?.name ?? "General"}</p>
+              <p className="text-sm text-muted-foreground">Admission</p>
+            </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-6 border-t border-dashed border-[var(--border)]" />
+          {/* Ticket code bar */}
+          <div className="mt-4 flex items-center justify-between rounded-lg bg-muted/80 px-3 py-2 sm:mt-5 sm:px-4">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Ticket</p>
+              <p className="font-mono text-base font-bold tracking-widest text-foreground sm:text-base">
+                {ticket.ticketCode}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Passenger</p>
+              <p className="max-w-[120px] truncate text-base font-semibold text-foreground sm:max-w-[160px] sm:text-base">
+                {user.name || "Ticket Holder"}
+              </p>
+            </div>
+          </div>
+        </div>
 
-          {/* QR Code or status message */}
+        {/* ── Tear perforation ── */}
+        <div className="relative my-4 sm:my-5">
+          <div className="absolute -left-3 top-1/2 size-6 -translate-y-1/2 rounded-full bg-background" />
+          <div className="absolute -right-3 top-1/2 size-6 -translate-y-1/2 rounded-full bg-background" />
+          <div className="mx-6 border-t border-dashed border-border" />
+        </div>
+
+        {/* ── QR stub ── */}
+        <div className="px-4 pb-5 sm:px-6 sm:pb-6">
           {isActive && !isCheckedIn ? (
             <QRDisplay ticketId={ticket.$id} ticketCode={ticket.ticketCode} />
           ) : isCheckedIn ? (
-            <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-6 text-center">
-              <p className="text-[16px] font-bold text-blue-400">
-                Checked in
-              </p>
-              <p className="mt-2 text-[13px] text-muted-foreground">
-                {ticket.checkedInAt && formatDate(ticket.checkedInAt)}
-              </p>
+            <div className="flex flex-col items-center gap-3 py-4 sm:py-6">
+              <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20 sm:size-16">
+                <CheckCircle2 className="size-7 text-blue-500 sm:size-8" />
+              </div>
+              <div className="text-center">
+                <p className="font-display text-base text-muted-foreground">You&apos;re in. Enjoy the show.</p>
+                {ticket.checkedInAt && (
+                  <p className="mt-1 flex items-center justify-center gap-1.5 text-base text-muted-foreground/80">
+                    <Clock className="size-3" />
+                    {formatDate(ticket.checkedInAt, { dateStyle: "medium", timeStyle: "short" })}
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-[var(--border)] p-6 text-center">
-              <p className="text-[14px] text-muted-foreground">
-                This ticket is {ticket.status}
-              </p>
+            <div className="py-6 text-center">
+              <p className="text-base text-muted-foreground/80">This ticket is no longer valid</p>
             </div>
           )}
 
-          {/* Trust message */}
+          {/* Wallet buttons */}
+          {isActive && !isCheckedIn && event && (
+            <div className="mt-5 sm:mt-6">
+              <WalletButtons
+                ticketId={ticket.$id}
+                eventTitle={event.title}
+                eventDate={event.startsAt}
+                venueName={venueName}
+                ticketCode={ticket.ticketCode}
+                tierName={tier?.name ?? "General"}
+              />
+            </div>
+          )}
+
+          {/* Security note */}
           {isActive && !isCheckedIn && (
-            <div className="mt-8 flex items-start gap-2 text-[12px]">
-              <Shield className="mt-0.5 size-3.5 shrink-0 text-coral" />
-              <p className="text-muted-foreground">
-                This ticket is cryptographically signed and verified at the door.
-                Screenshots will not work — the QR refreshes automatically.
+            <div className="mt-4 flex items-start gap-2 rounded-lg bg-muted/70 px-3 py-2.5 sm:mt-5">
+              <Shield className="mt-0.5 size-3.5 shrink-0 text-coral/50" />
+              <p className="text-sm leading-relaxed text-muted-foreground/70 sm:text-sm">
+                Cryptographically signed. Screenshots won&apos;t work — QR refreshes automatically.
               </p>
             </div>
           )}

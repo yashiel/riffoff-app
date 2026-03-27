@@ -7,6 +7,7 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { checkExportRateLimit } from "@/lib/security/rate-limit";
 import { createAuditLog } from "@/lib/audit";
+import { serialize } from "@/lib/utils";
 import type { ConsentType, UserConsentDoc } from "@/lib/appwrite/types";
 
 /** Get all consent records for the current user */
@@ -23,7 +24,7 @@ export async function getMyConsents(): Promise<UserConsentDoc[]> {
       COLLECTIONS.USER_CONSENTS,
       [Query.equal("userId", user.$id), Query.limit(10)],
     );
-    return result.documents as unknown as UserConsentDoc[];
+    return serialize(result.documents as unknown as UserConsentDoc[]);
   } catch {
     return [];
   }

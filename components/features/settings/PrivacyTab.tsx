@@ -71,8 +71,8 @@ export function PrivacyTab({ consents }: PrivacyTabProps) {
                 className="mt-0.5 size-4 rounded border-[var(--border)] bg-transparent accent-coral"
               />
               <div>
-                <p className="text-[14px] font-medium text-foreground">{opt.label}</p>
-                <p className="text-[12px] text-muted-foreground">{opt.description}</p>
+                <p className="text-base font-medium text-foreground">{opt.label}</p>
+                <p className="text-base text-muted-foreground">{opt.description}</p>
               </div>
             </label>
           ))}
@@ -81,14 +81,14 @@ export function PrivacyTab({ consents }: PrivacyTabProps) {
 
       <SettingsSection title="Export Your Data" description="Download a copy of all your data in JSON format (GDPR Article 20).">
         {exportError && (
-          <div role="alert" className="mb-3 rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400">{exportError}</div>
+          <div role="alert" className="mb-3 rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-base text-red-400">{exportError}</div>
         )}
         <button onClick={handleExport} disabled={isPending}
-          className="btn-ghost inline-flex items-center gap-1.5 !py-2 !text-[12px]">
+          className="btn-ghost inline-flex items-center gap-1.5 !py-2 !text-base">
           <Download className="size-3.5" />
           {isPending ? "Preparing..." : "Download my data"}
         </button>
-        <p className="mt-2 text-[11px] text-muted-foreground">Includes: profile, orders, tickets, RSVPs, notifications, and consent records. Limited to once per hour.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Includes: profile, orders, tickets, RSVPs, notifications, and consent records. Limited to once per hour.</p>
       </SettingsSection>
     </div>
   );

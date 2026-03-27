@@ -9,7 +9,10 @@ import { getPublishedEvents, getAvailableGenres } from "@/actions/events";
 import { getWishlistedEventIds } from "@/actions/wishlist";
 import { getExchangeRates, formatConvertedPrice } from "@/lib/currency";
 import { serialize } from "@/lib/utils";
-import type { EventFilters as EventFilterType, EventWithVenue } from "@/actions/events";
+import type {
+  EventFilters as EventFilterType,
+  EventWithVenue,
+} from "@/actions/events";
 
 export const metadata = { title: "Discover Events" };
 export const dynamic = "force-dynamic";
@@ -34,7 +37,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   };
 
   const cookieStore = await cookies();
-  const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
+  const displayCurrency =
+    cookieStore.get("riffoff-currency")?.value || "original";
 
   let events: EventWithVenue[] = [];
   let page = 1;
@@ -55,16 +59,24 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
     const eventIds = events.map((e) => e.$id);
     if (eventIds.length > 0) {
-      const wishlistSet = await getWishlistedEventIds(eventIds);
-      wishlistedIds = [...wishlistSet];
+      wishlistedIds = await getWishlistedEventIds(eventIds);
     }
 
     if (displayCurrency !== "original") {
       const rates = await getExchangeRates("USD");
       if (rates) {
         for (const event of events) {
-          if (event.minPrice && event.minPriceCurrency && event.minPriceCurrency !== displayCurrency) {
-            const converted = formatConvertedPrice(event.minPrice, event.minPriceCurrency, displayCurrency, rates);
+          if (
+            event.minPrice &&
+            event.minPriceCurrency &&
+            event.minPriceCurrency !== displayCurrency
+          ) {
+            const converted = formatConvertedPrice(
+              event.minPrice,
+              event.minPriceCurrency,
+              displayCurrency,
+              rates
+            );
             if (converted) convertedPrices[event.$id] = converted;
           }
         }
@@ -73,30 +85,80 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   } catch {}
 
   const totalEvents = events.length + (totalPages - 1) * 12;
+  const hasActiveFilters = params.search || params.genre || params.date;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      {/* ─── Page header — Shotgun style ─── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-display text-[clamp(2rem,5vw,3rem)] leading-none tracking-tight">
-            Discover Events
-          </h1>
-          <p className="mt-2 text-[14px] text-muted-foreground">
-            {totalEvents > 0 ? `${totalEvents}+ upcoming events` : "Find live music events near you"}
-          </p>
+    <div>
+      {/* ═══════════════════════════════════════════
+          HERO SEARCH SECTION — full-bleed dark band
+          ═══════════════════════════════════════════ */}
+      <section className="relative overflow-hidden border-b border-border bg-[#0a0a0c] dark:bg-[#0a0a0c]">
+        {/* Ambient gradient orbs */}
+        <div
+          className="pointer-events-none absolute -left-40 -top-40 size-[500px] rounded-full opacity-15 blur-[120px]"
+          style={{ background: "var(--coral)" }}
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 right-1/4 size-[400px] rounded-full opacity-8 blur-[100px]"
+          style={{ background: "#f97316" }}
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -right-20 top-0 size-[300px] rounded-full opacity-8 blur-[100px]"
+          style={{ background: "#38bdf8" }}
+          aria-hidden="true"
+        />
+
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+          {/* Title */}
+          <div className="text-center">
+            <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] tracking-tighter text-white">
+              Find your
+              <br />
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(90deg, var(--coral) 0%, #f97316 25%, #fb7185 50%, #a78bfa 75%, #38bdf8 100%)",
+                }}
+              >
+                next show
+              </span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-md text-base text-white/50">
+              {hasActiveFilters
+                ? `${totalEvents} event${totalEvents !== 1 ? "s" : ""} match your search`
+                : totalEvents > 0
+                  ? `${totalEvents}+ live events waiting for you`
+                  : "Discover live music events near you"}
+            </p>
+          </div>
+
+          {/* Search bar */}
+          <div className="mx-auto mt-8 max-w-xl">
+            <Suspense>
+              <EventFilters genres={genres} heroMode />
+            </Suspense>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* ─── Filters ─── */}
-      <div className="mt-6">
-        <Suspense>
-          <EventFilters genres={genres} />
-        </Suspense>
-      </div>
+      {/* ═══════════════════════════════════════════
+          FILTERS — genre/date pills below hero
+          ═══════════════════════════════════════════ */}
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <Suspense>
+            <EventFilters genres={genres} pillsOnly />
+          </Suspense>
+        </div>
+      </section>
 
-      {/* ─── Date-grouped event grid ─── */}
-      <div className="mt-10">
+      {/* ═══════════════════════════════════════════
+          EVENT GRID
+          ═══════════════════════════════════════════ */}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <Suspense fallback={<SkeletonList count={6} />}>
           <EventGrid
             events={serialize(events)}
@@ -104,12 +166,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
             convertedPrices={convertedPrices}
           />
         </Suspense>
-      </div>
 
-      {/* ─── Pagination ─── */}
-      <div className="mt-10">
-        <Pagination currentPage={page} totalPages={totalPages} />
-      </div>
+        {/* Pagination */}
+        <div className="mt-12">
+          <Pagination currentPage={page} totalPages={totalPages} />
+        </div>
+      </section>
     </div>
   );
 }

@@ -33,14 +33,14 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {/* Artist avatar */}
-          <div className="flex size-10 items-center justify-center rounded-full bg-coral/10 text-[14px] font-bold text-coral">
+          <div className="flex size-10 items-center justify-center rounded-full bg-coral/10 text-base font-bold text-coral">
             {(application.artist?.displayName ?? "A").charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-[15px] font-bold text-foreground">
+            <p className="text-base font-bold text-foreground">
               {application.artist?.displayName ?? "Unknown Artist"}
             </p>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Applied {formatDate(application.submittedAt, { dateStyle: "medium" })}
             </p>
           </div>
@@ -50,7 +50,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
 
       {/* Notes */}
       {application.notes && (
-        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           {application.notes}
         </p>
       )}
@@ -62,7 +62,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             <button
               onClick={() => handleStatusChange("shortlisted")}
               disabled={isPending}
-              className="btn-ghost inline-flex items-center gap-1.5 !py-1.5 !text-[11px]"
+              className="btn-ghost inline-flex items-center gap-1.5 !py-1.5 !text-sm"
             >
               <Star className="size-3" />
               Shortlist
@@ -72,7 +72,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             <button
               onClick={() => handleStatusChange("accepted")}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 rounded bg-emerald-500/20 px-3 py-1.5 text-[11px] font-medium uppercase text-emerald-400 transition-colors hover:bg-emerald-500/30"
+              className="inline-flex items-center gap-1.5 rounded bg-emerald-500/20 px-3 py-1.5 text-sm font-medium uppercase text-emerald-400 transition-colors hover:bg-emerald-500/30"
             >
               <Check className="size-3" />
               Accept
@@ -82,7 +82,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             <button
               onClick={() => handleStatusChange("rejected")}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 rounded bg-red-500/10 px-3 py-1.5 text-[11px] font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+              className="inline-flex items-center gap-1.5 rounded bg-red-500/10 px-3 py-1.5 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
             >
               <X className="size-3" />
               Reject

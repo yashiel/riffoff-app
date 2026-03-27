@@ -15,18 +15,18 @@ export function PayPalCheckout({ orderId }: PayPalCheckoutProps) {
   const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
   if (!clientId) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         PayPal is not configured.
       </p>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-3">
       {error && (
         <div
           role="alert"
-          className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="rounded-xl bg-destructive/10 px-4 py-3 text-base text-destructive"
         >
           {error}
         </div>
@@ -34,7 +34,8 @@ export function PayPalCheckout({ orderId }: PayPalCheckoutProps) {
 
       <PayPalScriptProvider options={{ clientId }}>
         <PayPalButtons
-          style={{ layout: "vertical", shape: "rect" }}
+          className="w-full [&>div]:!min-w-full"
+          style={{ layout: "vertical", shape: "pill", label: "pay", height: 50 }}
           createOrder={async () => {
             setError(null);
             const res = await fetch("/api/paypal/create-order", {

@@ -161,7 +161,7 @@ function VerifyContent() {
     return (
       <div className="text-center">
         <h1 className="font-display text-[36px]">Verification</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">
+        <p className="mt-2 text-base text-muted-foreground">
           No email provided. Please register first.
         </p>
         <Link href="/register" className="btn-primary mt-6 inline-block">
@@ -180,24 +180,24 @@ function VerifyContent() {
         </div>
 
         <h1 className="mt-6 font-display text-[36px]">Check your email</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">
+        <p className="mt-2 text-base text-muted-foreground">
           We sent a 6-digit code to
         </p>
-        <p className="mt-1 text-[15px] font-semibold text-foreground">{email}</p>
+        <p className="mt-1 text-base font-semibold text-foreground">{email}</p>
       </div>
 
       <div className="mt-8">
         {error && (
           <div
             role="alert"
-            className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-[13px] text-red-400"
+            className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-base text-red-400"
           >
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-[13px] text-emerald-400">
+          <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-base text-emerald-400">
             ✓ Email verified! Redirecting...
           </div>
         )}
@@ -240,20 +240,20 @@ function VerifyContent() {
             <button
               onClick={handleResend}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-coral transition-colors hover:text-coral/80"
+              className="inline-flex items-center gap-1.5 text-base font-medium text-coral transition-colors hover:text-coral/80"
             >
               <RefreshCw className="size-3.5" />
               Resend code
             </button>
           ) : (
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Resend code in <span className="font-medium text-foreground">{cooldown}s</span>
             </p>
           )}
         </div>
 
         {/* Didn't receive */}
-        <p className="mt-6 text-center text-[12px] text-muted-foreground/60">
+        <p className="mt-6 text-center text-base text-muted-foreground/60">
           Didn&apos;t receive the email? Check your spam folder or{" "}
           <button onClick={handleResend} disabled={!canResend} className="text-coral/60 hover:text-coral disabled:text-muted-foreground">
             try again
@@ -265,7 +265,7 @@ function VerifyContent() {
       <div className="mt-8 text-center">
         <Link
           href="/register"
-          className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-base text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" />
           Back to register

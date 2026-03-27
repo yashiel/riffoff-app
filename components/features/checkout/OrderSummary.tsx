@@ -1,4 +1,4 @@
-import { Shield } from "lucide-react";
+import { Shield, Ticket, Music } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 interface OrderSummaryProps {
@@ -19,40 +19,81 @@ export function OrderSummary({
   const total = unitPrice * qty;
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[#242424] p-5">
-      <h3 className="font-display text-[22px]">Order Summary</h3>
+    <div className="relative">
+      {/* ── Ticket top section ── */}
+      <div className="rounded-t-2xl border border-b-0 border-border bg-card px-6 pt-6 pb-5">
+        {/* Small label */}
+        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground">
+          <Ticket className="size-3.5" aria-hidden="true" />
+          Order Summary
+        </div>
 
-      <div className="mt-4 space-y-2.5 text-[14px]">
-        <p className="font-medium text-foreground">{eventTitle}</p>
-        <div className="flex justify-between text-muted-foreground">
-          <span>
-            {tierName} &times; {qty}
+        {/* Event title */}
+        <h3 className="mt-3 font-display text-xl leading-tight sm:text-2xl">
+          {eventTitle}
+        </h3>
+
+        {/* Tier pill */}
+        <div className="mt-3">
+          <span className="genre-pill">
+            <Music className="size-3" aria-hidden="true" />
+            {tierName}
           </span>
-          <span className="text-foreground">{formatCurrency(unitPrice * qty, currency)}</span>
+        </div>
+
+        {/* Line items */}
+        <div className="mt-5 space-y-2 text-base">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              {tierName} &times; {qty}
+            </span>
+            <span className="font-medium text-foreground tabular-nums">
+              {formatCurrency(unitPrice * qty, currency)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Service fee</span>
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">
+              Free
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="my-4 border-t border-[var(--border)]" />
-
-      {/* Total */}
-      <div className="flex justify-between">
-        <span className="text-[16px] font-bold text-foreground">Total</span>
-        <span className="text-[20px] font-bold text-foreground">
-          {formatCurrency(total, currency)}
-        </span>
+      {/* ── Perforated tear line ── */}
+      <div className="relative flex items-center" aria-hidden="true">
+        {/* Left semicircle cutout */}
+        <div className="absolute -left-3 size-6 rounded-full bg-background" />
+        {/* Dashed line */}
+        <div className="w-full border-t-2 border-dashed border-border" />
+        {/* Right semicircle cutout */}
+        <div className="absolute -right-3 size-6 rounded-full bg-background" />
       </div>
 
-      {/* Price transparency — DICE-inspired */}
-      <div className="mt-4 flex items-start gap-2 rounded-lg bg-[rgba(232,119,88,0.08)] p-3">
-        <Shield className="mt-0.5 size-4 shrink-0 text-coral" />
-        <div>
-          <p className="text-[12px] font-medium text-coral">
-            No hidden fees
-          </p>
-          <p className="text-[12px] text-muted-foreground">
-            The price shown is the price you pay. No service charges,
-            no booking fees, no surprises at checkout.
-          </p>
+      {/* ── Ticket bottom section (total) ── */}
+      <div className="rounded-b-2xl border border-t-0 border-border bg-card px-6 pt-4 pb-6">
+        {/* Total */}
+        <div className="flex items-end justify-between">
+          <span className="text-base font-semibold uppercase tracking-wider text-muted-foreground">
+            Total
+          </span>
+          <div className="text-right">
+            <span className="text-3xl font-bold tabular-nums text-foreground sm:text-4xl">
+              {formatCurrency(total, currency)}
+            </span>
+          </div>
+        </div>
+
+        {/* No hidden fees */}
+        <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-coral/5 border border-coral/10 p-3">
+          <Shield className="mt-0.5 size-4 shrink-0 text-coral" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-semibold text-coral">No hidden fees</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              The price shown is the price you pay. No service charges, no
+              booking fees, no surprises.
+            </p>
+          </div>
         </div>
       </div>
     </div>

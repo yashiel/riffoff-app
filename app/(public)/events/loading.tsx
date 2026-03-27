@@ -4,13 +4,13 @@ export default function EventsLoading() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       {/* Header skeleton */}
-      <div className="h-8 w-48 animate-pulse rounded bg-foreground/5" />
-      <div className="mt-2 h-4 w-72 animate-pulse rounded bg-foreground/5" />
+      <div className="h-8 w-48 animate-pulse rounded bg-muted/80" />
+      <div className="mt-2 h-4 w-72 animate-pulse rounded bg-muted/80" />
 
       {/* Filter bar skeleton */}
       <div className="mt-6 flex gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-10 w-24 animate-pulse rounded-full bg-foreground/5" />
+          <div key={i} className="h-10 w-24 animate-pulse rounded-full bg-muted/80" />
         ))}
       </div>
 

@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { serialize } from "@/lib/utils";
 import type { ReservationDoc, TicketTierDoc } from "@/lib/appwrite/types";
 
 const HOLD_DURATION_MS = 15 * 60 * 1000; // 15 minutes
@@ -96,7 +97,7 @@ export async function createReservation(
 
   if (existing.documents.length > 0) {
     return {
-      reservation: existing.documents[0] as unknown as ReservationDoc,
+      reservation: serialize(existing.documents[0] as unknown as ReservationDoc),
     };
   }
 
@@ -116,16 +117,33 @@ export async function createReservation(
     },
   )) as unknown as ReservationDoc;
 
-  return { reservation };
+  return { reservation: serialize(reservation) };
 }
 
 /** Cancel a held reservation and release inventory */
 export async function cancelReservation(
   reservationId: string,
 ): Promise<void> {
+  // Auth check — user must be logged in
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return;
+
+  const user = await sessionClient.account.get();
   const { databases } = await createAdminClient();
 
   try {
+    // Fetch reservation and verify ownership before cancelling
+    const reservation = await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.RESERVATIONS,
+      reservationId,
+    ) as unknown as ReservationDoc;
+
+    if (reservation.userId !== user.$id) {
+      // User doesn't own this reservation — silently return (404 pattern)
+      return;
+    }
+
     await databases.updateDocument(
       DATABASE_ID,
       COLLECTIONS.RESERVATIONS,

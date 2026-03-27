@@ -1,16 +1,17 @@
 "use client";
 
+import { CreditCard, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PaymentProvider } from "@/lib/appwrite/types";
 
 const PROVIDERS: Array<{
   id: PaymentProvider;
   name: string;
-  description: string;
+  icon: typeof CreditCard;
 }> = [
-  { id: "stripe", name: "Card", description: "Visa, Mastercard, Amex" },
-  { id: "paypal", name: "PayPal", description: "Pay with PayPal balance" },
-  { id: "tng", name: "TNG eWallet", description: "Touch 'n Go (MYR only)" },
+  { id: "stripe", name: "Card", icon: CreditCard },
+  { id: "paypal", name: "PayPal", icon: Wallet },
+  { id: "tng", name: "TNG", icon: Wallet },
 ];
 
 interface ProviderSelectorProps {
@@ -24,49 +25,58 @@ export function ProviderSelector({
   onChange,
   currency,
 }: ProviderSelectorProps) {
-  const availableProviders = PROVIDERS.filter((p) => {
-    // TNG only for MYR
+  const available = PROVIDERS.filter((p) => {
     if (p.id === "tng" && currency !== "MYR") return false;
     return true;
   });
 
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium">Payment method</h3>
-      <div className="grid gap-2">
-        {availableProviders.map((provider) => (
-          <button
-            key={provider.id}
-            type="button"
-            onClick={() => onChange(provider.id)}
-            className={cn(
-              "flex items-center gap-3 rounded-lg border p-3 text-left transition-colors",
-              selected === provider.id
-                ? "border-primary bg-primary/5"
-                : "border-border hover:bg-muted/50",
-            )}
-          >
-            <div
+    <fieldset>
+      <legend className="mb-3 text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground">
+        Payment method
+      </legend>
+
+      {/* Segmented pill selector */}
+      <div className="flex gap-2 rounded-2xl border border-border bg-muted/30 p-1.5" role="radiogroup">
+        {available.map((provider) => {
+          const isSelected = selected === provider.id;
+          const Icon = provider.icon;
+
+          return (
+            <button
+              key={provider.id}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => onChange(provider.id)}
               className={cn(
-                "flex size-4 items-center justify-center rounded-full border-2",
-                selected === provider.id
-                  ? "border-primary"
-                  : "border-muted-foreground/30",
+                "group relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-semibold transition-all duration-200",
+                isSelected
+                  ? "bg-coral text-white shadow-md shadow-coral/20 dark:text-[#08080a]"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              {selected === provider.id && (
-                <div className="size-2 rounded-full bg-primary" />
-              )}
-            </div>
-            <div>
-              <p className="font-medium">{provider.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {provider.description}
-              </p>
-            </div>
-          </button>
-        ))}
+              <Icon
+                className={cn(
+                  "size-4 transition-colors",
+                  isSelected
+                    ? "text-white dark:text-[#08080a]"
+                    : "text-muted-foreground group-hover:text-foreground"
+                )}
+                aria-hidden="true"
+              />
+              {provider.name}
+            </button>
+          );
+        })}
       </div>
-    </div>
+
+      {/* Provider detail hint */}
+      <p className="mt-2 text-center text-sm text-muted-foreground">
+        {selected === "stripe" && "Visa, Mastercard, Amex — secure card payment"}
+        {selected === "paypal" && "Pay with your PayPal balance or linked bank"}
+        {selected === "tng" && "Touch 'n Go eWallet — MYR only"}
+      </p>
+    </fieldset>
   );
 }

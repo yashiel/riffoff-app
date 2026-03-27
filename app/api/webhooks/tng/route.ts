@@ -36,9 +36,7 @@ export async function POST(request: NextRequest) {
       notification.paymentId ?? "",
     );
 
-    if (alreadyProcessed) {
-      console.log(`TNG webhook: order ${orderId} already processed (idempotent)`);
-    }
+    // alreadyProcessed check ensures idempotent webhook handling
   }
 
   // Always respond with success to TNG

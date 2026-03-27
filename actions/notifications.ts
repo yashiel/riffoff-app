@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { serialize } from "@/lib/utils";
 import type { NotificationDoc, NotificationType } from "@/lib/appwrite/types";
 
 // ─── Create Notification (internal helper) ───────────
@@ -73,7 +74,7 @@ export async function getMyNotifications(
     queries,
   );
 
-  return result.documents as unknown as NotificationDoc[];
+  return serialize(result.documents as unknown as NotificationDoc[]);
 }
 
 /** Get unread notification count */

@@ -69,19 +69,19 @@ export function SettingsPage({
                   isActive
                     ? isDanger
                       ? "bg-red-500/[0.08] text-red-400"
-                      : "bg-foreground/[0.05] text-foreground"
-                    : "text-foreground/40 hover:bg-foreground/[0.03] hover:text-foreground/70"
+                      : "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 <tab.icon className={`mt-0.5 size-4 shrink-0 transition-colors ${
                   isActive
                     ? isDanger ? "text-red-400" : "text-coral"
-                    : "group-hover:text-foreground/50"
+                    : "group-hover:text-muted-foreground"
                 }`} />
                 <div className="min-w-0">
-                  <span className="block text-[13px] font-medium leading-tight">{tab.label}</span>
-                  <span className={`block text-[11px] leading-tight ${
-                    isActive ? "text-foreground/40" : "text-foreground/20"
+                  <span className="block text-base font-medium leading-tight">{tab.label}</span>
+                  <span className={`block text-sm leading-tight ${
+                    isActive ? "text-muted-foreground" : "text-muted-foreground/60"
                   }`}>{tab.description}</span>
                 </div>
               </button>
@@ -99,12 +99,12 @@ export function SettingsPage({
               <button
                 key={tab.id}
                 onClick={() => setTab(tab.id)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-medium transition-colors ${
+                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-base font-medium transition-colors ${
                   isActive
                     ? tab.id === "danger"
                       ? "bg-red-500/15 text-red-400"
-                      : "bg-foreground/10 text-foreground"
-                    : "text-foreground/40 hover:text-foreground/60"
+                      : "bg-muted text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <tab.icon className="size-3.5" />

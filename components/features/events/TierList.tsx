@@ -27,7 +27,7 @@ export function TierList({ tiers, isFree, eventId, eventTitle, convertedPrices =
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Tickets</h2>
         {hasConversions && (
-          <span className="text-[11px] text-foreground/30">
+          <span className="text-sm text-muted-foreground/80">
             Converted prices are approximate
           </span>
         )}
@@ -50,30 +50,30 @@ export function TierList({ tiers, isFree, eventId, eventTitle, convertedPrices =
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{tier.name}</span>
                     {isSoldOut && (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-sm">
                         Sold out
                       </Badge>
                     )}
                     {isLowStock && !isSoldOut && (
                       <Badge
                         variant="outline"
-                        className="border-amber-500/20 bg-amber-500/10 text-xs text-amber-700 dark:text-amber-400"
+                        className="border-amber-500/20 bg-amber-500/10 text-sm text-amber-700 dark:text-amber-400"
                       >
                         {available} left
                       </Badge>
                     )}
                     {!isOnSale && !isSoldOut && (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-sm">
                         Not on sale
                       </Badge>
                     )}
                   </div>
                   <div className="mt-0.5 flex items-baseline gap-2">
-                    <p className="text-sm font-medium text-foreground">
+                    <p className="text-base font-medium text-foreground">
                       {converted ?? formatCurrency(tier.price, tier.currency)}
                     </p>
                     {converted && (
-                      <p className="text-[11px] text-foreground/30">
+                      <p className="text-sm text-muted-foreground/80">
                         {formatCurrency(tier.price, tier.currency)}
                       </p>
                     )}

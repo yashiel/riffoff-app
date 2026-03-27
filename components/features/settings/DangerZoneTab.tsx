@@ -52,7 +52,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
   return (
     <div className="space-y-6">
       {error && (
-        <div role="alert" className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400">{error}</div>
+        <div role="alert" className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-base text-red-400">{error}</div>
       )}
 
       {/* Active deletion request banner */}
@@ -61,15 +61,15 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
           <div className="flex items-start gap-3">
             <Clock className="mt-0.5 size-5 text-amber-400" />
             <div>
-              <h3 className="text-[15px] font-bold text-amber-400">Account Deletion Scheduled</h3>
-              <p className="mt-2 text-[13px] text-muted-foreground">
+              <h3 className="text-base font-bold text-amber-400">Account Deletion Scheduled</h3>
+              <p className="mt-2 text-base text-muted-foreground">
                 Your account will be permanently deleted in <strong className="text-foreground">{daysRemaining} days</strong> ({new Date(activeDeletion.scheduledDeleteAt).toLocaleDateString()}).
                 All data will be irreversibly removed.
               </p>
               <button
                 onClick={handleCancelDeletion}
                 disabled={isPending}
-                className="mt-3 rounded bg-amber-500 px-4 py-2 text-[12px] font-bold uppercase text-black transition-colors hover:bg-amber-400"
+                className="mt-3 rounded bg-amber-500 px-4 py-2 text-base font-bold uppercase text-black transition-colors hover:bg-amber-400"
               >
                 {isPending ? "Cancelling..." : "Cancel Deletion"}
               </button>
@@ -82,7 +82,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
       <SettingsSection title="Deactivate Account" description="Temporarily hide your profile. You can reactivate by signing in again." danger>
         <ConfirmDialog
           trigger={
-            <button className="rounded border border-amber-500/20 bg-amber-500/10 px-4 py-2 text-[12px] font-medium uppercase text-amber-400 transition-colors hover:bg-amber-500/20">
+            <button className="rounded border border-amber-500/20 bg-amber-500/10 px-4 py-2 text-base font-medium uppercase text-amber-400 transition-colors hover:bg-amber-500/20">
               Deactivate Account
             </button>
           }
@@ -98,7 +98,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
       {!activeDeletion && (
         <SettingsSection title="Delete Account" description="Permanently delete your account and all associated data. This action has a 30-day grace period." danger>
           <div className="space-y-3">
-            <div className="flex items-start gap-2 rounded-lg bg-red-500/5 p-3 text-[12px] text-muted-foreground">
+            <div className="flex items-start gap-2 rounded-lg bg-red-500/5 p-3 text-base text-muted-foreground">
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-red-400" />
               <div>
                 <p>After requesting deletion:</p>
@@ -114,7 +114,7 @@ export function DangerZoneTab({ deletionRequest }: DangerZoneTabProps) {
 
             <ConfirmDialog
               trigger={
-                <button className="rounded bg-red-500 px-4 py-2 text-[12px] font-bold uppercase text-white transition-colors hover:bg-red-400">
+                <button className="rounded bg-red-500 px-4 py-2 text-base font-bold uppercase text-white transition-colors hover:bg-red-400">
                   Request Account Deletion
                 </button>
               }

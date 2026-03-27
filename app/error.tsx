@@ -18,7 +18,7 @@ export default function GlobalError({
         We couldn&apos;t load this page. Please try again.
       </p>
       {error.digest && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[13px] text-muted-foreground">
           Error ID: {error.digest}
         </p>
       )}

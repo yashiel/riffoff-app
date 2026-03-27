@@ -74,7 +74,7 @@ export function RSVPButton({
         </Button>
       </div>
       {count > 0 && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {count} {count === 1 ? "person" : "people"} going
         </p>
       )}

@@ -80,22 +80,22 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       {/* Role upgrade section */}
       {profile.role === "attendee" && (
         <div className="rounded-xl border border-coral/20 bg-coral/5 p-4">
-          <h3 className="text-[15px] font-bold text-foreground">Upgrade Your Account</h3>
-          <p className="mt-2 text-[13px] text-muted-foreground">
+          <h3 className="text-base font-bold text-foreground">Upgrade Your Account</h3>
+          <p className="mt-2 text-base text-muted-foreground">
             Unlock additional features by upgrading your role.
           </p>
           <div className="mt-3 flex gap-2">
             <button
               onClick={() => handleUpgradeRole("artist")}
               disabled={isPending}
-              className="btn-primary !py-2 !text-[12px]"
+              className="btn-primary !py-2 !text-base"
             >
               Become an Artist
             </button>
             <button
               onClick={() => handleUpgradeRole("organiser")}
               disabled={isPending}
-              className="btn-ghost !py-2 !text-[12px]"
+              className="btn-ghost !py-2 !text-base"
             >
               Become an Organiser
             </button>
@@ -106,12 +106,12 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       {/* Profile form */}
       <form action={handleSubmit} className="space-y-6">
         {error && (
-          <div role="alert" className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-[13px] text-red-400">
+          <div role="alert" className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-base text-red-400">
             {error}
           </div>
         )}
         {success && (
-          <div className="rounded border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-400">
+          <div className="rounded border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-base text-emerald-400">
             Profile updated successfully
           </div>
         )}
@@ -133,29 +133,29 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               type="file" accept="image/jpeg,image/png,image/webp"
               onChange={handlePhotoUpload}
               disabled={isUploading}
-              className="text-[13px] text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[var(--border)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-white file:cursor-pointer"
+              className="text-base text-muted-foreground file:mr-3 file:rounded file:border-0 file:bg-[var(--border)] file:px-3 file:py-1.5 file:text-base file:font-medium file:text-white file:cursor-pointer"
             />
-            {isUploading && <p className="mt-1 text-[12px] text-muted-foreground">Uploading...</p>}
+            {isUploading && <p className="mt-1 text-base text-muted-foreground">Uploading...</p>}
           </div>
         </div>
 
         {/* Display name */}
         <div className="space-y-1.5">
-          <Label htmlFor="displayName" className="text-[13px] text-muted-foreground">Display name</Label>
+          <Label htmlFor="displayName" className="text-base text-muted-foreground">Display name</Label>
           <input
             id="displayName" name="displayName" required maxLength={100}
             defaultValue={profile.displayName ?? ""}
-            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
 
         {/* Phone */}
         <div className="space-y-1.5">
-          <Label htmlFor="phone" className="text-[13px] text-muted-foreground">Phone (optional)</Label>
+          <Label htmlFor="phone" className="text-base text-muted-foreground">Phone (optional)</Label>
           <input
             id="phone" name="phone" type="tel" maxLength={20}
             defaultValue={profile.phone ?? ""}
-            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+            className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
           />
         </div>
 
@@ -164,45 +164,45 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           <>
             {/* Bio */}
             <div className="space-y-1.5">
-              <Label htmlFor="bio" className="text-[13px] text-muted-foreground">Bio</Label>
+              <Label htmlFor="bio" className="text-base text-muted-foreground">Bio</Label>
               <textarea
                 id="bio" name="bio" rows={4} maxLength={500}
                 defaultValue={profile.bio ?? ""}
                 placeholder="Tell people about yourself..."
-                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none"
               />
             </div>
 
             {/* Genres */}
             <div className="space-y-1.5">
-              <Label htmlFor="artistGenres" className="text-[13px] text-muted-foreground">Genres (comma-separated)</Label>
+              <Label htmlFor="artistGenres" className="text-base text-muted-foreground">Genres (comma-separated)</Label>
               <input
                 id="artistGenres" name="artistGenres"
                 defaultValue={profile.artistGenres?.join(", ") ?? ""}
                 placeholder="e.g. Electronic, Techno, House"
-                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors"
               />
             </div>
 
             {/* Social links */}
             <div className="space-y-1.5">
-              <Label htmlFor="socialLinks" className="text-[13px] text-muted-foreground">Social links (one per line)</Label>
+              <Label htmlFor="socialLinks" className="text-base text-muted-foreground">Social links (one per line)</Label>
               <textarea
                 id="socialLinks" name="socialLinks" rows={3}
                 defaultValue={profile.socialLinks?.join("\n") ?? ""}
                 placeholder={"https://instagram.com/yourname\nhttps://soundcloud.com/yourname"}
-                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-[13px]"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-base"
               />
             </div>
 
             {/* Portfolio URLs */}
             <div className="space-y-1.5">
-              <Label htmlFor="portfolioUrls" className="text-[13px] text-muted-foreground">Portfolio links (one per line)</Label>
+              <Label htmlFor="portfolioUrls" className="text-base text-muted-foreground">Portfolio links (one per line)</Label>
               <textarea
                 id="portfolioUrls" name="portfolioUrls" rows={3}
                 defaultValue={profile.portfolioUrls?.join("\n") ?? ""}
                 placeholder={"https://mixcloud.com/yourset\nhttps://youtube.com/watch?v=..."}
-                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-[14px] text-white placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-[13px]"
+                className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)] transition-colors resize-none font-mono text-base"
               />
             </div>
           </>

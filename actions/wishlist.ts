@@ -55,9 +55,9 @@ export async function toggleWishlist(
 /** Check if current user has wishlisted specific events (batch) */
 export async function getWishlistedEventIds(
   eventIds: string[],
-): Promise<Set<string>> {
+): Promise<string[]> {
   const sessionClient = await createSessionClient();
-  if (!sessionClient) return new Set();
+  if (!sessionClient) return [];
 
   const user = await sessionClient.account.get();
   const { databases } = await createAdminClient();
@@ -69,15 +69,15 @@ export async function getWishlistedEventIds(
       Query.limit(100),
     ]);
 
-    const wishlisted = new Set<string>();
+    const wishlisted: string[] = [];
     for (const doc of result.documents) {
       const rsvp = doc as unknown as RSVPDoc;
       if (eventIds.includes(rsvp.eventId)) {
-        wishlisted.add(rsvp.eventId);
+        wishlisted.push(rsvp.eventId);
       }
     }
     return wishlisted;
   } catch {
-    return new Set();
+    return [];
   }
 }

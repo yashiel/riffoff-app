@@ -5,7 +5,7 @@ import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import type { EventDoc } from "@/lib/appwrite/types";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://riffoff.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://riffoff.live";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

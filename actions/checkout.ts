@@ -82,27 +82,35 @@ export async function initiateCheckout(
 
   const reservation = reservationResult.reservation;
 
-  // Create order
+  // Create order — providerRef and idempotencyKey must be unique (Appwrite indexes),
+  // so use unique placeholders until the real values are set
+  const orderId = ID.unique();
   const idempotencyKey = crypto
     .createHash("sha256")
-    .update(`${user.$id}:${reservation.$id}:${provider}`)
+    .update(`${user.$id}:${reservation.$id}:${provider}:${orderId}`)
     .digest("hex");
 
-  const order = await databases.createDocument(
-    DATABASE_ID,
-    COLLECTIONS.ORDERS,
-    ID.unique(),
-    {
-      userId: user.$id,
-      eventId,
-      provider: provider as PaymentProvider,
-      status: "pending",
-      amount: amountCents,
-      currency: tier.currency,
-      providerRef: "",
-      idempotencyKey,
-    },
-  );
+  let order;
+  try {
+    order = await databases.createDocument(
+      DATABASE_ID,
+      COLLECTIONS.ORDERS,
+      orderId,
+      {
+        userId: user.$id,
+        eventId,
+        provider: provider as PaymentProvider,
+        status: "pending",
+        amount: amountCents,
+        currency: tier.currency,
+        providerRef: `pending_${orderId}`,
+        idempotencyKey,
+      },
+    );
+  } catch (err) {
+    console.error("Order creation failed:", err);
+    return { error: "Failed to create order. Please try again.", orderId: "", reservationId: "" };
+  }
 
   // Link reservation to order
   await databases.updateDocument(
@@ -166,9 +174,12 @@ export async function initiateCheckout(
     result.error = "Failed to create payment session. Please try again.";
   }
 
-  // For Stripe and TNG, redirect immediately
-  if (result.redirectUrl && !result.error) {
-    redirect(result.redirectUrl);
+  // For Stripe and TNG, redirect immediately.
+  // redirect() must be called OUTSIDE try/catch — it throws a special Next.js error.
+  const redirectUrl = !result.error ? result.redirectUrl : undefined;
+
+  if (redirectUrl) {
+    redirect(redirectUrl);
   }
 
   return result;

@@ -31,12 +31,22 @@ export function ThemeToggle({ className }: { className?: string }) {
     }
   }
 
-  if (!mounted) return null;
+  // Same-size placeholder prevents hydration mismatch (server=span, client=button)
+  if (!mounted) {
+    return (
+      <span
+        className={`flex size-8 items-center justify-center rounded-lg ${className ?? ""}`}
+        aria-hidden="true"
+      >
+        <Sun className="size-4 text-muted-foreground" />
+      </span>
+    );
+  }
 
   return (
     <button
       onClick={toggle}
-      className={`relative flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-foreground/[0.06] ${className ?? ""}`}
+      className={`relative flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-muted ${className ?? ""}`}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
     >
       {dark ? (

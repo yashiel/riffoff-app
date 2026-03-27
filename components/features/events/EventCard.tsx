@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Heart, Calendar, MapPin } from "lucide-react";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { toggleWishlist } from "@/actions/wishlist";
@@ -33,16 +32,16 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
   return (
     <Link
       href={`/events/${event.$id}`}
-      className={`group block ${variant === "scroll" ? "w-[260px] flex-shrink-0" : ""}`}
+      className={`group block ${variant === "scroll" ? "w-full flex-shrink-0" : ""}`}
     >
       {/* Image */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
         {event.coverimageUrl ? (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={event.coverimageUrl}
             alt={event.title}
-            fill
-            className="object-cover transition-all duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-card">
@@ -56,7 +55,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
         {/* Top-left badges */}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {event.isFree && (
-            <span className="rounded-full bg-emerald-500 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-foreground">
+            <span className="rounded-full bg-emerald-500 px-2.5 py-0.5 text-sm font-bold uppercase tracking-wide text-foreground">
               Free
             </span>
           )}
@@ -70,7 +69,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
           className={`absolute right-3 top-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-all ${
             wishlisted
               ? "bg-coral/90 text-black"
-              : "bg-background/80 text-foreground/70 hover:bg-background/90 hover:text-foreground"
+              : "bg-background/80 text-muted-foreground hover:bg-background/90 hover:text-foreground"
           } ${isPending ? "animate-pulse" : ""}`}
           aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
         >
@@ -78,7 +77,19 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
         </button>
 
         {/* Bottom overlay info */}
-        <div className="absolute bottom-0 left-0 right-0 p-3.5">
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          {event.genres.length > 0 && (
+            <div className="mb-1.5 flex gap-1">
+              {event.genres.slice(0, 2).map((genre) => (
+                <span
+                  key={genre}
+                  className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur-sm"
+                >
+                  {genre.length > 12 ? genre.slice(0, 10) + "…" : genre}
+                </span>
+              ))}
+            </div>
+          )}
           <h3 className="line-clamp-2 text-[15px] font-bold leading-tight text-white drop-shadow-sm">
             {event.title}
           </h3>
@@ -86,7 +97,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
       </div>
 
       {/* Meta below image */}
-      <div className="mt-2.5 space-y-0.5">
+      <div className="mt-1.5 space-y-px">
         <div className="flex items-center gap-1.5">
           <Calendar className="size-3 text-coral" />
           <span className="text-[13px] font-medium text-coral">
@@ -103,36 +114,15 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-0.5">
-          <div className="text-[13px] font-semibold">
-            {event.isFree ? (
-              <span className="text-emerald-400">Free</span>
-            ) : event.minPrice && event.minPriceCurrency ? (
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-foreground">
-                  From {convertedPrice ?? formatCurrency(event.minPrice, event.minPriceCurrency)}
-                </span>
-                {convertedPrice && (
-                  <span className="text-[10px] font-normal text-foreground/30">
-                    {formatCurrency(event.minPrice, event.minPriceCurrency)}
-                  </span>
-                )}
-              </div>
-            ) : (
-              <span className="text-muted-foreground">Price TBA</span>
-            )}
-          </div>
-          {event.genres.length > 0 && (
-            <div className="flex gap-1">
-              {event.genres.slice(0, 2).map((genre) => (
-                <span
-                  key={genre}
-                  className="rounded-full bg-foreground/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
-                >
-                  {genre}
-                </span>
-              ))}
-            </div>
+        <div className="pt-0.5 text-[13px] font-semibold">
+          {event.isFree ? (
+            <span className="text-emerald-400">Free</span>
+          ) : event.minPrice && event.minPriceCurrency ? (
+            <span className="text-foreground">
+              From {convertedPrice ?? formatCurrency(event.minPrice, event.minPriceCurrency)}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Price TBA</span>
           )}
         </div>
       </div>

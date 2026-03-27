@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef, useTransition } from "react";
+import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { RefreshCw, Maximize2 } from "lucide-react";
-import { getTicketToken } from "@/actions/tickets";
 
 interface QRDisplayProps {
   ticketId: string;
@@ -13,60 +12,26 @@ interface QRDisplayProps {
 export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasFetchedRef = useRef(false);
+  const isPending = false; // QR generated client-side, no loading state needed
 
-  function fetchToken() {
-    startTransition(async () => {
-      setError(null);
-
-      const result = await getTicketToken(ticketId);
-
-      if ("error" in result) {
-        setError(result.error);
-        return;
-      }
-
-      try {
-        const dataUrl = await QRCode.toDataURL(result.token, {
-          width: 280,
-          margin: 2,
-          color: { dark: "#ffffff", light: "#00000000" },
-          errorCorrectionLevel: "M",
-        });
-        setQrDataUrl(dataUrl);
-
-        // Schedule auto-refresh 5 min before expiry via ref (no setState in effect)
-        if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-        const msUntilRefresh = (result.expiresAt - 300) * 1000 - Date.now();
-        if (msUntilRefresh > 0) {
-          refreshTimerRef.current = setTimeout(fetchToken, msUntilRefresh);
-        }
-      } catch {
-        setError("Failed to generate QR code");
-      }
-    });
-  }
-
-  // Initial fetch on mount — using ref guard to avoid double-call in StrictMode
+  // Generate QR on mount — just the ticket ID (~20 chars = tiny QR)
   useEffect(() => {
-    if (!hasFetchedRef.current) {
-      hasFetchedRef.current = true;
-      fetchToken();
-    }
-    return () => {
-      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    QRCode.toDataURL(ticketId, {
+      width: 300,
+      margin: 3,
+      color: { dark: "#000000", light: "#ffffff" },
+      errorCorrectionLevel: "H",
+    })
+      .then(setQrDataUrl)
+      .catch(() => setError("Failed to generate QR code"));
+  }, [ticketId]);
 
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-[var(--border)] p-8 text-center">
-        <p className="text-[14px] text-red-400">{error}</p>
-        <button onClick={fetchToken} className="btn-ghost !text-[12px]">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-muted/70 p-8 text-center">
+        <p className="text-base text-red-400">{error}</p>
+        <button onClick={() => window.location.reload()} className="btn-ghost !text-base">
           Try again
         </button>
       </div>
@@ -75,72 +40,78 @@ export function QRDisplay({ ticketId, ticketCode }: QRDisplayProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-5">
+        {/* QR container with subtle glow ring */}
         <button
           onClick={() => setIsFullscreen(true)}
-          className="relative rounded-2xl border border-[var(--border)] bg-[#242424] p-6 transition-all hover:border-[var(--border)]"
+          className="group relative rounded-2xl transition-transform active:scale-[0.98]"
           aria-label="Expand QR code"
         >
-          {isPending || !qrDataUrl ? (
-            <div className="flex size-[280px] items-center justify-center">
-              <RefreshCw className="size-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={qrDataUrl}
-                alt={`QR code for ticket ${ticketCode}`}
-                width={280}
-                height={280}
-                className="rounded-lg"
-              />
-              <div className="absolute bottom-2 right-2 rounded-full bg-black/50 p-1.5">
-                <Maximize2 className="size-3.5 text-foreground/60" />
+          {/* Glow ring on hover */}
+          <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-b from-coral/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+
+          <div className="relative overflow-hidden rounded-xl border border-border bg-white p-3.5 sm:rounded-2xl sm:p-5">
+            {isPending || !qrDataUrl ? (
+              <div className="flex size-[200px] items-center justify-center sm:size-[240px]">
+                <RefreshCw className="size-6 animate-spin text-muted-foreground/60" />
               </div>
-            </>
-          )}
+            ) : (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={qrDataUrl}
+                  alt={`QR code for ticket ${ticketCode}`}
+                  className="size-[200px] sm:size-[240px]"
+                />
+                {/* Expand hint */}
+                <div className="absolute bottom-3 right-3 rounded-full bg-muted p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                  <Maximize2 className="size-3.5 text-muted-foreground" />
+                </div>
+              </>
+            )}
+          </div>
         </button>
 
-        <div className="text-center">
-          <p className="font-mono text-[20px] font-bold tracking-widest text-foreground">
-            {ticketCode}
-          </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
-            Show this QR code at the entrance
-          </p>
+        {/* Ticket code + actions */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="text-center">
+            <p className="font-mono text-lg font-bold tracking-[0.2em] text-foreground sm:text-xl">
+              {ticketCode}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground/80">
+              Show this QR at the entrance
+            </p>
+          </div>
+
+          {/* No refresh needed — QR encodes the static ticket ID */}
         </div>
-
-        <button
-          onClick={fetchToken}
-          disabled={isPending}
-          className="btn-ghost inline-flex items-center gap-1.5 !text-[12px]"
-        >
-          <RefreshCw className={`size-3 ${isPending ? "animate-spin" : ""}`} />
-          Refresh QR
-        </button>
       </div>
 
+      {/* Fullscreen overlay */}
       {isFullscreen && qrDataUrl && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl"
           onClick={() => setIsFullscreen(false)}
           role="dialog"
           aria-label="QR code fullscreen"
         >
-          <div className="flex flex-col items-center gap-6" onClick={(e) => e.stopPropagation()}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={qrDataUrl}
-              alt={`QR code for ticket ${ticketCode}`}
-              className="size-[min(320px,80vw)] rounded-xl"
-            />
-            <p className="font-mono text-xl font-bold tracking-widest text-white sm:text-[28px]">
-              {ticketCode}
-            </p>
-            <p className="text-[14px] text-muted-foreground">
-              Tap anywhere to close
-            </p>
+          <div className="flex flex-col items-center gap-8" onClick={(e) => e.stopPropagation()}>
+            <div className="rounded-3xl border border-white/10 bg-white p-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={qrDataUrl}
+                alt={`QR code for ticket ${ticketCode}`}
+                className="size-[min(300px,70vw)]"
+              />
+            </div>
+            <div className="text-center">
+              <p className="font-mono text-2xl font-bold tracking-[0.2em] text-white">
+                {ticketCode}
+              </p>
+              <p className="mt-3 text-base text-white/30">
+                Tap anywhere to close
+              </p>
+            </div>
           </div>
         </div>
       )}

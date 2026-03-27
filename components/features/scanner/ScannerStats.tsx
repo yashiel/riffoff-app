@@ -15,14 +15,14 @@ export function ScannerStats({ stats }: ScannerStatsProps) {
   return (
     <div className="rounded-2xl border border-[var(--border)] p-5">
       <h3 className="font-display text-[22px]">{stats.eventTitle}</h3>
-      <p className="mt-1 flex items-center gap-1.5 text-[13px] text-coral">
+      <p className="mt-1 flex items-center gap-1.5 text-base text-coral">
         <Clock className="size-3" />
         {formatDate(stats.startsAt, { dateStyle: "medium", timeStyle: "short" })}
       </p>
 
       {/* Progress bar */}
       <div className="mt-4">
-        <div className="flex items-end justify-between text-[13px]">
+        <div className="flex items-end justify-between text-base">
           <span className="text-muted-foreground">Check-in progress</span>
           <span className="font-display text-[24px] text-foreground">{percentage}%</span>
         </div>
@@ -39,12 +39,12 @@ export function ScannerStats({ stats }: ScannerStatsProps) {
         <div className="rounded-xl bg-[var(--border)] p-3">
           <Ticket className="size-4 text-coral" />
           <p className="mt-1 font-display text-[20px]">{stats.checkedIn}</p>
-          <p className="text-[11px] text-muted-foreground">Checked In</p>
+          <p className="text-sm text-muted-foreground">Checked In</p>
         </div>
         <div className="rounded-xl bg-[var(--border)] p-3">
           <Users className="size-4 text-muted-foreground" />
           <p className="mt-1 font-display text-[20px]">{stats.totalTickets}</p>
-          <p className="text-[11px] text-muted-foreground">Total Tickets</p>
+          <p className="text-sm text-muted-foreground">Total Tickets</p>
         </div>
       </div>
     </div>

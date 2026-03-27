@@ -27,7 +27,7 @@ export function CurrencySelector({ currentCurrency }: CurrencySelectorProps) {
     <select
       value={currentCurrency}
       onChange={handleChange}
-      className="cursor-pointer rounded-lg border-0 bg-transparent py-1 pl-1 pr-6 text-[12px] font-medium text-foreground/60 outline-none transition-colors hover:text-white focus:text-white [&>option]:bg-card [&>option]:text-foreground"
+      className="cursor-pointer rounded-lg border-0 bg-transparent py-1 pl-1 pr-6 text-base font-medium text-muted-foreground outline-none transition-colors hover:text-white focus:text-white [&>option]:bg-card [&>option]:text-foreground"
       aria-label="Display currency"
     >
       <option value="original">🌐 All</option>

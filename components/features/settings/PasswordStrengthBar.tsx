@@ -23,7 +23,7 @@ export function PasswordStrengthBar({ password }: PasswordStrengthBarProps) {
         ))}
       </div>
       {password.length > 0 && (
-        <p className={`text-[11px] ${strength >= 3 ? "text-emerald-400" : strength >= 2 ? "text-amber-400" : "text-red-400"}`}>
+        <p className={`text-sm ${strength >= 3 ? "text-emerald-400" : strength >= 2 ? "text-amber-400" : "text-red-400"}`}>
           {labels[strength]}
         </p>
       )}

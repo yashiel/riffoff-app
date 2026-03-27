@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { serialize } from "@/lib/utils";
 import type { ProfileDoc, UserRole } from "@/lib/appwrite/types";
 
 /**
@@ -24,7 +25,8 @@ export async function getProfile(): Promise<ProfileDoc | null> {
       [Query.equal("userId", user.$id), Query.limit(1)],
     );
 
-    return (documents[0] as unknown as ProfileDoc) ?? null;
+    const doc = documents[0] as unknown as ProfileDoc | undefined;
+    return doc ? serialize(doc) : null;
   } catch (error) {
     console.error("[getProfile] Error:", error);
     return null;
@@ -33,12 +35,14 @@ export async function getProfile(): Promise<ProfileDoc | null> {
 
 /**
  * Ensure a profile document exists for the given user.
- * Creates one with role "attendee" if it doesn't exist.
+ * Creates one if it doesn't exist. Role defaults to "attendee" unless specified.
  * Called on registration and OAuth first-login.
+ * SECURITY: role parameter is validated — only "attendee", "artist", "organiser" accepted.
  */
 export async function ensureProfile(
   userId: string,
   displayName?: string,
+  role?: "attendee" | "artist" | "organiser",
 ): Promise<ProfileDoc> {
   const { databases } = await createAdminClient();
 
@@ -50,7 +54,7 @@ export async function ensureProfile(
   );
 
   if (documents.length > 0) {
-    return documents[0] as unknown as ProfileDoc;
+    return serialize(documents[0] as unknown as ProfileDoc);
   }
 
   // Create new profile with default role
@@ -62,7 +66,7 @@ export async function ensureProfile(
       userId,
       displayName: displayName ?? null,
       photoUrl: null,
-      role: "attendee" as UserRole,
+      role: (role ?? "attendee") as UserRole,
       phone: null,
       timezone: null,
       language: null,
@@ -74,7 +78,7 @@ export async function ensureProfile(
     },
   );
 
-  return profile as unknown as ProfileDoc;
+  return serialize(profile as unknown as ProfileDoc);
 }
 
 /**
@@ -93,7 +97,8 @@ export async function getProfileByUserId(
       [Query.equal("userId", userId), Query.limit(1)],
     );
 
-    return (documents[0] as unknown as ProfileDoc) ?? null;
+    const doc = documents[0] as unknown as ProfileDoc | undefined;
+    return doc ? serialize(doc) : null;
   } catch {
     return null;
   }
@@ -154,7 +159,7 @@ export async function updateProfile(
     )) as unknown as ProfileDoc;
 
     revalidatePath("/dashboard/profile");
-    return { profile: updated };
+    return { profile: serialize(updated) };
   } catch {
     return { error: "Failed to update profile" };
   }
@@ -194,7 +199,7 @@ export async function upgradeRole(
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/profile");
-    return { profile: updated };
+    return { profile: serialize(updated) };
   } catch {
     return { error: "Failed to upgrade role" };
   }

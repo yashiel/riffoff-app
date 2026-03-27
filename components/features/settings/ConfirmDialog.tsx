@@ -58,14 +58,14 @@ export function ConfirmDialog({
       <DialogContent className="border-[var(--border)] bg-[#1e1e1e] sm:max-w-md">
         <DialogHeader>
           <DialogTitle className={danger ? "text-red-400" : ""}>{title}</DialogTitle>
-          <DialogDescription className="text-[13px] text-muted-foreground">
+          <DialogDescription className="text-base text-muted-foreground">
             {description}
           </DialogDescription>
         </DialogHeader>
 
         {typeToConfirm && (
           <div className="space-y-2">
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Type <strong className="text-foreground">{typeToConfirm}</strong> to confirm:
             </p>
             <input
@@ -73,7 +73,7 @@ export function ConfirmDialog({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               placeholder={typeToConfirm}
-              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-[14px] text-white outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
+              className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-base text-foreground outline-none focus:border-[color-mix(in srgb,var(--foreground) 30%,transparent)]"
               autoFocus
             />
           </div>
@@ -82,14 +82,14 @@ export function ConfirmDialog({
         <DialogFooter className="gap-2 sm:gap-0">
           <button
             onClick={() => setOpen(false)}
-            className="btn-ghost !py-2 !text-[12px]"
+            className="btn-ghost !py-2 !text-base"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={!canConfirm || isPending || disabled}
-            className={`rounded px-4 py-2 text-[12px] font-bold uppercase transition-colors disabled:opacity-30 ${
+            className={`rounded px-4 py-2 text-base font-bold uppercase transition-colors disabled:opacity-30 ${
               danger
                 ? "bg-red-500 text-white hover:bg-red-400"
                 : "bg-white text-black hover:bg-white/90"

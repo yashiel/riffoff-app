@@ -25,8 +25,8 @@ export default async function ApplicationsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-[36px]">My Applications</h1>
-      <p className="mt-2 text-[14px] text-muted-foreground">
+      <h1 className="font-display text-2xl sm:text-3xl lg:text-[36px]">My Applications</h1>
+      <p className="mt-2 text-base text-muted-foreground">
         Track your performance applications
       </p>
 
@@ -81,7 +81,7 @@ function Section({
     <div>
       <div className="mb-3 flex items-center gap-2">
         <h3 className="font-display text-[22px]">{title}</h3>
-        <span className="rounded-full bg-foreground/5 px-2 py-0.5 text-[12px] text-muted-foreground">
+        <span className="rounded-full bg-muted/80 px-2 py-0.5 text-base text-muted-foreground">
           {count}
         </span>
       </div>

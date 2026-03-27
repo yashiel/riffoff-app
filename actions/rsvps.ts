@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { serialize } from "@/lib/utils";
 import type { RSVPDoc, RSVPStatus } from "@/lib/appwrite/types";
 
 const rsvpSchema = z.object({
@@ -72,7 +73,7 @@ export async function createOrUpdateRSVP(
     }
 
     revalidatePath(`/events/${eventId}`);
-    return { rsvp };
+    return { rsvp: serialize(rsvp) };
   } catch {
     return { error: "Failed to update RSVP. Please try again." };
   }
@@ -99,7 +100,8 @@ export async function getUserRSVP(
       ],
     );
 
-    return (result.documents[0] as unknown as RSVPDoc) ?? null;
+    const doc = result.documents[0] as unknown as RSVPDoc | undefined;
+    return doc ? serialize(doc) : null;
   } catch {
     return null;
   }

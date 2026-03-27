@@ -6,6 +6,7 @@ import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
+import { serialize } from "@/lib/utils";
 import type { EventDoc, TicketTierDoc } from "@/lib/appwrite/types";
 
 const tierSchema = z.object({
@@ -75,7 +76,7 @@ export async function createTier(
     )) as unknown as TicketTierDoc;
 
     revalidatePath(`/dashboard/events/${parsed.data.eventId}/tiers`);
-    return { tier };
+    return { tier: serialize(tier) };
   } catch {
     return { error: "Failed to create tier" };
   }
@@ -121,7 +122,7 @@ export async function updateTier(
     )) as unknown as TicketTierDoc;
 
     revalidatePath(`/dashboard/events/${tier.eventId}/tiers`);
-    return { tier: updated };
+    return { tier: serialize(updated) };
   } catch {
     return { error: "Failed to update tier" };
   }
@@ -153,7 +154,40 @@ export async function deleteTier(tierId: string): Promise<{ error?: string }> {
   }
 }
 
-/** Get tiers for an event */
+/** Reorder tiers (drag-and-drop) */
+export async function reorderTiers(
+  orderMap: { tierId: string; sortOrder: number }[],
+): Promise<{ error?: string }> {
+  if (orderMap.length === 0) return {};
+
+  const { databases } = await createAdminClient();
+
+  try {
+    // Verify ownership of the first tier's event
+    const firstTier = (await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.TICKET_TIERS,
+      orderMap[0].tierId,
+    )) as unknown as TicketTierDoc;
+
+    const auth = await verifyEventOwnership(firstTier.eventId);
+    if ("error" in auth) return { error: auth.error };
+
+    // Update all sort orders
+    await Promise.all(
+      orderMap.map(({ tierId, sortOrder }) =>
+        databases.updateDocument(DATABASE_ID, COLLECTIONS.TICKET_TIERS, tierId, { sortOrder }),
+      ),
+    );
+
+    revalidatePath(`/dashboard/events/${firstTier.eventId}/tiers`);
+    return {};
+  } catch {
+    return { error: "Failed to reorder tiers" };
+  }
+}
+
+/** Get tiers for an event (serialised for client components) */
 export async function getEventTiers(eventId: string): Promise<TicketTierDoc[]> {
   const { databases } = await createAdminClient();
 
@@ -163,5 +197,19 @@ export async function getEventTiers(eventId: string): Promise<TicketTierDoc[]> {
     [Query.equal("eventId", eventId), Query.orderAsc("sortOrder"), Query.limit(20)],
   );
 
-  return result.documents as unknown as TicketTierDoc[];
+  // Strip Appwrite internal properties that break RSC serialisation
+  return result.documents.map((doc) => ({
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
+    eventId: doc.eventId as string,
+    name: doc.name as string,
+    price: doc.price as number,
+    currency: doc.currency as string,
+    quota: doc.quota as number,
+    soldCount: doc.soldCount as number,
+    saleStartsAt: (doc.saleStartsAt as string) ?? null,
+    saleEndsAt: (doc.saleEndsAt as string) ?? null,
+    sortOrder: doc.sortOrder as number,
+  })) as unknown as TicketTierDoc[];
 }

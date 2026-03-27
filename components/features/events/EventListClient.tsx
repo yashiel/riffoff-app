@@ -163,15 +163,15 @@ export function EventListClient({ events }: EventListClientProps) {
       {/* ─── Stats strip ─── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total Events", value: stats.total, icon: BarChart3, accent: "text-foreground/50" },
+          { label: "Total Events", value: stats.total, icon: BarChart3, accent: "text-muted-foreground" },
           { label: "Live Now", value: stats.live, icon: Zap, accent: "text-emerald-400" },
           { label: "Upcoming", value: stats.upcoming, icon: Clock, accent: "text-coral" },
-          { label: "Past", value: stats.past, icon: TrendingUp, accent: "text-foreground/30" },
+          { label: "Past", value: stats.past, icon: TrendingUp, accent: "text-muted-foreground" },
         ].map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-foreground/[0.04] bg-foreground/[0.015] p-5">
+          <div key={stat.label} className="rounded-2xl border border-border bg-muted/60 p-5">
             <stat.icon className={`size-5 ${stat.accent}`} />
             <p className="mt-3 font-display text-3xl leading-none tracking-tight">{stat.value}</p>
-            <p className="mt-1 text-[11px] uppercase tracking-wider text-foreground/25">{stat.label}</p>
+            <p className="mt-1 text-sm uppercase tracking-wider text-muted-foreground">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -190,12 +190,12 @@ export function EventListClient({ events }: EventListClientProps) {
                 <button
                   key={tab.id}
                   onClick={() => setStatusFilter(tab.id)}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all ${
+                  className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold uppercase tracking-wide transition-all ${
                     isActive
                       ? tab.id === "all"
-                        ? "bg-foreground/10 text-foreground"
+                        ? "bg-muted text-foreground"
                         : `${cfg?.bg} ${cfg?.text}`
-                      : "text-foreground/20 hover:text-foreground/40"
+                      : "text-muted-foreground/70 hover:text-muted-foreground"
                   }`}
                 >
                   {tab.icon && <tab.icon className="size-3" />}
@@ -210,13 +210,13 @@ export function EventListClient({ events }: EventListClientProps) {
           <div className="flex items-center gap-2">
             {/* Search */}
             <div className="relative flex-1 sm:w-56 sm:flex-initial">
-              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-foreground/15" />
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/60" />
               <input
                 type="search"
                 placeholder="Search events..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg bg-foreground/[0.03] border border-foreground/[0.05] py-2 pl-9 pr-3 text-[12px] text-white placeholder:text-foreground/20 outline-none focus:border-coral/30 transition-colors"
+                className="w-full rounded-lg bg-muted/80 border border-border py-2 pl-9 pr-3 text-base text-foreground placeholder:text-muted-foreground outline-none focus:border-coral/30 transition-colors"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function EventListClient({ events }: EventListClientProps) {
               className={`rounded-lg border p-2 transition-all ${
                 showFilters || dateFilter !== "all" || sortBy !== "date-asc"
                   ? "border-coral/20 bg-coral/5 text-coral"
-                  : "border-foreground/[0.05] text-foreground/20 hover:text-foreground/40"
+                  : "border-border text-muted-foreground/70 hover:text-muted-foreground"
               }`}
               aria-label="Toggle filters"
             >
@@ -234,17 +234,17 @@ export function EventListClient({ events }: EventListClientProps) {
             </button>
 
             {/* View toggle */}
-            <div className="flex rounded-lg border border-foreground/[0.05] p-0.5">
+            <div className="flex rounded-lg border border-border p-0.5">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-foreground/10 text-foreground" : "text-foreground/20 hover:text-foreground/40"}`}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-muted text-foreground" : "text-muted-foreground/70 hover:text-muted-foreground"}`}
                 aria-label="Grid view"
               >
                 <LayoutGrid className="size-3.5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-foreground/10 text-foreground" : "text-foreground/20 hover:text-foreground/40"}`}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-muted text-foreground" : "text-muted-foreground/70 hover:text-muted-foreground"}`}
                 aria-label="List view"
               >
                 <List className="size-3.5" />
@@ -255,19 +255,19 @@ export function EventListClient({ events }: EventListClientProps) {
 
         {/* Row 2: Expanded filters (date + sort) */}
         {showFilters && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-foreground/[0.03] bg-foreground/[0.015] p-3 animate-fade-up">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/60 p-3 animate-fade-up">
             {/* Date filter */}
             <div className="flex items-center gap-2">
-              <Calendar className="size-3.5 text-foreground/20" />
+              <Calendar className="size-3.5 text-muted-foreground/70" />
               <div className="flex flex-wrap gap-1">
                 {DATE_FILTERS.map((df) => (
                   <button
                     key={df.id}
                     onClick={() => setDateFilter(df.id)}
-                    className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                    className={`rounded-md px-2.5 py-1 text-sm font-medium transition-colors ${
                       dateFilter === df.id
                         ? "bg-coral/10 text-coral"
-                        : "text-foreground/25 hover:text-foreground/50"
+                        : "text-muted-foreground hover:text-muted-foreground"
                     }`}
                   >
                     {df.label}
@@ -276,15 +276,15 @@ export function EventListClient({ events }: EventListClientProps) {
               </div>
             </div>
 
-            <div className="hidden h-5 w-px bg-foreground/[0.06] sm:block" />
+            <div className="hidden h-5 w-px bg-muted sm:block" />
 
             {/* Sort */}
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="size-3.5 text-foreground/20" />
+              <ArrowUpDown className="size-3.5 text-muted-foreground/70" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="rounded-md bg-transparent px-2 py-1 text-[11px] text-foreground/50 outline-none"
+                className="rounded-md bg-transparent px-2 py-1 text-sm text-muted-foreground outline-none"
               >
                 {SORT_OPTIONS.map((so) => (
                   <option key={so.id} value={so.id} className="bg-background">{so.label}</option>
@@ -296,7 +296,7 @@ export function EventListClient({ events }: EventListClientProps) {
             {(dateFilter !== "all" || sortBy !== "date-asc") && (
               <button
                 onClick={() => { setDateFilter("all"); setSortBy("date-asc"); }}
-                className="ml-auto text-[10px] text-foreground/25 hover:text-coral transition-colors"
+                className="ml-auto text-sm text-muted-foreground hover:text-coral transition-colors"
               >
                 Clear filters
               </button>
@@ -306,7 +306,7 @@ export function EventListClient({ events }: EventListClientProps) {
       </div>
 
       {/* ─── Result count ─── */}
-      <p className="text-[11px] uppercase tracking-wider text-foreground/15">
+      <p className="text-sm uppercase tracking-wider text-muted-foreground/60">
         {filtered.length} event{filtered.length !== 1 ? "s" : ""}
         {statusFilter !== "all" && ` · ${statusConfig[statusFilter]?.label}`}
         {dateFilter !== "all" && ` · ${DATE_FILTERS.find((d) => d.id === dateFilter)?.label}`}
@@ -315,11 +315,11 @@ export function EventListClient({ events }: EventListClientProps) {
       {/* ─── Results ─── */}
       {filtered.length === 0 ? (
         <div className="py-20 text-center">
-          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-foreground/[0.02] ring-1 ring-white/[0.04]">
-            <Search className="size-6 text-foreground/10" />
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-muted/70 ring-1 ring-white/[0.04]">
+            <Search className="size-6 text-muted-foreground/50" />
           </div>
-          <p className="text-[14px] font-medium text-foreground/30">No events found</p>
-          <p className="mt-1 text-[12px] text-foreground/15">
+          <p className="text-base font-medium text-muted-foreground">No events found</p>
+          <p className="mt-1 text-base text-muted-foreground/60">
             {search ? `Nothing matching "${search}"` : "Try adjusting your filters"}
           </p>
         </div>
@@ -336,7 +336,7 @@ export function EventListClient({ events }: EventListClientProps) {
               <Link
                 key={event.$id}
                 href={`/dashboard/events/${event.$id}`}
-                className="group relative overflow-hidden rounded-2xl border border-foreground/[0.04] transition-all duration-300 hover:border-foreground/[0.1] hover:shadow-[0_0_30px_rgba(191,255,0,0.03)]"
+                className="group relative overflow-hidden rounded-2xl border border-border transition-all duration-300 hover:border-border hover:shadow-[0_0_30px_rgba(191,255,0,0.03)]"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 {/* Cover */}
@@ -351,17 +351,17 @@ export function EventListClient({ events }: EventListClientProps) {
                   ) : (
                     <div className="flex h-full items-center justify-center bg-gradient-to-br from-white/[0.02] to-transparent text-3xl text-white/[0.03]">♪</div>
                   )}
-                  {/* Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  {/* Gradient — always dark overlay for image readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
 
                   {/* Top row: status + relative time */}
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
-                    <span className={`inline-flex items-center gap-1.5 rounded-md ${cfg.bg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.text} backdrop-blur-sm`}>
+                    <span className={`inline-flex items-center gap-1.5 rounded-lg bg-black/60 px-2.5 py-1 text-sm font-bold uppercase tracking-wider backdrop-blur-md ${cfg.text}`}>
                       <span className={`size-1.5 rounded-full ${cfg.dot}`} />
                       {cfg.label}
                     </span>
-                    <span className={`rounded-md bg-background/80 px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm ${
-                      isUpcoming ? "text-coral" : "text-foreground/30"
+                    <span className={`rounded-lg bg-black/60 px-2.5 py-1 text-sm font-semibold backdrop-blur-md ${
+                      isUpcoming ? "text-coral" : "text-white/60"
                     }`}>
                       {relativeTime(event.startsAt)}
                     </span>
@@ -375,17 +375,17 @@ export function EventListClient({ events }: EventListClientProps) {
 
                 {/* Info */}
                 <div className="space-y-3 p-5">
-                  <h3 className="text-[16px] font-bold leading-snug text-foreground/90 group-hover:text-white transition-colors line-clamp-2">
+                  <h3 className="text-[16px] font-bold leading-snug text-foreground group-hover:text-coral transition-colors line-clamp-2">
                     {event.title}
                   </h3>
-                  <div className="flex flex-col gap-1.5 text-[12px] text-foreground/30">
+                  <div className="flex flex-col gap-1.5 text-base text-muted-foreground">
                     <span className="flex items-center gap-2">
                       <Calendar className="size-3.5 text-coral/50" />
                       {formatDate(event.startsAt, { dateStyle: "long" })}
                     </span>
                     {event.venue && (
                       <span className="flex items-center gap-2 truncate">
-                        <MapPin className="size-3.5 shrink-0 text-foreground/15" />
+                        <MapPin className="size-3.5 shrink-0 text-muted-foreground/60" />
                         <span className="truncate">{event.venue.name}</span>
                       </span>
                     )}
@@ -395,12 +395,12 @@ export function EventListClient({ events }: EventListClientProps) {
                   <div className="flex items-center justify-between pt-1">
                     <div className="flex gap-1.5 overflow-hidden">
                       {event.genres.slice(0, 2).map((g) => (
-                        <span key={g} className="rounded-md bg-violet-500/[0.06] px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-violet-300/40">
+                        <span key={g} className="rounded-md bg-violet-500/10 px-2.5 py-1 text-sm font-medium uppercase tracking-wide text-violet-500 dark:text-violet-300">
                           {g}
                         </span>
                       ))}
                     </div>
-                    <span className="flex items-center gap-1.5 text-[11px] text-foreground/15">
+                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground/60">
                       <Users className="size-3.5" />
                       {event.capacity.toLocaleString()}
                     </span>
@@ -412,9 +412,9 @@ export function EventListClient({ events }: EventListClientProps) {
         </div>
       ) : (
         /* ─── List View ─── */
-        <div className="overflow-hidden rounded-2xl border border-foreground/[0.04]">
+        <div className="overflow-hidden rounded-2xl border border-border">
           {/* Table header */}
-          <div className="hidden border-b border-foreground/[0.04] bg-foreground/[0.015] px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/20 sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]">
+          <div className="hidden border-b border-border bg-muted/60 px-4 py-2.5 text-sm font-semibold uppercase tracking-wider text-muted-foreground/70 sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]">
             <span className="w-14" />
             <span>Event</span>
             <span>Date</span>
@@ -434,25 +434,25 @@ export function EventListClient({ events }: EventListClientProps) {
                 <Link
                   key={event.$id}
                   href={`/dashboard/events/${event.$id}`}
-                  className="group flex items-center gap-3 px-4 py-3 transition-all hover:bg-foreground/[0.02] sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]"
+                  className="group flex items-center gap-3 px-4 py-3 transition-all hover:bg-muted/70 sm:grid sm:grid-cols-[auto_1fr_140px_120px_80px_40px]"
                 >
                   {/* Thumbnail */}
-                  <div className={`size-10 shrink-0 overflow-hidden rounded-lg bg-foreground/[0.03] ${isPast ? "grayscale-[30%]" : ""}`}>
+                  <div className={`size-10 shrink-0 overflow-hidden rounded-lg bg-muted/80 ${isPast ? "grayscale-[30%]" : ""}`}>
                     {event.coverimageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={event.coverimageUrl} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-white/[0.05]">♪</div>
+                      <div className="flex h-full items-center justify-center text-base text-white/[0.05]">♪</div>
                     )}
                   </div>
 
                   {/* Title + genres */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-[13px] font-semibold text-foreground/80 group-hover:text-white transition-colors">
+                    <h3 className="truncate text-base font-semibold text-foreground group-hover:text-coral transition-colors">
                       {event.title}
                     </h3>
                     <div className="mt-0.5 flex gap-1 sm:hidden">
-                      <span className="text-[10px] text-foreground/20">
+                      <span className="text-sm text-muted-foreground/70">
                         {formatDate(event.startsAt, { dateStyle: "medium" })}
                       </span>
                     </div>
@@ -460,27 +460,27 @@ export function EventListClient({ events }: EventListClientProps) {
 
                   {/* Date */}
                   <div className="hidden sm:block">
-                    <p className="text-[12px] text-foreground/50">{formatDate(event.startsAt, { dateStyle: "medium" })}</p>
-                    <p className={`text-[10px] ${isUpcoming ? "text-coral/50" : "text-foreground/15"}`}>
+                    <p className="text-base text-muted-foreground">{formatDate(event.startsAt, { dateStyle: "medium" })}</p>
+                    <p className={`text-sm ${isUpcoming ? "text-coral/50" : "text-muted-foreground/60"}`}>
                       {relativeTime(event.startsAt)}
                     </p>
                   </div>
 
                   {/* Venue */}
-                  <p className="hidden truncate text-[12px] text-foreground/30 sm:block">
+                  <p className="hidden truncate text-base text-muted-foreground sm:block">
                     {event.venue?.name ?? "—"}
                   </p>
 
                   {/* Status */}
                   <div className="hidden sm:block">
-                    <span className={`inline-flex items-center gap-1.5 rounded-md ${cfg.bg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.text}`}>
+                    <span className={`inline-flex items-center gap-1.5 rounded-md ${cfg.bg} px-2 py-0.5 text-sm font-bold uppercase tracking-wider ${cfg.text}`}>
                       <span className={`size-1.5 rounded-full ${cfg.dot}`} />
                       {cfg.label}
                     </span>
                   </div>
 
                   {/* Arrow */}
-                  <ChevronRight className="size-4 shrink-0 text-white/8 transition-colors group-hover:text-coral/50" />
+                  <ChevronRight className="size-4 shrink-0 text-muted-foreground/30 transition-colors group-hover:text-coral/50" />
                 </Link>
               );
             })}

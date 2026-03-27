@@ -1,7 +1,15 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useState, useTransition, useEffect, useCallback, useRef } from "react";
-import { QrCode, ChevronDown, History, BarChart3 } from "lucide-react";
+import { QrCode, History, BarChart3 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { QRScanner } from "@/components/features/scanner/QRScanner";
 import { ScanResult } from "@/components/features/scanner/ScanResult";
 import { ScannerStats } from "@/components/features/scanner/ScannerStats";
@@ -96,35 +104,38 @@ export default function ScannerPage() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <QrCode className="size-5 text-coral" />
-        <h1 className="font-display text-[36px]">Scanner</h1>
+        <h1 className="font-display text-2xl sm:text-3xl lg:text-[36px]">Scanner</h1>
       </div>
 
       {/* Event selector */}
       {events.length > 0 && (
-        <div className="relative mt-4">
-          <select
+        <div className="mt-4">
+          <Select
             value={selectedEventId}
-            onChange={(e) => {
-              setSelectedEventId(e.target.value);
+            onValueChange={(value) => {
+              setSelectedEventId(value);
               setLastResult(null);
               setScanning(false);
             }}
-            className="w-full appearance-none rounded-xl bg-[var(--input)] border border-[var(--border)] px-4 py-3 pr-10 text-[14px] font-medium text-white outline-none focus:border-coral transition-colors"
           >
-            {events.map((event) => (
-              <option key={event.eventId} value={event.eventId}>
-                {event.eventTitle}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <SelectTrigger className="h-auto w-full rounded-xl border-border bg-input/30 px-4 py-3 text-base font-medium">
+              <SelectValue placeholder="Select an event" />
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              {events.map((event) => (
+                <SelectItem key={event.eventId} value={event.eventId} className="py-2.5 text-base">
+                  {event.eventTitle}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
       {events.length === 0 && !isPending && (
         <div className="mt-8 rounded-xl border border-[var(--border)] p-6 text-center">
           <QrCode className="mx-auto size-8 text-muted-foreground" />
-          <p className="mt-3 text-[14px] text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground">
             No active events to scan for. Create and publish an event first.
           </p>
         </div>
@@ -144,9 +155,9 @@ export default function ScannerPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-medium uppercase transition-colors ${
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-base font-medium uppercase transition-colors ${
                   activeTab === tab.id
-                    ? "bg-foreground/10 text-foreground"
+                    ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -165,7 +176,7 @@ export default function ScannerPage() {
                   <button
                     onClick={() => setScanning(!scanning)}
                     disabled={isPending}
-                    className={`w-full rounded-full py-3 text-[14px] font-bold uppercase transition-colors ${
+                    className={`w-full rounded-full py-3 text-base font-bold uppercase transition-colors ${
                       scanning
                         ? "bg-red-500 text-white hover:bg-red-400"
                         : "bg-coral text-black hover:bg-coral/90"
@@ -182,7 +193,7 @@ export default function ScannerPage() {
 
               {/* Quick stats below scanner */}
               {stats && (
-                <div className="flex items-center justify-center gap-4 text-[13px] text-muted-foreground">
+                <div className="flex items-center justify-center gap-4 text-base text-muted-foreground">
                   <span>
                     <strong className="text-foreground">{stats.checkedIn}</strong> / {stats.totalTickets} checked in
                   </span>
@@ -202,7 +213,7 @@ export default function ScannerPage() {
               {stats ? (
                 <ScannerStats stats={stats} />
               ) : (
-                <p className="py-8 text-center text-[13px] text-muted-foreground">Loading stats...</p>
+                <p className="py-8 text-center text-base text-muted-foreground">Loading stats...</p>
               )}
             </div>
           )}
