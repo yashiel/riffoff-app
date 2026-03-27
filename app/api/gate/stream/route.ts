@@ -26,30 +26,67 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl;
   const tokenParam = url.searchParams.get("token");
   const role = url.searchParams.get("role") || "dashboard";
-  const sessionId =
-    tokenParam ||
-    request.cookies.get("riffoff-gate-session")?.value ||
-    (() => {
-      const auth = request.headers.get("authorization");
-      return auth?.startsWith("Bearer ") ? auth.slice(7) : null;
-    })();
 
-  if (!sessionId) {
-    return new Response(JSON.stringify({ error: "No session" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // sessionId is guaranteed non-null beyond this point
-  const validSessionId: string = sessionId;
-
-  // For scanner role, validate with device fingerprint
-  // For dashboard role, we do a lightweight check (organiser uses normal Appwrite session)
   let eventId: string;
   let gateId: string | null = null;
+  let validSessionId: string = "";
 
-  if (role === "scanner") {
+  if (role === "dashboard") {
+    // Dashboard role: authenticate via Appwrite user session (organiser)
+    const eid = url.searchParams.get("eventId");
+    if (!eid) {
+      return new Response(JSON.stringify({ error: "eventId required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Verify Appwrite session — organiser must own this event or be admin
+    try {
+      const sessionClient = await (await import("@/lib/appwrite/server")).createSessionClient();
+      if (!sessionClient) {
+        return new Response(JSON.stringify({ error: "Not authenticated" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      const user = await sessionClient.account.get();
+      const { databases: adminDb } = await createAdminClient();
+      const event = await adminDb.getDocument(DATABASE_ID, COLLECTIONS.EVENTS, eid);
+      const isAdmin = await (await import("@/lib/auth-utils")).isCurrentUserAdmin();
+      if (event.organiserId !== user.$id && !isAdmin) {
+        return new Response(JSON.stringify({ error: "Not authorized" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch {
+      return new Response(JSON.stringify({ error: "Auth failed" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    eventId = eid;
+  } else {
+    // Scanner role: authenticate via gate session token
+    const sessionId =
+      tokenParam ||
+      request.cookies.get("riffoff-gate-session")?.value ||
+      (() => {
+        const auth = request.headers.get("authorization");
+        return auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+      })();
+
+    if (!sessionId) {
+      return new Response(JSON.stringify({ error: "No session" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    validSessionId = sessionId;
+
     const session = await validateSession(sessionId, {
       userAgent: request.headers.get("user-agent") ?? "unknown",
       screenSize: request.headers.get("x-screen-size") ?? "unknown",
@@ -67,18 +104,8 @@ export async function GET(request: NextRequest) {
     eventId = session.eventId;
     gateId = session.gateId;
 
-    // Update keepalive — SSE connection itself acts as heartbeat
+    // Update keepalive
     await updateLastSeen(validSessionId);
-  } else {
-    // Dashboard role — extract eventId from query param
-    const eid = url.searchParams.get("eventId");
-    if (!eid) {
-      return new Response(JSON.stringify({ error: "eventId required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    eventId = eid;
   }
 
   // --- SSE Stream ---
