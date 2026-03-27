@@ -15,7 +15,7 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
         <div className="flex items-start gap-3">
           <CheckCircle2 className="mt-0.5 size-6 shrink-0 text-emerald-400" />
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-[20px] text-emerald-400">Checked In</h3>
+            <h3 className="font-display text-xl text-emerald-400">Checked In</h3>
             <div className="mt-2 space-y-1 text-base">
               <p className="font-bold text-foreground">{result.ticket.attendeeName}</p>
               <p className="text-muted-foreground">
@@ -48,7 +48,7 @@ export function ScanResult({ result, onDismiss }: ScanResultProps) {
       <div className="flex items-start gap-3">
         <Icon className={`mt-0.5 size-6 shrink-0 ${textColor}`} />
         <div>
-          <h3 className={`font-display text-[20px] ${textColor}`}>
+          <h3 className={`font-display text-xl ${textColor}`}>
             {isWarning ? "Already Scanned" : "Invalid Ticket"}
           </h3>
           <p className="mt-2 text-base text-muted-foreground">{result.reason}</p>
