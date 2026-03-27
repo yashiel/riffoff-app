@@ -278,10 +278,10 @@ function SideCard({
         )}
         {/* Date overlay */}
         <div className="absolute bottom-2 left-2 flex flex-col items-center rounded-lg bg-background/80 px-2 py-1 backdrop-blur-sm">
-          <span className="text-[9px] font-bold leading-none text-coral">
+          <span className="text-xs font-bold leading-none text-coral">
             {monthShort}
           </span>
-          <span className="text-[16px] font-bold leading-tight text-foreground">
+          <span className="text-base font-bold leading-tight text-foreground">
             {day}
           </span>
         </div>
@@ -368,7 +368,7 @@ function GridCard({
           <span className="text-sm font-bold uppercase leading-none text-coral">
             {monthShort}
           </span>
-          <span className="text-[18px] font-bold leading-tight text-foreground">
+          <span className="text-lg font-bold leading-tight text-foreground">
             {day}
           </span>
         </div>
@@ -432,7 +432,7 @@ function GridCard({
           </div>
           <div className="flex gap-1">
             {event.genres.slice(0, 2).map((g) => (
-              <span key={g} className="genre-pill !px-2 !py-0.5 !text-[9px]">
+              <span key={g} className="genre-pill !px-2 !py-0.5 !text-xs">
                 {g}
               </span>
             ))}

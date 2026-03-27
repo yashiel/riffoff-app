@@ -71,14 +71,14 @@ export function TrendingArtists({ artists }: TrendingArtistsProps) {
 
               {/* Genre pill — top left */}
               <div className="absolute left-3 top-4">
-                <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/70 backdrop-blur-sm">
+                <span className="rounded bg-white/10 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-white/70 backdrop-blur-sm">
                   {artist.genre}
                 </span>
               </div>
 
               {/* Event count — top right */}
               <div className="absolute right-3 top-4">
-                <span className="flex items-center gap-1 rounded-full bg-coral/90 px-2 py-0.5 text-[11px] font-bold text-black">
+                <span className="flex items-center gap-1 rounded-full bg-coral/90 px-2 py-0.5 text-xs font-bold text-black">
                   <Disc3
                     className={`size-3 ${hoveredIdx === i ? "animate-spin" : ""}`}
                     style={{ animationDuration: "3s" }}
@@ -100,7 +100,7 @@ export function TrendingArtists({ artists }: TrendingArtistsProps) {
                 </h3>
 
                 {/* CTA — slides up on hover */}
-                <div className="mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-coral opacity-0 transition-all duration-300 group-hover:opacity-100">
+                <div className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-coral opacity-0 transition-all duration-300 group-hover:opacity-100">
                   View events
                   <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                 </div>
@@ -142,10 +142,10 @@ export function TrendingArtists({ artists }: TrendingArtistsProps) {
 
               {/* Name overlay at bottom */}
               <div className="absolute bottom-0 left-0 right-0 p-2">
-                <p className="text-[11px] font-bold leading-tight text-white">
+                <p className="text-xs font-bold leading-tight text-white">
                   {artist.name}
                 </p>
-                <p className="text-[9px] uppercase tracking-wider text-white/50">
+                <p className="text-[10px] uppercase tracking-wider text-white/50">
                   {artist.genre}
                 </p>
               </div>

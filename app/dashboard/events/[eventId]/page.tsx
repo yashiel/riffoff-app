@@ -174,7 +174,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
               {event.genres.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {event.genres.map((g) => (
-                    <span key={g} className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white/70 backdrop-blur-sm">
+                    <span key={g} className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/70 backdrop-blur-sm">
                       {g}
                     </span>
                   ))}
@@ -329,17 +329,17 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
               <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
                 <div className="rounded-xl bg-background/60 p-2 text-center sm:p-3">
                   <p className="font-display text-xl tabular-nums text-foreground sm:text-3xl">{checkedIn}</p>
-                  <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Scanned</p>
+                  <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Scanned</p>
                 </div>
                 <div className="rounded-xl bg-background/60 p-2 text-center sm:p-3">
                   <p className="font-display text-xl tabular-nums text-foreground sm:text-3xl">{totalSold - checkedIn}</p>
-                  <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Remaining</p>
+                  <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Remaining</p>
                 </div>
                 <div className="rounded-xl bg-background/60 p-2 text-center sm:p-3">
                   <p className="font-display text-xl tabular-nums text-coral sm:text-3xl">
                     {totalSold > 0 ? Math.round((checkedIn / totalSold) * 100) : 0}%
                   </p>
-                  <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Rate</p>
+                  <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-muted-foreground sm:text-sm">Rate</p>
                 </div>
               </div>
             </div>

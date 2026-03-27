@@ -128,8 +128,8 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-5">
             {/* Date */}
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Date</p>
-              <p className="mt-0.5 text-base font-bold tabular-nums text-foreground sm:text-[17px]">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Date</p>
+              <p className="mt-0.5 text-base font-bold tabular-nums text-foreground sm:text-lg">
                 {day} {monthShort} {yearFull}
               </p>
               <p className="text-sm text-muted-foreground">{weekdayShort}</p>
@@ -137,21 +137,21 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
 
             {/* Time */}
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Time</p>
-              <p className="mt-0.5 text-base font-bold text-foreground sm:text-[17px]">{time}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Time</p>
+              <p className="mt-0.5 text-base font-bold text-foreground sm:text-lg">{time}</p>
               <p className="text-sm text-muted-foreground">Doors open</p>
             </div>
 
             {/* Venue */}
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Venue</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Venue</p>
               <p className="mt-0.5 truncate text-base font-semibold text-foreground sm:text-base">{venueName}</p>
               {venueCity && <p className="truncate text-sm text-muted-foreground">{venueCity}</p>}
             </div>
 
             {/* Tier / Section */}
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Section</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Section</p>
               <p className="mt-0.5 text-base font-semibold text-foreground sm:text-base">{tier?.name ?? "General"}</p>
               <p className="text-sm text-muted-foreground">Admission</p>
             </div>
@@ -160,13 +160,13 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           {/* Ticket code bar */}
           <div className="mt-4 flex items-center justify-between rounded-lg bg-muted/80 px-3 py-2 sm:mt-5 sm:px-4">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Ticket</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Ticket</p>
               <p className="font-mono text-base font-bold tracking-widest text-foreground sm:text-base">
                 {ticket.ticketCode}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Passenger</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/80 sm:text-sm">Passenger</p>
               <p className="max-w-[120px] truncate text-base font-semibold text-foreground sm:max-w-[160px] sm:text-base">
                 {user.name || "Ticket Holder"}
               </p>

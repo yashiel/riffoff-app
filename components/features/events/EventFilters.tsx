@@ -82,63 +82,68 @@ export function EventFilters({
     );
   }
 
-  // ─── Pills-only mode: date + genre filters ───
+  // ─── Pills-only mode: date + genre as horizontal scroll ───
   if (pillsOnly) {
     return (
       <div
         className={cn(
-          "flex flex-wrap items-center gap-2",
+          "space-y-2.5",
           isPending && "opacity-60 pointer-events-none"
         )}
       >
-        {/* Date filters */}
-        {DATE_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => updateParams("date", option.value)}
-            className={cn(
-              "filter-btn",
-              currentDate === option.value && "active"
-            )}
-          >
-            {option.label}
-          </button>
-        ))}
+        {/* Date filters — always visible */}
+        <div className="flex items-center gap-2">
+          {DATE_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => updateParams("date", option.value)}
+              className={cn(
+                "filter-btn whitespace-nowrap",
+                currentDate === option.value && "active"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
 
-        {/* Divider */}
+          {/* Clear all */}
+          {hasActiveFilters && (
+            <button
+              onClick={() => {
+                startTransition(() => {
+                  router.push("/events");
+                });
+              }}
+              className="ml-1 flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            >
+              <X className="size-3" aria-hidden="true" />
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Genre filters — horizontal scroll */}
         {genres.length > 0 && (
-          <div className="mx-1 h-7 w-px bg-border" aria-hidden="true" />
-        )}
-
-        {/* Genre filters */}
-        {genres.map((genre) => (
-          <button
-            key={genre}
-            onClick={() =>
-              updateParams("genre", currentGenre === genre ? "" : genre)
-            }
-            className={cn(
-              "genre-pill cursor-pointer",
-              currentGenre === genre && "active"
-            )}
-          >
-            {genre}
-          </button>
-        ))}
-
-        {/* Clear all */}
-        {hasActiveFilters && (
-          <button
-            onClick={() => {
-              startTransition(() => {
-                router.push("/events");
-              });
-            }}
-            className="ml-1 flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-          >
-            <X className="size-3" aria-hidden="true" />
-            Clear all
-          </button>
+          <div className="scrollbar-none -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div className="flex items-center gap-1.5 pb-1">
+              {genres.map((genre) => (
+                <button
+                  key={genre}
+                  onClick={() =>
+                    updateParams("genre", currentGenre === genre ? "" : genre)
+                  }
+                  className={cn(
+                    "shrink-0 rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-wide transition-all",
+                    currentGenre === genre
+                      ? "border-coral/50 bg-coral/15 text-coral"
+                      : "border-border/50 bg-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                  )}
+                >
+                  {genre}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     );

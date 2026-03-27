@@ -83,14 +83,14 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
               {event.genres.slice(0, 2).map((genre) => (
                 <span
                   key={genre}
-                  className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur-sm"
+                  className="rounded bg-white/15 px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-white/80 backdrop-blur-sm"
                 >
                   {genre.length > 12 ? genre.slice(0, 10) + "…" : genre}
                 </span>
               ))}
             </div>
           )}
-          <h3 className="line-clamp-2 text-[15px] font-bold leading-tight text-white drop-shadow-sm">
+          <h3 className="line-clamp-2 text-base font-bold leading-tight text-white drop-shadow-sm">
             {event.title}
           </h3>
         </div>
@@ -100,7 +100,7 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
       <div className="mt-1.5 space-y-px">
         <div className="flex items-center gap-1.5">
           <Calendar className="size-3 text-coral" />
-          <span className="text-[13px] font-medium text-coral">
+          <span className="text-sm font-medium text-coral">
             {formatDate(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
           </span>
         </div>
@@ -108,13 +108,13 @@ export function EventCard({ event, variant = "grid", initialWishlisted = false, 
         {event.venue && (
           <div className="flex items-center gap-1.5">
             <MapPin className="size-3 text-muted-foreground" />
-            <span className="truncate text-[13px] text-muted-foreground">
+            <span className="truncate text-sm text-muted-foreground">
               {event.venue.name}
             </span>
           </div>
         )}
 
-        <div className="pt-0.5 text-[13px] font-semibold">
+        <div className="pt-0.5 text-sm font-semibold">
           {event.isFree ? (
             <span className="text-emerald-400">Free</span>
           ) : event.minPrice && event.minPriceCurrency ? (

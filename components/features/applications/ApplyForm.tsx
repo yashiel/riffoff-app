@@ -41,7 +41,7 @@ export function ApplyForm({ eventId, eventTitle }: ApplyFormProps) {
 
       <div className="rounded-xl border border-[var(--border)] p-4">
         <p className="text-base text-muted-foreground">Applying to perform at</p>
-        <p className="mt-1 text-[16px] font-bold text-foreground">{eventTitle}</p>
+        <p className="mt-1 text-base font-bold text-foreground">{eventTitle}</p>
       </div>
 
       <div className="space-y-1.5">

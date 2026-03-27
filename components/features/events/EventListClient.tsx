@@ -201,7 +201,7 @@ export function EventListClient({ events }: EventListClientProps) {
                   {tab.icon && <tab.icon className="size-3" />}
                   {cfg?.dot && isActive && <span className={`size-1.5 rounded-full ${cfg.dot}`} />}
                   {tab.label}
-                  <span className={`text-[9px] ${isActive ? "opacity-50" : "opacity-30"}`}>{count}</span>
+                  <span className={`text-[10px] ${isActive ? "opacity-50" : "opacity-30"}`}>{count}</span>
                 </button>
               );
             })}
@@ -375,7 +375,7 @@ export function EventListClient({ events }: EventListClientProps) {
 
                 {/* Info */}
                 <div className="space-y-3 p-5">
-                  <h3 className="text-[16px] font-bold leading-snug text-foreground group-hover:text-coral transition-colors line-clamp-2">
+                  <h3 className="text-base font-bold leading-snug text-foreground group-hover:text-coral transition-colors line-clamp-2">
                     {event.title}
                   </h3>
                   <div className="flex flex-col gap-1.5 text-base text-muted-foreground">

@@ -54,7 +54,7 @@ export function ConnectedTab({ providers }: ConnectedTabProps) {
             return (
               <div key={providerKey} className="flex items-center justify-between rounded-lg border border-[var(--border)] p-4">
                 <div className="flex items-center gap-3">
-                  <div className={`flex size-10 items-center justify-center rounded-full text-[16px] font-bold ${info.color}`}>
+                  <div className={`flex size-10 items-center justify-center rounded-full text-base font-bold ${info.color}`}>
                     {info.icon}
                   </div>
                   <div>

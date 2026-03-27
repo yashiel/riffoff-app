@@ -250,7 +250,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                   <div className="flex flex-col gap-3 rounded-2xl bg-[#1a1a1e] p-4 dark:bg-[#1a1a1e] sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="min-w-0">
                       <div className="flex items-baseline gap-2">
-                        <p className="text-[20px] font-bold text-white">
+                        <p className="text-xl font-bold text-white">
                           From{" "}
                           {convertedTierPrices[cheapestTier.$id] ??
                             formatCurrency(
@@ -371,14 +371,14 @@ export default async function EventDetailPage({ params }: EventPageProps) {
 
                       {/* Avatar */}
                       <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-coral/20 to-coral/5 ring-1 ring-coral/15">
-                        <span className="text-[16px] font-bold text-coral">
+                        <span className="text-base font-bold text-coral">
                           {(artist.displayName ?? "A").charAt(0).toUpperCase()}
                         </span>
                       </div>
 
                       {/* Name */}
                       <div className="min-w-0 flex-1">
-                        <p className="text-base font-semibold text-foreground transition-colors group-hover:text-coral sm:text-[16px]">
+                        <p className="text-base font-semibold text-foreground transition-colors group-hover:text-coral sm:text-base">
                           {artist.displayName ?? "Artist"}
                         </p>
                       </div>

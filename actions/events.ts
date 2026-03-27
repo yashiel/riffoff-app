@@ -23,6 +23,7 @@ export interface EventFilters {
   search?: string;
   genre?: string;
   dateRange?: "today" | "weekend" | "week" | "month" | "all";
+  city?: string;
   page?: number;
 }
 
@@ -43,13 +44,17 @@ export interface EventDetails {
 /** List published events with optional filters and pagination */
 export async function getPublishedEvents(filters: EventFilters = {}) {
   const { databases } = await createAdminClient();
-  const { search, genre, dateRange, page = 1 } = filters;
+  const { search, genre, dateRange, city, page = 1 } = filters;
+
+  // When city filtering is active, fetch more since we filter post-join
+  const fetchLimit = city ? 500 : PAGE_SIZE;
+  const fetchOffset = city ? 0 : (page - 1) * PAGE_SIZE;
 
   const queries: string[] = [
     Query.equal("status", "published"),
     Query.orderDesc("startsAt"),
-    Query.limit(PAGE_SIZE),
-    Query.offset((page - 1) * PAGE_SIZE),
+    Query.limit(fetchLimit),
+    Query.offset(fetchOffset),
   ];
 
   // Date filtering
@@ -122,7 +127,7 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
     }
   }
 
-  const eventsWithVenue: EventWithVenue[] = events.map((event) => {
+  let eventsWithVenue: EventWithVenue[] = events.map((event) => {
     const minTier = priceMap.get(event.$id);
     return {
       ...event,
@@ -132,13 +137,78 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
     };
   });
 
+  // City filter — post-join filter since venue address is in a separate collection
+  if (city) {
+    const { deriveCityFromAddress } = await import("@/lib/city-mapping");
+    eventsWithVenue = eventsWithVenue.filter((e) => {
+      const eventCity = deriveCityFromAddress(e.venue?.address ?? null);
+      return eventCity === city;
+    });
+  }
+
+  const total = city ? eventsWithVenue.length : result.total;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  // Paginate city-filtered results manually
+  const paginatedEvents = city
+    ? eventsWithVenue.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    : eventsWithVenue;
+
   return {
-    events: serialize(eventsWithVenue),
-    total: result.total,
+    events: serialize(paginatedEvents),
+    total,
     page,
     pageSize: PAGE_SIZE,
-    totalPages: Math.ceil(result.total / PAGE_SIZE),
+    totalPages,
   };
+}
+
+/** Get event counts grouped by city (for the map) */
+export async function getEventCountsByCity(): Promise<Array<{ cityId: string; count: number }>> {
+  const { databases } = await createAdminClient();
+  const { deriveCityFromAddress } = await import("@/lib/city-mapping");
+
+  // Fetch all published events (just IDs + venueIds — lightweight)
+  const result = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.EVENTS,
+    [
+      Query.equal("status", "published"),
+      Query.select(["$id", "venueId"]),
+      Query.limit(500),
+    ],
+  );
+
+  const events = result.documents as unknown as Array<{ $id: string; venueId: string }>;
+
+  // Fetch all unique venues
+  const venueIds = [...new Set(events.map((e) => e.venueId))];
+  const venueAddressMap = new Map<string, string>();
+
+  if (venueIds.length > 0) {
+    const venues = await Promise.all(
+      venueIds.map((id) =>
+        databases
+          .getDocument(DATABASE_ID, COLLECTIONS.VENUES, id)
+          .catch(() => null),
+      ),
+    );
+    for (const v of venues) {
+      if (v) venueAddressMap.set(v.$id, (v as unknown as VenueDoc).address ?? "");
+    }
+  }
+
+  // Count events per city
+  const counts = new Map<string, number>();
+  for (const event of events) {
+    const address = venueAddressMap.get(event.venueId) ?? null;
+    const cityId = deriveCityFromAddress(address);
+    if (cityId) {
+      counts.set(cityId, (counts.get(cityId) ?? 0) + 1);
+    }
+  }
+
+  return Array.from(counts.entries()).map(([cityId, count]) => ({ cityId, count }));
 }
 
 /** Get a single event by ID — returns null for non-existent or non-published (unless organiser/admin) */

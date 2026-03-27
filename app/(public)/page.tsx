@@ -76,7 +76,7 @@ export default async function HomePage() {
               <br />starts here.
             </h1>
 
-            <p className="mt-6 max-w-lg text-[16px] leading-relaxed text-white/40 sm:text-[18px]">
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/40 sm:text-lg">
               Discover events. Get tickets. No hidden fees, no scalping.
               Built for music lovers, artists, and organisers.
             </p>
@@ -108,7 +108,7 @@ export default async function HomePage() {
                     <stat.icon className="size-4 text-[#00D4FF]" />
                   </div>
                   <div>
-                    <p className="font-display text-[22px] leading-none text-white">{stat.value}</p>
+                    <p className="font-display text-xl leading-none text-white">{stat.value}</p>
                     <p className="text-sm text-white/35">{stat.label}</p>
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export default async function HomePage() {
                   <div className={`inline-flex size-12 items-center justify-center rounded-xl ${item.iconBg}`}>
                     <item.icon className={`size-5 ${item.iconColor}`} />
                   </div>
-                  <h3 className="mt-5 font-display text-[22px]">{item.title}</h3>
+                  <h3 className="mt-5 font-display text-xl">{item.title}</h3>
                   <p className="mt-3 text-base leading-relaxed text-muted-foreground">{item.desc}</p>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default async function HomePage() {
             ].map((card) => (
               <div key={card.title} className={`group overflow-hidden rounded-2xl border ${card.border} ${card.bg} p-10 transition-all lg:p-12`}>
                 <card.icon className="size-7 text-coral" />
-                <h3 className="mt-6 font-display text-[26px]">{card.title}</h3>
+                <h3 className="mt-6 font-display text-2xl">{card.title}</h3>
                 <p className="mt-3 max-w-sm text-base leading-relaxed text-muted-foreground">{card.desc}</p>
                 <Link href={card.href} className="mt-8 inline-flex items-center gap-2 text-base font-semibold text-coral transition-all group-hover:gap-3">
                   {card.cta} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
