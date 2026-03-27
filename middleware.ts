@@ -9,6 +9,8 @@ const PUBLIC_ROUTES = [
   "/verify",
   "/callback",
   "/events",
+  "/privacy",
+  "/terms",
   "/api/webhooks",
   "/api/gate",
 ];
