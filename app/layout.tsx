@@ -54,16 +54,19 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let authUser: AuthUser | null = null;
-  const user = await getLoggedInUser();
-
-  if (user) {
-    const profile = await getProfileByUserId(user.$id);
-    authUser = {
-      id: user.$id,
-      email: user.email,
-      name: user.name || profile?.displayName || "User",
-      role: profile?.role ?? "attendee",
-    };
+  try {
+    const user = await getLoggedInUser();
+    if (user) {
+      const profile = await getProfileByUserId(user.$id);
+      authUser = {
+        id: user.$id,
+        email: user.email,
+        name: user.name || profile?.displayName || "User",
+        role: profile?.role ?? "attendee",
+      };
+    }
+  } catch {
+    // Root layout must never crash — degrade gracefully to unauthenticated state
   }
 
   return (

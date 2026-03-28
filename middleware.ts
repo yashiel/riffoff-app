@@ -78,6 +78,14 @@ export function middleware(request: NextRequest) {
 
   const session = request.cookies.get(SESSION_COOKIE_NAME);
 
+  // Redirect /dashboard index to /dashboard/tickets (avoid redirect() in page component)
+  if (pathname === "/dashboard" && session?.value) {
+    const ticketsUrl = new URL("/dashboard/tickets", request.url);
+    const response = NextResponse.redirect(ticketsUrl);
+    applySecurityHeaders(response);
+    return response;
+  }
+
   // Allow public routes and static assets
   if (isPublicRoute(pathname)) {
     const response = NextResponse.next();

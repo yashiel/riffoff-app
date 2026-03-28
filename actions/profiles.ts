@@ -88,9 +88,8 @@ export async function ensureProfile(
 export async function getProfileByUserId(
   userId: string,
 ): Promise<ProfileDoc | null> {
-  const { databases } = await createAdminClient();
-
   try {
+    const { databases } = await createAdminClient();
     const { documents } = await databases.listDocuments(
       DATABASE_ID,
       COLLECTIONS.PROFILES,
