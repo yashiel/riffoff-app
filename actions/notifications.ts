@@ -51,9 +51,10 @@ export async function createNotification(
 export async function getMyNotifications(
   limit = 20,
   unreadOnly = false,
-): Promise<NotificationDoc[]> {
+  offset = 0,
+): Promise<{ notifications: NotificationDoc[]; total: number }> {
   const sessionClient = await createSessionClient();
-  if (!sessionClient) return [];
+  if (!sessionClient) return { notifications: [], total: 0 };
 
   const user = await sessionClient.account.get();
   const { databases } = await createAdminClient();
@@ -62,6 +63,7 @@ export async function getMyNotifications(
     Query.equal("userId", user.$id),
     Query.orderDesc("$createdAt"),
     Query.limit(limit),
+    Query.offset(offset),
   ];
 
   if (unreadOnly) {
@@ -74,7 +76,10 @@ export async function getMyNotifications(
     queries,
   );
 
-  return serialize(result.documents as unknown as NotificationDoc[]);
+  return {
+    notifications: serialize(result.documents as unknown as NotificationDoc[]),
+    total: result.total,
+  };
 }
 
 /** Get unread notification count */

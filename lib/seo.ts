@@ -107,10 +107,10 @@ export function createEventJsonLd(event: {
       availability: "https://schema.org/InStock",
       url: `${BASE_URL}/events/${event.eventId}`,
       ...(event.isFree
-        ? { price: "0", priceCurrency: event.currency ?? "MYR" }
+        ? { price: "0", priceCurrency: event.currency ?? "USD" }
         : event.minPrice !== undefined && {
             price: event.minPrice.toString(),
-            priceCurrency: event.currency ?? "MYR",
+            priceCurrency: event.currency ?? "USD",
           }),
     },
     eventStatus: "https://schema.org/EventScheduled",

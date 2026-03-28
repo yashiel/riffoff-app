@@ -6,9 +6,9 @@ import { describe, it, expect } from "vitest";
  */
 
 describe("Payment amount calculations", () => {
-  it("converts MYR to cents correctly", () => {
-    const amountMYR = 100;
-    const cents = Math.round(amountMYR * 100);
+  it("converts USD to cents correctly", () => {
+    const amountUSD = 100;
+    const cents = Math.round(amountUSD * 100);
     expect(cents).toBe(10000);
   });
 

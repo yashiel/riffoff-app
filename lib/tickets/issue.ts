@@ -210,5 +210,18 @@ export async function issueTicketsForOrder(
     },
   );
 
+  // Non-blocking fraud check after ticket issuance
+  void (async () => {
+    try {
+      const { runTicketPurchaseFraudChecks, createFraudModerationItem } = await import("@/lib/moderation/fraud-rules");
+      const signals = await runTicketPurchaseFraudChecks(order.userId);
+      for (const signal of signals) {
+        await createFraudModerationItem(signal);
+      }
+    } catch {
+      // Fraud detection must never crash the main action
+    }
+  })();
+
   return { tickets, alreadyProcessed: false };
 }

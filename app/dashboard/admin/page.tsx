@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { Users, CalendarDays, Ticket, QrCode, ScrollText, TrendingUp } from "lucide-react";
+import { Users, CalendarDays, Ticket, QrCode, ScrollText, TrendingUp, AlertTriangle, Flag, Scale, ExternalLink } from "lucide-react";
 import { getPlatformStats } from "@/actions/admin";
+import { getModerationStats } from "@/actions/moderation";
 
 export const metadata = { title: "Admin Dashboard" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const stats = await getPlatformStats();
+  const [stats, modStats] = await Promise.all([
+    getPlatformStats(),
+    getModerationStats().catch(() => null),
+  ]);
 
   if (!stats) {
     return (
@@ -34,6 +38,13 @@ export default async function AdminPage() {
     { label: "Published Events", value: stats.publishedEvents, icon: TrendingUp },
     { label: "Tickets Sold", value: stats.totalTickets, icon: Ticket },
     { label: "Checked In", value: stats.checkedIn, icon: QrCode },
+    { label: "Open Disputes", value: stats.openDisputes, icon: AlertTriangle, href: "/dashboard/admin/disputes" },
+    { label: "Needs Response", value: stats.needsResponseDisputes, icon: AlertTriangle },
+    ...(modStats ? [
+      { label: "Open Items", value: modStats.open, icon: Flag, href: "/dashboard/admin/moderation" },
+      { label: "Critical", value: modStats.critical, icon: Flag },
+      { label: "In Review", value: modStats.inReview, icon: Scale },
+    ] : []),
   ];
 
   return (
@@ -70,6 +81,10 @@ export default async function AdminPage() {
         {[
           { label: "Manage Users", description: "View, search, and change user roles", href: "/dashboard/admin/users", icon: Users },
           { label: "Moderate Events", description: "Review and cancel events", href: "/dashboard/admin/events", icon: CalendarDays },
+          { label: "Moderation Queue", description: "Review reported content and take action", href: "/dashboard/admin/moderation", icon: Flag },
+          { label: "Review Appeals", description: "Handle user appeals against moderation actions", href: "/dashboard/admin/appeals", icon: Scale },
+          { label: "Manage Disputes", description: "Review and respond to payment disputes", href: "/dashboard/admin/disputes", icon: AlertTriangle },
+          { label: "Transparency Report", description: "Public moderation transparency data", href: "/transparency", icon: ExternalLink, external: true },
           { label: "Audit Log", description: "View all platform actions", href: "/dashboard/admin/audit-log", icon: ScrollText },
         ].map((link) => (
           <Link

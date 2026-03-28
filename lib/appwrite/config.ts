@@ -23,6 +23,11 @@ export const COLLECTIONS = {
   SIGNING_KEYS: "signing-keys",
   GATE_ACCESS_PINS: "gate-access-pins",
   GATE_MESSAGES: "gate-messages",
+  MODERATION_ITEMS: "moderation-items",
+  MODERATION_NOTES: "moderation-notes",
+  USER_WARNINGS: "user-warnings",
+  EVENT_RATINGS: "event-ratings",
+  APPEALS: "appeals",
 } as const;
 
 export const BUCKETS = {

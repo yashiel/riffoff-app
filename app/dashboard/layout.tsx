@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLoggedInUser } from "@/lib/appwrite/server";
 import { getProfileByUserId } from "@/actions/profiles";
+import { autoLiftExpiredBan } from "@/actions/warnings";
 import { logout } from "@/actions/auth";
 import type { UserRole } from "@/lib/appwrite/types";
 import {
@@ -15,6 +16,9 @@ import {
   LogOut,
   LayoutDashboard,
   ExternalLink,
+  AlertTriangle,
+  Flag,
+  Scale,
 } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/features/shared/ThemeToggle";
@@ -35,6 +39,9 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Scanner", href: "/dashboard/scanner", icon: QrCode, roles: ["organiser", "admin"], section: "main" },
   { label: "Applications", href: "/dashboard/applications", icon: Music, roles: ["artist", "organiser", "admin"], section: "main" },
   { label: "Settings", href: "/dashboard/settings", icon: Settings, section: "system" },
+  { label: "Moderation", href: "/dashboard/admin/moderation", icon: Flag, roles: ["admin"], section: "system" },
+  { label: "Appeals", href: "/dashboard/admin/appeals", icon: Scale, roles: ["admin"], section: "system" },
+  { label: "Disputes", href: "/dashboard/admin/disputes", icon: AlertTriangle, roles: ["admin"], section: "system" },
   { label: "Admin", href: "/dashboard/admin", icon: Shield, roles: ["admin"], section: "system" },
 ];
 
@@ -49,6 +56,24 @@ export default async function DashboardLayout({
   }
 
   const profile = await getProfileByUserId(user.$id);
+
+  // Ban enforcement
+  if (profile?.banLevel === "permanent_banned") {
+    redirect("/suspended");
+  }
+  if (profile?.banLevel === "temp_banned") {
+    if (profile.banExpiresAt && new Date(profile.banExpiresAt) > new Date()) {
+      redirect("/suspended");
+    } else {
+      // Ban expired — auto-lift
+      await autoLiftExpiredBan(profile);
+    }
+  }
+  // Legacy deactivatedAt check as fallback
+  if (profile?.deactivatedAt) {
+    redirect("/suspended");
+  }
+
   const role = profile?.role ?? "attendee";
   const displayName = user.name || profile?.displayName || "User";
   const initials = displayName

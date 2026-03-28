@@ -2,9 +2,9 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useTransition, useEffect, useRef, useId } from "react";
-import { Search, ChevronLeft, ChevronRight, Users, ShieldAlert } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Users, ShieldAlert, Ban, CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "@/components/features/shared/StatusBadge";
-import { listUsers, changeUserRole, type AdminUserRow } from "@/actions/admin";
+import { listUsers, changeUserRole, suspendUser, unsuspendUser, type AdminUserRow } from "@/actions/admin";
 import { formatDate } from "@/lib/utils";
 import type { UserRole } from "@/lib/appwrite/types";
 
@@ -71,6 +71,37 @@ export default function AdminUsersPage() {
         setStatusMessage(
           `${user.displayName ?? "User"}'s role changed to ${newRole}`
         );
+        fetchUsers();
+      }
+    });
+  }
+
+  function handleSuspend(user: AdminUserRow) {
+    const reason = prompt(
+      `Suspend ${user.displayName ?? "this user"}?\n\nEnter a reason for the suspension:`
+    );
+    if (!reason) return;
+    startTransition(async () => {
+      const result = await suspendUser(user.userId, reason);
+      if (result.error) {
+        alert(result.error);
+        setStatusMessage(`Error: ${result.error}`);
+      } else {
+        setStatusMessage(`${user.displayName ?? "User"} has been suspended`);
+        fetchUsers();
+      }
+    });
+  }
+
+  function handleUnsuspend(user: AdminUserRow) {
+    if (!confirm(`Unsuspend ${user.displayName ?? "this user"}? They will regain access to the platform.`)) return;
+    startTransition(async () => {
+      const result = await unsuspendUser(user.userId);
+      if (result.error) {
+        alert(result.error);
+        setStatusMessage(`Error: ${result.error}`);
+      } else {
+        setStatusMessage(`${user.displayName ?? "User"} has been unsuspended`);
         fetchUsers();
       }
     });
@@ -161,12 +192,18 @@ export default function AdminUsersPage() {
               >
                 Change Role
               </th>
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {users.length === 0 && !isPending && (
               <tr>
-                <td colSpan={4} className="px-4 py-12 text-center">
+                <td colSpan={5} className="px-4 py-12 text-center">
                   <p className="text-base text-muted-foreground">
                     {search ? `No users found matching "${search}"` : "No users found"}
                   </p>
@@ -175,7 +212,7 @@ export default function AdminUsersPage() {
             )}
             {isPending && users.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-12 text-center">
+                <td colSpan={5} className="px-4 py-12 text-center">
                   <p className="text-base text-muted-foreground">Loading users...</p>
                 </td>
               </tr>
@@ -205,7 +242,15 @@ export default function AdminUsersPage() {
                   </div>
                 </td>
                 <td className="px-4 py-3.5">
-                  <StatusBadge status={user.role} />
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={user.role} />
+                    {user.deactivatedAt && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
+                        <Ban className="size-3" aria-hidden="true" />
+                        Suspended
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="hidden px-4 py-3.5 text-muted-foreground sm:table-cell">
                   <time dateTime={user.createdAt}>
@@ -242,6 +287,31 @@ export default function AdminUsersPage() {
                       />
                     )}
                   </div>
+                </td>
+                <td className="px-4 py-3.5">
+                  {user.role !== "admin" && (
+                    user.deactivatedAt ? (
+                      <button
+                        onClick={() => handleUnsuspend(user)}
+                        disabled={isPending}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-500 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
+                        aria-label={`Unsuspend ${user.displayName ?? "user"}`}
+                      >
+                        <CheckCircle2 className="size-3.5" aria-hidden="true" />
+                        Unsuspend
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleSuspend(user)}
+                        disabled={isPending}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-destructive/10 px-3 py-1.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
+                        aria-label={`Suspend ${user.displayName ?? "user"}`}
+                      >
+                        <Ban className="size-3.5" aria-hidden="true" />
+                        Suspend
+                      </button>
+                    )
+                  )}
                 </td>
               </tr>
             ))}

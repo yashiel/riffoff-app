@@ -12,9 +12,9 @@ describe("Appwrite config", () => {
     expect(DATABASE_ID).toBe("riffoff");
   });
 
-  it("has all 22 collection IDs", () => {
+  it("has all 27 collection IDs", () => {
     const collectionValues = Object.values(COLLECTIONS);
-    expect(collectionValues).toHaveLength(22);
+    expect(collectionValues).toHaveLength(27);
 
     // Verify each collection ID matches Appwrite table names
     expect(COLLECTIONS.PROFILES).toBe("profiles");

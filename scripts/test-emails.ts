@@ -85,7 +85,7 @@ async function main() {
     ticketCode: "RO-7X9K2M",
     quantity: 2,
     totalAmount: "590.00",
-    currency: "MYR",
+    currency: "USD",
     coverImageUrl: "https://www.allkpop.com/upload/2022/09/content/250120/1664083209-yettocome-collage.jpg",
     qrCodeData: "riffoff:ticket:RO-7X9K2M:evt-oneokrock:sig-abc123def456",
   });
@@ -122,7 +122,7 @@ async function main() {
   const r7 = await sendEventCancelledEmail(TO, {
     userName: "Yashi",
     eventTitle: "Midnight Jazz Sessions",
-    refundInfo: "Full refund of MYR 120.00 initiated. Please allow 5-10 business days.",
+    refundInfo: "Full refund of USD 120.00 initiated. Please allow 5-10 business days.",
     coverImageUrl: "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2021/09/yohani-1632936586.jpg",
   });
   console.log(`     ${r7.success ? "✅" : "❌"}`);

@@ -4,12 +4,12 @@
  * Uses the free Open Exchange Rates API (no API key needed).
  * Rates cached in-memory for 1 hour to minimize API calls.
  *
- * Supported currencies: MYR, USD, SGD, LKR, THB, PHP, IDR, EUR, GBP, AUD, JPY, KRW
+ * Supported currencies: USD, MYR, SGD, LKR, THB, PHP, IDR, EUR, GBP, AUD, JPY, KRW
  */
 
 export const SUPPORTED_CURRENCIES = [
-  { code: "MYR", label: "Malaysian Ringgit", flag: "🇲🇾" },
   { code: "USD", label: "US Dollar", flag: "🇺🇸" },
+  { code: "MYR", label: "Malaysian Ringgit", flag: "🇲🇾" },
   { code: "SGD", label: "Singapore Dollar", flag: "🇸🇬" },
   { code: "LKR", label: "Sri Lankan Rupee", flag: "🇱🇰" },
   { code: "THB", label: "Thai Baht", flag: "🇹🇭" },

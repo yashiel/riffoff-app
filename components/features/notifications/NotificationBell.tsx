@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition, useRef, useCallback } from "react";
+import Link from "next/link";
 import { Bell, CheckCheck } from "lucide-react";
 import { NotificationItem } from "./NotificationItem";
 import {
@@ -23,8 +24,12 @@ export function NotificationBell() {
     if (!hasFetchedRef.current) {
       hasFetchedRef.current = true;
       startTransition(async () => {
-        const count = await getUnreadCount();
-        setUnreadCount(count);
+        try {
+          const count = await getUnreadCount();
+          setUnreadCount(count);
+        } catch {
+          // Non-critical — session may not be ready yet (e.g. post-login redirect)
+        }
       });
     }
   }, []);
@@ -33,8 +38,12 @@ export function NotificationBell() {
   useEffect(() => {
     const interval = setInterval(() => {
       startTransition(async () => {
-        const count = await getUnreadCount();
-        setUnreadCount(count);
+        try {
+          const count = await getUnreadCount();
+          setUnreadCount(count);
+        } catch {
+          // Silently ignore polling failures
+        }
       });
     }, 30000);
     return () => clearInterval(interval);
@@ -43,10 +52,14 @@ export function NotificationBell() {
   // Load notifications when dropdown opens
   const loadNotifications = useCallback(() => {
     startTransition(async () => {
-      const notifs = await getMyNotifications(20);
-      setNotifications(notifs);
-      const count = await getUnreadCount();
-      setUnreadCount(count);
+      try {
+        const { notifications: notifs } = await getMyNotifications(20);
+        setNotifications(notifs);
+        const count = await getUnreadCount();
+        setUnreadCount(count);
+      } catch {
+        // Non-critical — degrade gracefully
+      }
     });
   }, []);
 
@@ -71,11 +84,15 @@ export function NotificationBell() {
 
   function handleMarkAllRead() {
     startTransition(async () => {
-      await markAllAsRead();
-      setUnreadCount(0);
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })),
-      );
+      try {
+        await markAllAsRead();
+        setUnreadCount(0);
+        setNotifications((prev) =>
+          prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })),
+        );
+      } catch {
+        // Non-critical — user can retry
+      }
     });
   }
 
@@ -130,6 +147,15 @@ export function NotificationBell() {
               </div>
             )}
           </div>
+
+          {/* View all link */}
+          <Link
+            href="/dashboard/notifications"
+            className="block border-t border-[var(--border)] py-2.5 text-center text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+            onClick={() => setIsOpen(false)}
+          >
+            View all notifications
+          </Link>
         </div>
       )}
     </div>

@@ -6,7 +6,7 @@ const tierSchema = z.object({
   eventId: z.string().min(1),
   name: z.string().min(1).max(100),
   price: z.number().min(0),
-  currency: z.string().min(1).max(10).default("MYR"),
+  currency: z.string().min(1).max(10).default("USD"),
   quota: z.number().int().min(1),
   saleStartsAt: z.string().nullable().optional(),
   saleEndsAt: z.string().nullable().optional(),
@@ -18,7 +18,7 @@ describe("Tier validation", () => {
     eventId: "evt-123",
     name: "Early Bird",
     price: 25.5,
-    currency: "MYR",
+    currency: "USD",
     quota: 100,
     sortOrder: 0,
   };
@@ -69,13 +69,13 @@ describe("Tier validation", () => {
     ).toBe(false);
   });
 
-  it("defaults currency to MYR", () => {
+  it("defaults currency to USD", () => {
     const input = { ...validTier };
     delete (input as Record<string, unknown>).currency;
     const result = tierSchema.safeParse(input);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.currency).toBe("MYR");
+      expect(result.data.currency).toBe("USD");
     }
   });
 

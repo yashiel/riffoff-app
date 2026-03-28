@@ -41,6 +41,8 @@ export interface PlatformStats {
   totalTickets: number;
   totalRevenue: number;
   checkedIn: number;
+  openDisputes: number;
+  needsResponseDisputes: number;
 }
 
 export async function getPlatformStats(): Promise<PlatformStats | null> {
@@ -49,7 +51,7 @@ export async function getPlatformStats(): Promise<PlatformStats | null> {
 
   const { databases } = auth;
 
-  const [users, events, published, tickets, checkedIn] = await Promise.all([
+  const [users, events, published, tickets, checkedIn, openDisputes, needsResponse] = await Promise.all([
     databases.listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [Query.limit(1)]),
     databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, [Query.limit(1)]),
     databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, [
@@ -61,6 +63,14 @@ export async function getPlatformStats(): Promise<PlatformStats | null> {
       Query.isNotNull("checkedInAt"),
       Query.limit(1),
     ]),
+    databases.listDocuments(DATABASE_ID, COLLECTIONS.DISPUTES, [
+      Query.equal("status", "open"),
+      Query.limit(1),
+    ]),
+    databases.listDocuments(DATABASE_ID, COLLECTIONS.DISPUTES, [
+      Query.equal("status", "needs_response"),
+      Query.limit(1),
+    ]),
   ]);
 
   return {
@@ -70,6 +80,8 @@ export async function getPlatformStats(): Promise<PlatformStats | null> {
     totalTickets: tickets.total,
     totalRevenue: 0, // Calculated from orders in production
     checkedIn: checkedIn.total,
+    openDisputes: openDisputes.total,
+    needsResponseDisputes: needsResponse.total,
   };
 }
 
@@ -81,6 +93,7 @@ export interface AdminUserRow {
   displayName: string | null;
   role: UserRole;
   createdAt: string;
+  deactivatedAt: string | null;
 }
 
 export async function listUsers(
@@ -118,6 +131,7 @@ export async function listUsers(
       displayName: profile.displayName,
       role: profile.role,
       createdAt: profile.$createdAt,
+      deactivatedAt: profile.deactivatedAt ?? null,
     };
   });
 
@@ -355,4 +369,120 @@ export async function getAuditLogs(
   });
 
   return { logs, total: result.total };
+}
+
+// ─── User Suspension ────────────────────────────────
+
+/** Suspend a user account (admin only) */
+export async function suspendUser(
+  userId: string,
+  reason: string,
+): Promise<{ error?: string }> {
+  const auth = await requireAdmin();
+  if (!auth) return { error: "Admin access required" };
+
+  const { databases, user } = auth;
+
+  // Find target profile
+  const { documents } = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.PROFILES,
+    [Query.equal("userId", userId), Query.limit(1)],
+  );
+
+  const target = documents[0] as unknown as ProfileDoc | undefined;
+  if (!target) return { error: "User not found" };
+
+  // Prevent suspending yourself or other admins
+  if (target.userId === user.$id) {
+    return { error: "Cannot suspend your own account" };
+  }
+  if (target.role === "admin") {
+    return { error: "Cannot suspend admin users" };
+  }
+
+  try {
+    await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.PROFILES,
+      target.$id,
+      { deactivatedAt: new Date().toISOString() },
+    );
+
+    // Audit log
+    await databases.createDocument(
+      DATABASE_ID,
+      COLLECTIONS.AUDIT_LOGS,
+      ID.unique(),
+      {
+        actorId: user.$id,
+        action: "admin.user_suspended",
+        entityType: "profile",
+        entityId: target.$id,
+        metadata: JSON.stringify({
+          actorName: auth.profile.displayName ?? user.name ?? "Admin",
+          targetUserId: target.userId,
+          targetName: target.displayName ?? "Unknown user",
+          reason,
+        }),
+      },
+    );
+
+    revalidatePath("/dashboard/admin/users");
+    return {};
+  } catch {
+    return { error: "Failed to suspend user" };
+  }
+}
+
+/** Unsuspend a user account (admin only) */
+export async function unsuspendUser(
+  userId: string,
+): Promise<{ error?: string }> {
+  const auth = await requireAdmin();
+  if (!auth) return { error: "Admin access required" };
+
+  const { databases, user } = auth;
+
+  // Find target profile
+  const { documents } = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.PROFILES,
+    [Query.equal("userId", userId), Query.limit(1)],
+  );
+
+  const target = documents[0] as unknown as ProfileDoc | undefined;
+  if (!target) return { error: "User not found" };
+
+  try {
+    await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.PROFILES,
+      target.$id,
+      { deactivatedAt: null },
+    );
+
+    // Audit log
+    await databases.createDocument(
+      DATABASE_ID,
+      COLLECTIONS.AUDIT_LOGS,
+      ID.unique(),
+      {
+        actorId: user.$id,
+        action: "admin.user_unsuspended",
+        entityType: "profile",
+        entityId: target.$id,
+        metadata: JSON.stringify({
+          actorName: auth.profile.displayName ?? user.name ?? "Admin",
+          targetUserId: target.userId,
+          targetName: target.displayName ?? "Unknown user",
+        }),
+      },
+    );
+
+    revalidatePath("/dashboard/admin/users");
+    return {};
+  } catch {
+    return { error: "Failed to unsuspend user" };
+  }
 }

@@ -412,43 +412,43 @@ const EVENTS = [
 // ─── TICKET TIERS ───────────────────────────────────────
 const TICKET_TIERS: Array<{ eventId: string; name: string; price: number; currency: string; quota: number; sortOrder: number }> = [
   // BLACKPINK
-  { eventId: "evt-blackpink-kl", name: "CAT 1 — VIP Standing", price: 1288, currency: "MYR", quota: 2000, sortOrder: 0 },
-  { eventId: "evt-blackpink-kl", name: "CAT 2 — Premium Seated", price: 888, currency: "MYR", quota: 4000, sortOrder: 1 },
-  { eventId: "evt-blackpink-kl", name: "CAT 3 — Standard", price: 588, currency: "MYR", quota: 5000, sortOrder: 2 },
-  { eventId: "evt-blackpink-kl", name: "CAT 4 — Upper Tier", price: 388, currency: "MYR", quota: 5000, sortOrder: 3 },
+  { eventId: "evt-blackpink-kl", name: "CAT 1 — VIP Standing", price: 1288, currency: "USD", quota: 2000, sortOrder: 0 },
+  { eventId: "evt-blackpink-kl", name: "CAT 2 — Premium Seated", price: 888, currency: "USD", quota: 4000, sortOrder: 1 },
+  { eventId: "evt-blackpink-kl", name: "CAT 3 — Standard", price: 588, currency: "USD", quota: 5000, sortOrder: 2 },
+  { eventId: "evt-blackpink-kl", name: "CAT 4 — Upper Tier", price: 388, currency: "USD", quota: 5000, sortOrder: 3 },
   // Stray Kids
-  { eventId: "evt-stray-kids-kl", name: "VIP Soundcheck", price: 998, currency: "MYR", quota: 500, sortOrder: 0 },
-  { eventId: "evt-stray-kids-kl", name: "CAT 1", price: 788, currency: "MYR", quota: 3000, sortOrder: 1 },
-  { eventId: "evt-stray-kids-kl", name: "CAT 2", price: 588, currency: "MYR", quota: 5000, sortOrder: 2 },
-  { eventId: "evt-stray-kids-kl", name: "CAT 3", price: 388, currency: "MYR", quota: 7500, sortOrder: 3 },
+  { eventId: "evt-stray-kids-kl", name: "VIP Soundcheck", price: 998, currency: "USD", quota: 500, sortOrder: 0 },
+  { eventId: "evt-stray-kids-kl", name: "CAT 1", price: 788, currency: "USD", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-stray-kids-kl", name: "CAT 2", price: 588, currency: "USD", quota: 5000, sortOrder: 2 },
+  { eventId: "evt-stray-kids-kl", name: "CAT 3", price: 388, currency: "USD", quota: 7500, sortOrder: 3 },
   // SEVENTEEN
-  { eventId: "evt-seventeen-kl", name: "CARAT ZONE", price: 1088, currency: "MYR", quota: 1500, sortOrder: 0 },
-  { eventId: "evt-seventeen-kl", name: "CAT 1", price: 788, currency: "MYR", quota: 4000, sortOrder: 1 },
-  { eventId: "evt-seventeen-kl", name: "CAT 2", price: 488, currency: "MYR", quota: 5000, sortOrder: 2 },
-  { eventId: "evt-seventeen-kl", name: "CAT 3", price: 288, currency: "MYR", quota: 5500, sortOrder: 3 },
+  { eventId: "evt-seventeen-kl", name: "CARAT ZONE", price: 1088, currency: "USD", quota: 1500, sortOrder: 0 },
+  { eventId: "evt-seventeen-kl", name: "CAT 1", price: 788, currency: "USD", quota: 4000, sortOrder: 1 },
+  { eventId: "evt-seventeen-kl", name: "CAT 2", price: 488, currency: "USD", quota: 5000, sortOrder: 2 },
+  { eventId: "evt-seventeen-kl", name: "CAT 3", price: 288, currency: "USD", quota: 5500, sortOrder: 3 },
   // aespa
-  { eventId: "evt-aespa-kl", name: "Standing — Front", price: 688, currency: "MYR", quota: 800, sortOrder: 0 },
-  { eventId: "evt-aespa-kl", name: "Standing — General", price: 488, currency: "MYR", quota: 2000, sortOrder: 1 },
+  { eventId: "evt-aespa-kl", name: "Standing — Front", price: 688, currency: "USD", quota: 800, sortOrder: 0 },
+  { eventId: "evt-aespa-kl", name: "Standing — General", price: 488, currency: "USD", quota: 2000, sortOrder: 1 },
   // IVE
-  { eventId: "evt-ive-kl", name: "DIVE — VIP", price: 798, currency: "MYR", quota: 500, sortOrder: 0 },
-  { eventId: "evt-ive-kl", name: "CAT 1", price: 598, currency: "MYR", quota: 1500, sortOrder: 1 },
-  { eventId: "evt-ive-kl", name: "CAT 2", price: 398, currency: "MYR", quota: 3000, sortOrder: 2 },
+  { eventId: "evt-ive-kl", name: "DIVE — VIP", price: 798, currency: "USD", quota: 500, sortOrder: 0 },
+  { eventId: "evt-ive-kl", name: "CAT 1", price: 598, currency: "USD", quota: 1500, sortOrder: 1 },
+  { eventId: "evt-ive-kl", name: "CAT 2", price: 398, currency: "USD", quota: 3000, sortOrder: 2 },
   // Good Vibes Festival
-  { eventId: "evt-good-vibes-2026", name: "2-Day GA Pass", price: 488, currency: "MYR", quota: 15000, sortOrder: 0 },
-  { eventId: "evt-good-vibes-2026", name: "2-Day VIP Pass", price: 888, currency: "MYR", quota: 3000, sortOrder: 1 },
-  { eventId: "evt-good-vibes-2026", name: "Single Day GA", price: 298, currency: "MYR", quota: 7000, sortOrder: 2 },
+  { eventId: "evt-good-vibes-2026", name: "2-Day GA Pass", price: 488, currency: "USD", quota: 15000, sortOrder: 0 },
+  { eventId: "evt-good-vibes-2026", name: "2-Day VIP Pass", price: 888, currency: "USD", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-good-vibes-2026", name: "Single Day GA", price: 298, currency: "USD", quota: 7000, sortOrder: 2 },
   // RWMF
-  { eventId: "evt-rwmf-2026", name: "3-Day Pass", price: 380, currency: "MYR", quota: 12000, sortOrder: 0 },
-  { eventId: "evt-rwmf-2026", name: "Single Day Pass", price: 165, currency: "MYR", quota: 8000, sortOrder: 1 },
+  { eventId: "evt-rwmf-2026", name: "3-Day Pass", price: 380, currency: "USD", quota: 12000, sortOrder: 0 },
+  { eventId: "evt-rwmf-2026", name: "Single Day Pass", price: 165, currency: "USD", quota: 8000, sortOrder: 1 },
   // Yuna
-  { eventId: "evt-yuna-homecoming", name: "General Admission", price: 198, currency: "MYR", quota: 2000, sortOrder: 0 },
-  { eventId: "evt-yuna-homecoming", name: "VIP (Meet & Greet)", price: 488, currency: "MYR", quota: 200, sortOrder: 1 },
+  { eventId: "evt-yuna-homecoming", name: "General Admission", price: 198, currency: "USD", quota: 2000, sortOrder: 0 },
+  { eventId: "evt-yuna-homecoming", name: "VIP (Meet & Greet)", price: 488, currency: "USD", quota: 200, sortOrder: 1 },
   // Sheila Majid
-  { eventId: "evt-sheila-anniversary", name: "Premium", price: 388, currency: "MYR", quota: 1500, sortOrder: 0 },
-  { eventId: "evt-sheila-anniversary", name: "Standard", price: 188, currency: "MYR", quota: 3500, sortOrder: 1 },
+  { eventId: "evt-sheila-anniversary", name: "Premium", price: 388, currency: "USD", quota: 1500, sortOrder: 0 },
+  { eventId: "evt-sheila-anniversary", name: "Standard", price: 188, currency: "USD", quota: 3500, sortOrder: 1 },
   // EDM Night
-  { eventId: "evt-edm-night-kl", name: "Early Bird", price: 148, currency: "MYR", quota: 500, sortOrder: 0 },
-  { eventId: "evt-edm-night-kl", name: "General Admission", price: 228, currency: "MYR", quota: 2300, sortOrder: 1 },
+  { eventId: "evt-edm-night-kl", name: "Early Bird", price: 148, currency: "USD", quota: 500, sortOrder: 0 },
+  { eventId: "evt-edm-night-kl", name: "General Admission", price: 228, currency: "USD", quota: 2300, sortOrder: 1 },
   // Yohani
   { eventId: "evt-yohani-live-colombo", name: "Gold Circle", price: 12000, currency: "LKR", quota: 500, sortOrder: 0 },
   { eventId: "evt-yohani-live-colombo", name: "Silver", price: 7500, currency: "LKR", quota: 1000, sortOrder: 1 },
@@ -485,8 +485,8 @@ const TICKET_TIERS: Array<{ eventId: string; name: string; price: number; curren
   { eventId: "evt-we-the-fest-2026", name: "3-Day VIP", price: 3500000, currency: "IDR", quota: 5000, sortOrder: 1 },
   { eventId: "evt-we-the-fest-2026", name: "Single Day", price: 800000, currency: "IDR", quota: 10000, sortOrder: 2 },
   // Masdo Penang
-  { eventId: "evt-masdo-penang", name: "GA", price: 88, currency: "MYR", quota: 3000, sortOrder: 0 },
-  { eventId: "evt-masdo-penang", name: "VIP", price: 188, currency: "MYR", quota: 1000, sortOrder: 1 },
+  { eventId: "evt-masdo-penang", name: "GA", price: 88, currency: "USD", quota: 3000, sortOrder: 0 },
+  { eventId: "evt-masdo-penang", name: "VIP", price: 188, currency: "USD", quota: 1000, sortOrder: 1 },
 ];
 
 // ─── SEED RUNNER ────────────────────────────────────────

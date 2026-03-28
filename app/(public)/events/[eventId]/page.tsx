@@ -11,13 +11,23 @@ import {
   Ticket,
   ArrowRight,
   ChevronRight,
+  AlertTriangle,
+  Flag,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { TierList } from "@/components/features/events/TierList";
 import { RSVPButton } from "@/components/features/events/RSVPButton";
 import { VideoPlayer } from "@/components/features/events/VideoPlayer";
+import { ReportModal } from "@/components/features/moderation/ReportModal";
+import { TrustScoreBadge } from "@/components/features/trust/TrustScoreBadge";
+import { VerifiedBadge } from "@/components/features/trust/VerifiedBadge";
+import { RatingDisplay } from "@/components/features/ratings/RatingDisplay";
+import { RatingModal } from "@/components/features/ratings/RatingModal";
 import { getEventWithDetails } from "@/actions/events";
 import { getUserRSVP } from "@/actions/rsvps";
+import { getOrganiserTrustData } from "@/actions/trust-score";
+import { getEventRatingsSummary } from "@/actions/ratings";
 import { getExchangeRates, formatConvertedPrice } from "@/lib/currency";
 import {
   formatDate,
@@ -48,6 +58,23 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   const { event, venue, tiers, lineup, rsvpCount } = data;
   const userRSVP = await getUserRSVP(eventId);
   const isPast = new Date(event.endsAt) < new Date();
+
+  // Moderation / trust data — wrapped in try/catch so they never crash the page
+  let trustData: { trustScore: number; isVerified: boolean } | null = null;
+  try {
+    trustData = await getOrganiserTrustData(event.organiserId);
+  } catch {
+    // silently fail — trust badge simply won't show
+  }
+
+  let ratingsSummary: { averageRating: number; totalRatings: number } | null = null;
+  if (event.status === "completed") {
+    try {
+      ratingsSummary = await getEventRatingsSummary(eventId);
+    } catch {
+      // silently fail — ratings section simply won't show
+    }
+  }
 
   const cookieStore = await cookies();
   const displayCurrency =
@@ -171,6 +198,21 @@ export default async function EventDetailPage({ params }: EventPageProps) {
         {/* ── RIGHT: Scrollable content panel ── */}
         <div className="relative bg-background lg:overflow-y-auto">
           <div className="px-5 py-6 sm:px-8 sm:py-8 lg:max-w-[640px] lg:py-10">
+            {/* ─── Suspended Banner ─── */}
+            {event.status === "suspended" && (
+              <div className="mb-6 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
+                <div>
+                  <p className="text-base font-semibold text-destructive">
+                    This event has been suspended
+                  </p>
+                  <p className="mt-0.5 text-sm text-destructive/80">
+                    This event has been suspended by our moderation team. If you are the organiser, please check your dashboard for more details.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* ─── Header ─── */}
             <header>
               {/* Genres + countdown — desktop only (mobile shows on poster) */}
@@ -196,6 +238,33 @@ export default async function EventDetailPage({ params }: EventPageProps) {
               <h1 className="mt-3 hidden font-display text-[clamp(2rem,4vw,3.5rem)] leading-[0.92] tracking-tight lg:block">
                 {event.title}
               </h1>
+
+              {/* Organiser info + Report button */}
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {trustData && (
+                    <>
+                      <TrustScoreBadge score={trustData.trustScore} />
+                      {trustData.isVerified && <VerifiedBadge size="sm" />}
+                    </>
+                  )}
+                </div>
+                <ReportModal
+                  entityType="event"
+                  entityId={event.$id}
+                  entityLabel={event.title}
+                  trigger={
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label="Report this event"
+                    >
+                      <Flag className="size-3.5" />
+                      <span className="hidden sm:inline">Report</span>
+                    </button>
+                  }
+                />
+              </div>
 
               {/* Quick facts strip */}
               <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -426,6 +495,34 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                       </p>
                     )}
                   </div>
+                </div>
+              </section>
+            )}
+
+            {/* ─── Ratings (completed events only) ─── */}
+            {event.status === "completed" && ratingsSummary && (
+              <section className="mt-8">
+                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                  Ratings
+                </h2>
+                <div className="mt-4 flex flex-col gap-4 rounded-xl border border-border p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <RatingDisplay
+                    averageRating={ratingsSummary.averageRating}
+                    totalRatings={ratingsSummary.totalRatings}
+                  />
+                  <RatingModal
+                    eventId={event.$id}
+                    eventTitle={event.title}
+                    trigger={
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-lg bg-coral/10 px-4 py-2.5 text-base font-medium text-coral transition-colors hover:bg-coral/20"
+                      >
+                        <Star className="size-4" />
+                        Rate this event
+                      </button>
+                    }
+                  />
                 </div>
               </section>
             )}

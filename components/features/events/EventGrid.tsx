@@ -38,6 +38,23 @@ export function EventGrid({
     );
   }
 
+  // When fewer than 3 events, skip bento and use simple grid
+  // (bento needs 1 hero + 2 side cards to look correct)
+  if (events.length < 3) {
+    return (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {events.map((event) => (
+          <GridCard
+            key={event.$id}
+            event={event}
+            initialWishlisted={wishlistSet.has(event.$id)}
+            convertedPrice={convertedPrices[event.$id] ?? null}
+          />
+        ))}
+      </div>
+    );
+  }
+
   // Layout: 1 hero + 2 side cards + rest in 3-col grid
   const [hero, ...rest] = events;
   const sidePair = rest.slice(0, 2);
@@ -220,7 +237,7 @@ function HeroCard({
                   {convertedPrice ??
                     formatCurrency(
                       event.minPrice!,
-                      event.minPriceCurrency ?? "MYR"
+                      event.minPriceCurrency ?? "USD"
                     )}
                 </span>
               ) : null}
@@ -307,7 +324,7 @@ function SideCard({
                 {convertedPrice ??
                   formatCurrency(
                     event.minPrice!,
-                    event.minPriceCurrency ?? "MYR"
+                    event.minPriceCurrency ?? "USD"
                   )}
               </span>
             ) : (
@@ -423,7 +440,7 @@ function GridCard({
                 {convertedPrice ??
                   formatCurrency(
                     event.minPrice!,
-                    event.minPriceCurrency ?? "MYR"
+                    event.minPriceCurrency ?? "USD"
                   )}
               </span>
             ) : (

@@ -6,8 +6,9 @@ import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
-import { notifyEventCancelled, notifyEventPublished } from "@/actions/notifications";
+import { notifyEventCancelled, notifyEventPublished, createNotification } from "@/actions/notifications";
 import { sendEventPublishedEmail, sendEventCancelledEmail } from "@/lib/email";
+import { createAuditLog } from "@/lib/audit";
 import { serialize } from "@/lib/utils";
 import type {
   EventDoc,
@@ -562,6 +563,37 @@ export async function publishEvent(
     revalidatePath(`/dashboard/events/${eventId}`);
     revalidatePath("/dashboard/events");
     revalidatePath("/events");
+
+    // Non-blocking fraud check after successful publish
+    const { runEventPublishFraudChecks, createFraudModerationItem } = await import("@/lib/moderation/fraud-rules");
+    void (async () => {
+      try {
+        // Find max ticket price for this event
+        const tierDocs = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTIONS.TICKET_TIERS,
+          [Query.equal("eventId", eventId), Query.limit(100)],
+        );
+        const maxTicketPrice = tierDocs.documents.reduce(
+          (max, t) => Math.max(max, (t as unknown as TicketTierDoc).price),
+          0,
+        );
+
+        const signals = await runEventPublishFraudChecks(
+          eventId,
+          event.organiserId,
+          event.title,
+          event.startsAt,
+          maxTicketPrice,
+        );
+        for (const signal of signals) {
+          await createFraudModerationItem(signal);
+        }
+      } catch {
+        // Fraud detection must never crash the main action
+      }
+    })();
+
     return { eventId };
   } catch {
     return { error: "Failed to publish event" };
@@ -781,6 +813,143 @@ export async function getOrganiserEvents(): Promise<EventWithVenue[]> {
     ...event,
     venue: venueMap.get(event.venueId) ?? null,
   })));
+}
+
+// ─── Helpers ───────────────────────────────────────
+
+// ─── Admin: Event Suspend / Reinstate ─────────────────
+
+async function requireAdminForEvents() {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return null;
+
+  const user = await sessionClient.account.get();
+  const { databases } = await createAdminClient();
+
+  const { documents } = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.PROFILES,
+    [Query.equal("userId", user.$id), Query.limit(1)],
+  );
+
+  const profile = documents[0] as unknown as ProfileDoc | undefined;
+  if (!profile || profile.role !== "admin") return null;
+
+  return { user, databases, profile };
+}
+
+/** Admin: Suspend a published event (hide from public) */
+export async function suspendEvent(
+  eventId: string,
+  reason: string,
+): Promise<{ success: boolean; error?: string }> {
+  const auth = await requireAdminForEvents();
+  if (!auth) return { success: false, error: "Admin access required" };
+
+  const { databases, user, profile: adminProfile } = auth;
+
+  try {
+    const event = (await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.EVENTS,
+      eventId,
+    )) as unknown as EventDoc;
+
+    if (event.status !== "published") {
+      return { success: false, error: "Only published events can be suspended" };
+    }
+
+    await databases.updateDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId, {
+      status: "suspended",
+    });
+
+    // Notify organiser
+    await createNotification({
+      userId: event.organiserId,
+      type: "event_suspended",
+      title: `Your event "${event.title}" has been suspended`,
+      body: `Reason: ${reason}`,
+      linkUrl: `/dashboard/events/${eventId}`,
+    });
+
+    // Audit log
+    await createAuditLog({
+      actorId: user.$id,
+      action: "admin.event_suspended",
+      entityType: "event",
+      entityId: eventId,
+      metadata: {
+        actorName: adminProfile.displayName ?? user.name ?? "Admin",
+        title: event.title,
+        organiserId: event.organiserId,
+        reason,
+      },
+    });
+
+    revalidatePath(`/dashboard/events/${eventId}`);
+    revalidatePath("/dashboard/events");
+    revalidatePath("/dashboard/admin/events");
+    revalidatePath("/events");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to suspend event" };
+  }
+}
+
+/** Admin: Reinstate a suspended event back to published */
+export async function reinstateEvent(
+  eventId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const auth = await requireAdminForEvents();
+  if (!auth) return { success: false, error: "Admin access required" };
+
+  const { databases, user, profile: adminProfile } = auth;
+
+  try {
+    const event = (await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.EVENTS,
+      eventId,
+    )) as unknown as EventDoc;
+
+    if (event.status !== "suspended") {
+      return { success: false, error: "Only suspended events can be reinstated" };
+    }
+
+    await databases.updateDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId, {
+      status: "published",
+    });
+
+    // Notify organiser
+    await createNotification({
+      userId: event.organiserId,
+      type: "event_reinstated",
+      title: `Your event "${event.title}" has been reinstated`,
+      body: "Your event is now live again.",
+      linkUrl: `/dashboard/events/${eventId}`,
+    });
+
+    // Audit log
+    await createAuditLog({
+      actorId: user.$id,
+      action: "admin.event_reinstated",
+      entityType: "event",
+      entityId: eventId,
+      metadata: {
+        actorName: adminProfile.displayName ?? user.name ?? "Admin",
+        title: event.title,
+        organiserId: event.organiserId,
+      },
+    });
+
+    revalidatePath(`/dashboard/events/${eventId}`);
+    revalidatePath("/dashboard/events");
+    revalidatePath("/dashboard/admin/events");
+    revalidatePath("/events");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to reinstate event" };
+  }
 }
 
 // ─── Helpers ───────────────────────────────────────

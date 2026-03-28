@@ -8,6 +8,7 @@ import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { revokeSession } from "@/lib/gate/session";
 import { sign, generateKeyPair, encryptPrivateKey } from "@/lib/crypto/ed25519";
+import { serialize } from "@/lib/utils";
 import type { EventDoc } from "@/lib/appwrite/types";
 
 // ─── Auth Helpers ────────────────────────────────────────
@@ -70,7 +71,7 @@ export async function createGate(
   );
 
   revalidatePath(`/dashboard/events/${eventId}`);
-  return JSON.parse(JSON.stringify(gate));
+  return serialize(gate);
 }
 
 export async function listGates(eventId: string) {
@@ -87,7 +88,7 @@ export async function listGates(eventId: string) {
     ],
   );
 
-  return JSON.parse(JSON.stringify(result.documents));
+  return serialize(result.documents);
 }
 
 export async function updateGate(
@@ -121,7 +122,7 @@ export async function updateGate(
   );
 
   revalidatePath(`/dashboard/events/${eventId}`);
-  return JSON.parse(JSON.stringify(updated));
+  return serialize(updated);
 }
 
 export async function lockGate(eventId: string, gateId: string) {
@@ -272,7 +273,7 @@ export async function listActiveSessions(eventId: string) {
     }
   }
 
-  return JSON.parse(JSON.stringify(active));
+  return serialize(active);
 }
 
 export async function revokeGateSession(

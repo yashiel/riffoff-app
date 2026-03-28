@@ -13,7 +13,7 @@ const tierSchema = z.object({
   eventId: z.string().min(1),
   name: z.string().min(1).max(100),
   price: z.number().min(0),
-  currency: z.string().min(1).max(10).default("MYR"),
+  currency: z.string().min(1).max(10).default("USD"),
   quota: z.number().int().min(1),
   saleStartsAt: z.string().nullable().optional(),
   saleEndsAt: z.string().nullable().optional(),

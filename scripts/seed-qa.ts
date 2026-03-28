@@ -141,10 +141,10 @@ const QA_EVENTS = [
     endsAt: "2026-09-12T23:00:00+08:00",
     capacity: 85000,
     tiers: [
-      { name: "Infinity Standing", price: 998, currency: "MYR", quota: 5000 },
-      { name: "CAT 1 — Lower Bowl", price: 698, currency: "MYR", quota: 20000 },
-      { name: "CAT 2 — Upper Bowl", price: 398, currency: "MYR", quota: 30000 },
-      { name: "CAT 3 — Nosebleed", price: 198, currency: "MYR", quota: 30000 },
+      { name: "Infinity Standing", price: 998, currency: "USD", quota: 5000 },
+      { name: "CAT 1 — Lower Bowl", price: 698, currency: "USD", quota: 20000 },
+      { name: "CAT 2 — Upper Bowl", price: 398, currency: "USD", quota: 30000 },
+      { name: "CAT 3 — Nosebleed", price: 198, currency: "USD", quota: 30000 },
     ],
   },
   {
@@ -247,9 +247,9 @@ const QA_EVENTS = [
     endsAt: "2026-10-03T23:59:00+08:00",
     capacity: 12000,
     tiers: [
-      { name: "Early Bird GA", price: 149, currency: "MYR", quota: 3000 },
-      { name: "General Admission", price: 229, currency: "MYR", quota: 7000 },
-      { name: "VIP Cabana", price: 599, currency: "MYR", quota: 2000 },
+      { name: "Early Bird GA", price: 149, currency: "USD", quota: 3000 },
+      { name: "General Admission", price: 229, currency: "USD", quota: 7000 },
+      { name: "VIP Cabana", price: 599, currency: "USD", quota: 2000 },
     ],
   },
   {
@@ -291,9 +291,9 @@ const QA_EVENTS = [
     endsAt: "2026-11-08T23:00:00+08:00",
     capacity: 1400,
     tiers: [
-      { name: "Royal Box", price: 888, currency: "MYR", quota: 100 },
-      { name: "Diamond", price: 488, currency: "MYR", quota: 400 },
-      { name: "Gold", price: 288, currency: "MYR", quota: 900 },
+      { name: "Royal Box", price: 888, currency: "USD", quota: 100 },
+      { name: "Diamond", price: 488, currency: "USD", quota: 400 },
+      { name: "Gold", price: 288, currency: "USD", quota: 900 },
     ],
   },
   {
@@ -335,8 +335,8 @@ const QA_EVENTS = [
     endsAt: "2026-11-01T11:00:00+08:00",
     capacity: 2000,
     tiers: [
-      { name: "Pre-sale", price: 89, currency: "MYR", quota: 500 },
-      { name: "General Entry", price: 139, currency: "MYR", quota: 1500 },
+      { name: "Pre-sale", price: 89, currency: "USD", quota: 500 },
+      { name: "General Entry", price: 139, currency: "USD", quota: 1500 },
     ],
   },
   {
@@ -364,8 +364,8 @@ const QA_EVENTS = [
     endsAt: "2026-09-05T22:00:00+08:00",
     capacity: 920,
     tiers: [
-      { name: "Premium", price: 328, currency: "MYR", quota: 300 },
-      { name: "Standard", price: 188, currency: "MYR", quota: 620 },
+      { name: "Premium", price: 328, currency: "USD", quota: 300 },
+      { name: "Standard", price: 188, currency: "USD", quota: 620 },
     ],
   },
   {
@@ -393,8 +393,8 @@ const QA_EVENTS = [
     endsAt: "2026-08-23T23:00:00+08:00",
     capacity: 2000,
     tiers: [
-      { name: "Early Bird", price: 128, currency: "MYR", quota: 500 },
-      { name: "GA Standing", price: 178, currency: "MYR", quota: 1500 },
+      { name: "Early Bird", price: 128, currency: "USD", quota: 500 },
+      { name: "GA Standing", price: 178, currency: "USD", quota: 1500 },
     ],
   },
   {
@@ -422,9 +422,9 @@ const QA_EVENTS = [
     endsAt: "2026-04-05T22:30:00+08:00",
     capacity: 3000,
     tiers: [
-      { name: "VVIP", price: 588, currency: "MYR", quota: 200 },
-      { name: "VIP", price: 368, currency: "MYR", quota: 800 },
-      { name: "Standard", price: 168, currency: "MYR", quota: 2000 },
+      { name: "VVIP", price: 588, currency: "USD", quota: 200 },
+      { name: "VIP", price: 368, currency: "USD", quota: 800 },
+      { name: "Standard", price: 168, currency: "USD", quota: 2000 },
     ],
   },
 ];

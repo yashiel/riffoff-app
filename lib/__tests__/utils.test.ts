@@ -28,28 +28,28 @@ describe("cn", () => {
 });
 
 describe("formatCurrency", () => {
-  it("formats MYR correctly", () => {
-    const result = formatCurrency(25.5, "MYR");
+  it("formats USD correctly", () => {
+    const result = formatCurrency(25.5, "USD");
     expect(result).toContain("25.50");
   });
 
-  it("formats USD correctly", () => {
-    const result = formatCurrency(100, "USD");
+  it("formats MYR correctly", () => {
+    const result = formatCurrency(100, "MYR");
     expect(result).toContain("100.00");
   });
 
-  it("defaults to MYR", () => {
+  it("defaults to USD", () => {
     const result = formatCurrency(10);
     expect(result).toContain("10.00");
   });
 
   it("handles zero", () => {
-    const result = formatCurrency(0, "MYR");
+    const result = formatCurrency(0, "USD");
     expect(result).toContain("0.00");
   });
 
   it("handles decimal precision", () => {
-    const result = formatCurrency(19.999, "MYR");
+    const result = formatCurrency(19.999, "USD");
     // Should round to 2 decimal places
     expect(result).toMatch(/20\.00/);
   });
@@ -57,17 +57,17 @@ describe("formatCurrency", () => {
 
 describe("formatCentsToDisplay", () => {
   it("converts cents to display currency", () => {
-    const result = formatCentsToDisplay(2550, "MYR");
+    const result = formatCentsToDisplay(2550, "USD");
     expect(result).toContain("25.50");
   });
 
   it("handles zero cents", () => {
-    const result = formatCentsToDisplay(0, "MYR");
+    const result = formatCentsToDisplay(0, "USD");
     expect(result).toContain("0.00");
   });
 
   it("handles large amounts", () => {
-    const result = formatCentsToDisplay(1000000, "MYR");
+    const result = formatCentsToDisplay(1000000, "USD");
     expect(result).toContain("10,000.00");
   });
 });

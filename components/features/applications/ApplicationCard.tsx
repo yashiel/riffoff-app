@@ -1,7 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { Check, X, Star } from "lucide-react";
+import Link from "next/link";
+import { Check, X, Star, MessageSquare } from "lucide-react";
 import { StatusBadge } from "@/components/features/shared/StatusBadge";
 import { updateApplicationStatus } from "@/actions/applications";
 import { formatDate } from "@/lib/utils";
@@ -55,41 +56,46 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         </p>
       )}
 
-      {/* Actions */}
-      {(canShortlist || canAccept || canReject) && (
-        <div className="mt-4 flex gap-2">
-          {canShortlist && (
-            <button
-              onClick={() => handleStatusChange("shortlisted")}
-              disabled={isPending}
-              className="btn-ghost inline-flex items-center gap-1.5 !py-1.5 !text-sm"
-            >
-              <Star className="size-3" />
-              Shortlist
-            </button>
-          )}
-          {canAccept && (
-            <button
-              onClick={() => handleStatusChange("accepted")}
-              disabled={isPending}
-              className="inline-flex items-center gap-1.5 rounded bg-emerald-500/20 px-3 py-1.5 text-sm font-medium uppercase text-emerald-400 transition-colors hover:bg-emerald-500/30"
-            >
-              <Check className="size-3" />
-              Accept
-            </button>
-          )}
-          {canReject && (
-            <button
-              onClick={() => handleStatusChange("rejected")}
-              disabled={isPending}
-              className="inline-flex items-center gap-1.5 rounded bg-red-500/10 px-3 py-1.5 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
-            >
-              <X className="size-3" />
-              Reject
-            </button>
-          )}
-        </div>
-      )}
+      {/* View detail + Actions */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link
+          href={`/dashboard/events/${application.eventId}/applications/${application.$id}`}
+          className="inline-flex items-center gap-1.5 rounded bg-coral/10 px-3 py-1.5 text-sm font-medium text-coral transition-colors hover:bg-coral/20"
+        >
+          <MessageSquare className="size-3" />
+          View
+        </Link>
+        {canShortlist && (
+          <button
+            onClick={() => handleStatusChange("shortlisted")}
+            disabled={isPending}
+            className="btn-ghost inline-flex items-center gap-1.5 !py-1.5 !text-sm"
+          >
+            <Star className="size-3" />
+            Shortlist
+          </button>
+        )}
+        {canAccept && (
+          <button
+            onClick={() => handleStatusChange("accepted")}
+            disabled={isPending}
+            className="inline-flex items-center gap-1.5 rounded bg-emerald-500/20 px-3 py-1.5 text-sm font-medium uppercase text-emerald-400 transition-colors hover:bg-emerald-500/30"
+          >
+            <Check className="size-3" />
+            Accept
+          </button>
+        )}
+        {canReject && (
+          <button
+            onClick={() => handleStatusChange("rejected")}
+            disabled={isPending}
+            className="inline-flex items-center gap-1.5 rounded bg-red-500/10 px-3 py-1.5 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+          >
+            <X className="size-3" />
+            Reject
+          </button>
+        )}
+      </div>
     </div>
   );
 }

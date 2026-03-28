@@ -338,35 +338,35 @@ const NEW_EVENTS: Array<{
 // Ticket tiers for new events
 const NEW_TIERS = [
   // TXT KL
-  { eventId: "evt-txt-kl", name: "VIP", price: 1098, currency: "MYR", quota: 1000, sortOrder: 0 },
-  { eventId: "evt-txt-kl", name: "CAT 1", price: 898, currency: "MYR", quota: 3000, sortOrder: 1 },
-  { eventId: "evt-txt-kl", name: "CAT 2", price: 598, currency: "MYR", quota: 5000, sortOrder: 2 },
-  { eventId: "evt-txt-kl", name: "CAT 3", price: 398, currency: "MYR", quota: 7000, sortOrder: 3 },
+  { eventId: "evt-txt-kl", name: "VIP", price: 1098, currency: "USD", quota: 1000, sortOrder: 0 },
+  { eventId: "evt-txt-kl", name: "CAT 1", price: 898, currency: "USD", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-txt-kl", name: "CAT 2", price: 598, currency: "USD", quota: 5000, sortOrder: 2 },
+  { eventId: "evt-txt-kl", name: "CAT 3", price: 398, currency: "USD", quota: 7000, sortOrder: 3 },
   // ATEEZ KL
-  { eventId: "evt-ateez-kl", name: "VIP Soundcheck", price: 1198, currency: "MYR", quota: 500, sortOrder: 0 },
-  { eventId: "evt-ateez-kl", name: "CAT 1", price: 898, currency: "MYR", quota: 3000, sortOrder: 1 },
-  { eventId: "evt-ateez-kl", name: "CAT 2", price: 598, currency: "MYR", quota: 5000, sortOrder: 2 },
-  { eventId: "evt-ateez-kl", name: "CAT 3", price: 398, currency: "MYR", quota: 7500, sortOrder: 3 },
+  { eventId: "evt-ateez-kl", name: "VIP Soundcheck", price: 1198, currency: "USD", quota: 500, sortOrder: 0 },
+  { eventId: "evt-ateez-kl", name: "CAT 1", price: 898, currency: "USD", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-ateez-kl", name: "CAT 2", price: 598, currency: "USD", quota: 5000, sortOrder: 2 },
+  { eventId: "evt-ateez-kl", name: "CAT 3", price: 398, currency: "USD", quota: 7500, sortOrder: 3 },
   // TREASURE KL
-  { eventId: "evt-treasure-kl", name: "CAT 1", price: 888, currency: "MYR", quota: 3000, sortOrder: 0 },
-  { eventId: "evt-treasure-kl", name: "CAT 2", price: 599, currency: "MYR", quota: 5000, sortOrder: 1 },
-  { eventId: "evt-treasure-kl", name: "CAT 3", price: 399, currency: "MYR", quota: 8000, sortOrder: 2 },
+  { eventId: "evt-treasure-kl", name: "CAT 1", price: 888, currency: "USD", quota: 3000, sortOrder: 0 },
+  { eventId: "evt-treasure-kl", name: "CAT 2", price: 599, currency: "USD", quota: 5000, sortOrder: 1 },
+  { eventId: "evt-treasure-kl", name: "CAT 3", price: 399, currency: "USD", quota: 8000, sortOrder: 2 },
   // EXO KL
-  { eventId: "evt-exo-kl", name: "VIP", price: 1098, currency: "MYR", quota: 1000, sortOrder: 0 },
-  { eventId: "evt-exo-kl", name: "CAT 1", price: 798, currency: "MYR", quota: 3000, sortOrder: 1 },
-  { eventId: "evt-exo-kl", name: "CAT 2", price: 498, currency: "MYR", quota: 6000, sortOrder: 2 },
+  { eventId: "evt-exo-kl", name: "VIP", price: 1098, currency: "USD", quota: 1000, sortOrder: 0 },
+  { eventId: "evt-exo-kl", name: "CAT 1", price: 798, currency: "USD", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-exo-kl", name: "CAT 2", price: 498, currency: "USD", quota: 6000, sortOrder: 2 },
   // MCR KL (2 nights)
-  { eventId: "evt-mcr-kl", name: "Helena Seated", price: 1099, currency: "MYR", quota: 5000, sortOrder: 0 },
-  { eventId: "evt-mcr-kl", name: "GA Standing", price: 699, currency: "MYR", quota: 20000, sortOrder: 1 },
-  { eventId: "evt-mcr-kl", name: "Zone E Seated", price: 299, currency: "MYR", quota: 35000, sortOrder: 2 },
+  { eventId: "evt-mcr-kl", name: "Helena Seated", price: 1099, currency: "USD", quota: 5000, sortOrder: 0 },
+  { eventId: "evt-mcr-kl", name: "GA Standing", price: 699, currency: "USD", quota: 20000, sortOrder: 1 },
+  { eventId: "evt-mcr-kl", name: "Zone E Seated", price: 299, currency: "USD", quota: 35000, sortOrder: 2 },
   // Bryan Adams
-  { eventId: "evt-bryan-adams-kl", name: "Platinum", price: 758, currency: "MYR", quota: 500, sortOrder: 0 },
-  { eventId: "evt-bryan-adams-kl", name: "Gold", price: 658, currency: "MYR", quota: 1000, sortOrder: 1 },
-  { eventId: "evt-bryan-adams-kl", name: "CAT 1", price: 598, currency: "MYR", quota: 1000, sortOrder: 2 },
-  { eventId: "evt-bryan-adams-kl", name: "CAT 2", price: 498, currency: "MYR", quota: 1500, sortOrder: 3 },
+  { eventId: "evt-bryan-adams-kl", name: "Platinum", price: 758, currency: "USD", quota: 500, sortOrder: 0 },
+  { eventId: "evt-bryan-adams-kl", name: "Gold", price: 658, currency: "USD", quota: 1000, sortOrder: 1 },
+  { eventId: "evt-bryan-adams-kl", name: "CAT 1", price: 598, currency: "USD", quota: 1000, sortOrder: 2 },
+  { eventId: "evt-bryan-adams-kl", name: "CAT 2", price: 498, currency: "USD", quota: 1500, sortOrder: 3 },
   // Verknipt
-  { eventId: "evt-verknipt-kl", name: "Early Bird", price: 188, currency: "MYR", quota: 1000, sortOrder: 0 },
-  { eventId: "evt-verknipt-kl", name: "GA", price: 288, currency: "MYR", quota: 3000, sortOrder: 1 },
+  { eventId: "evt-verknipt-kl", name: "Early Bird", price: 188, currency: "USD", quota: 1000, sortOrder: 0 },
+  { eventId: "evt-verknipt-kl", name: "GA", price: 288, currency: "USD", quota: 3000, sortOrder: 1 },
   // SWARA Colombo
   { eventId: "evt-swara-colombo", name: "VIP", price: 10000, currency: "LKR", quota: 500, sortOrder: 0 },
   { eventId: "evt-swara-colombo", name: "Standard", price: 3000, currency: "LKR", quota: 2500, sortOrder: 1 },

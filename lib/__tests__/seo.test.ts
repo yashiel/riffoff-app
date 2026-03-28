@@ -72,7 +72,7 @@ describe("createEventJsonLd", () => {
     eventId: "evt-789",
     isFree: false,
     minPrice: 25,
-    currency: "MYR",
+    currency: "USD",
   };
 
   it("returns MusicEvent schema type", () => {
@@ -89,7 +89,7 @@ describe("createEventJsonLd", () => {
   it("includes price in offers", () => {
     const ld = createEventJsonLd(event);
     expect(ld.offers.price).toBe("25");
-    expect(ld.offers.priceCurrency).toBe("MYR");
+    expect(ld.offers.priceCurrency).toBe("USD");
   });
 
   it("sets price 0 for free events", () => {

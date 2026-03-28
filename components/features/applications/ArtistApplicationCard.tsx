@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { Calendar, MapPin, X } from "lucide-react";
+import { Calendar, MapPin, X, MessageSquare } from "lucide-react";
 import { StatusBadge } from "@/components/features/shared/StatusBadge";
 import { withdrawApplication } from "@/actions/artist-applications";
 import { formatDate } from "@/lib/utils";
@@ -67,16 +67,25 @@ export function ArtistApplicationCard({ application }: ArtistApplicationCardProp
 
       <div className="mt-3 flex items-center justify-between text-base text-muted-foreground">
         <span>Applied {formatDate(application.submittedAt, { dateStyle: "medium" })}</span>
-        {canWithdraw && (
-          <button
-            onClick={handleWithdraw}
-            disabled={isPending}
-            className="inline-flex items-center gap-1 rounded bg-red-500/10 px-3 py-1 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/dashboard/applications/${application.$id}`}
+            className="inline-flex items-center gap-1 rounded bg-coral/10 px-3 py-1 text-sm font-medium text-coral transition-colors hover:bg-coral/20"
           >
-            <X className="size-3" />
-            {isPending ? "Withdrawing..." : "Withdraw"}
-          </button>
-        )}
+            <MessageSquare className="size-3" />
+            View
+          </Link>
+          {canWithdraw && (
+            <button
+              onClick={handleWithdraw}
+              disabled={isPending}
+              className="inline-flex items-center gap-1 rounded bg-red-500/10 px-3 py-1 text-sm font-medium uppercase text-red-400 transition-colors hover:bg-red-500/20"
+            >
+              <X className="size-3" />
+              {isPending ? "Withdrawing..." : "Withdraw"}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

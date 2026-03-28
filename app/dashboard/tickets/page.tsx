@@ -1,4 +1,4 @@
-import { TicketList } from "@/components/features/tickets/TicketList";
+import { TicketSearchFilter } from "@/components/features/tickets/TicketSearchFilter";
 import { TicketListRefresher } from "@/components/features/tickets/TicketListRefresher";
 import { EventCarousel } from "@/components/features/events/EventCarousel";
 import { getUserTickets } from "@/actions/tickets";
@@ -26,9 +26,9 @@ export default async function TicketsPage() {
         Your purchased tickets and e-passes
       </p>
 
-      {/* Ticket list — priority */}
+      {/* Ticket list with search and filters */}
       <div className="mt-6 sm:mt-10">
-        <TicketList tickets={tickets} />
+        <TicketSearchFilter tickets={tickets} />
       </div>
 
       {/* Upcoming events carousel — below tickets */}

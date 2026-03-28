@@ -58,7 +58,7 @@ describe("Payment types", () => {
       providerRef: "cs_live_abc",
       provider: "stripe",
       amountCents: 5000,
-      currency: "MYR",
+      currency: "USD",
     };
     expect(confirmation.amountCents).toBe(5000);
     expect(confirmation.provider).toBe("stripe");

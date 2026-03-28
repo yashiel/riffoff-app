@@ -18,8 +18,8 @@ export function cn(...inputs: ClassValue[]) {
  * Format currency amount from smallest unit (cents/sen) to display string.
  * tickettiers.price is stored as double, so we accept both integer cents and float.
  */
-export function formatCurrency(amount: number, currency = "MYR"): string {
-  return new Intl.NumberFormat("en-MY", {
+export function formatCurrency(amount: number, currency = "USD"): string {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     minimumFractionDigits: 2,
@@ -30,13 +30,13 @@ export function formatCurrency(amount: number, currency = "MYR"): string {
  * Format integer cents to currency display.
  * Use for orders.amount and disputes.amount (stored as integer cents).
  */
-export function formatCentsToDisplay(cents: number, currency = "MYR"): string {
+export function formatCentsToDisplay(cents: number, currency = "USD"): string {
   return formatCurrency(cents / 100, currency);
 }
 
 /** Format ISO datetime string to localized display */
 export function formatDate(isoString: string, options?: Intl.DateTimeFormatOptions): string {
-  return new Intl.DateTimeFormat("en-MY", {
+  return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
     ...options,

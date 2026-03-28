@@ -54,7 +54,7 @@ export default function CheckoutPage({ searchParams, params }: CheckoutPageProps
         eventTitle: decodeURIComponent(sp.eventTitle ?? "Event"),
         tierName: decodeURIComponent(sp.tierName ?? "Ticket"),
         price: parseFloat(sp.price ?? "0"),
-        currency: sp.currency ?? "MYR",
+        currency: sp.currency ?? "USD",
       });
     });
   }, [params, searchParams]);

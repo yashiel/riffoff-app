@@ -11,6 +11,14 @@ import {
   Star,
   Bell,
   QrCode,
+  AlertTriangle,
+  Ban,
+  Scale,
+  PauseCircle,
+  PlayCircle,
+  ThumbsUp,
+  Shield,
+  BadgeCheck,
 } from "lucide-react";
 import { markAsRead } from "@/actions/notifications";
 import type { NotificationDoc, NotificationType } from "@/lib/appwrite/types";
@@ -25,6 +33,14 @@ const ICON_MAP: Record<NotificationType, React.ElementType> = {
   application_shortlisted: Star,
   checkin_complete: QrCode,
   system: Bell,
+  moderation_warning: AlertTriangle,
+  moderation_ban: Ban,
+  moderation_appeal_result: Scale,
+  event_suspended: PauseCircle,
+  event_reinstated: PlayCircle,
+  rating_received: ThumbsUp,
+  community_guardian_promoted: Shield,
+  verified_badge_granted: BadgeCheck,
 };
 
 const COLOR_MAP: Record<NotificationType, string> = {
@@ -37,6 +53,14 @@ const COLOR_MAP: Record<NotificationType, string> = {
   application_shortlisted: "text-amber-400",
   checkin_complete: "text-emerald-400",
   system: "text-muted-foreground",
+  moderation_warning: "text-amber-400",
+  moderation_ban: "text-red-500",
+  moderation_appeal_result: "text-blue-400",
+  event_suspended: "text-red-400",
+  event_reinstated: "text-emerald-400",
+  rating_received: "text-amber-400",
+  community_guardian_promoted: "text-purple-400",
+  verified_badge_granted: "text-emerald-400",
 };
 
 interface NotificationItemProps {

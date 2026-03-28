@@ -7,8 +7,8 @@ import { createTier, updateTier } from "@/actions/tiers";
 import type { TicketTierDoc } from "@/lib/appwrite/types";
 
 const CURRENCIES = [
-  { code: "MYR", flag: "🇲🇾", name: "Malaysian Ringgit" },
   { code: "USD", flag: "🇺🇸", name: "US Dollar" },
+  { code: "MYR", flag: "🇲🇾", name: "Malaysian Ringgit" },
   { code: "SGD", flag: "🇸🇬", name: "Singapore Dollar" },
   { code: "LKR", flag: "🇱🇰", name: "Sri Lankan Rupee" },
   { code: "THB", flag: "🇹🇭", name: "Thai Baht" },
@@ -59,7 +59,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
         eventId,
         name: formData.get("name") as string,
         price: parseFloat(formData.get("price") as string),
-        currency: (formData.get("currency") as string) || "MYR",
+        currency: (formData.get("currency") as string) || "USD",
         quota: parseInt(formData.get("quota") as string, 10),
         saleStartsAt: (formData.get("saleStartsAt") as string)
           ? new Date(formData.get("saleStartsAt") as string).toISOString()
@@ -117,7 +117,7 @@ export function TierForm({ eventId, tier, onComplete }: TierFormProps) {
           <Label htmlFor="tierCurrency" className="text-base text-muted-foreground">Currency</Label>
           <select
             id="tierCurrency" name="currency"
-            defaultValue={tier?.currency ?? "MYR"}
+            defaultValue={tier?.currency ?? "USD"}
             className="w-full rounded bg-[var(--input)] border border-[var(--border)] px-3 py-2 text-base text-foreground outline-none"
           >
             {CURRENCIES.map((c) => (

@@ -4,7 +4,7 @@ import type { Models } from "node-appwrite";
 export type UserRole = "attendee" | "artist" | "organiser" | "admin";
 
 /** Event status — matches Appwrite enum */
-export type EventStatus = "draft" | "published" | "cancelled" | "completed";
+export type EventStatus = "draft" | "published" | "suspended" | "cancelled" | "completed";
 
 /** Reservation status — matches Appwrite enum */
 export type ReservationStatus = "held" | "converted" | "expired" | "cancelled";
@@ -44,7 +44,15 @@ export type NotificationType =
   | "application_rejected"
   | "application_shortlisted"
   | "checkin_complete"
-  | "system";
+  | "system"
+  | "moderation_warning"
+  | "moderation_ban"
+  | "moderation_appeal_result"
+  | "event_suspended"
+  | "event_reinstated"
+  | "rating_received"
+  | "community_guardian_promoted"
+  | "verified_badge_granted";
 
 /** Consent type — matches Appwrite enum */
 export type ConsentType =
@@ -68,6 +76,29 @@ export type DisputeStatus =
   | "won"
   | "lost";
 
+// ── Moderation types ─────────────────────────────────────────
+export type ModerationEntityType = "event" | "user" | "message" | "review";
+export type ModerationSource = "user" | "system" | "admin";
+export type ModerationReason =
+  | "spam"
+  | "fraud"
+  | "harassment"
+  | "inappropriate"
+  | "duplicate"
+  | "scam"
+  | "impersonation"
+  | "wrong_info"
+  | "sold_out_misleading"
+  | "cancelled_unlisted"
+  | "unofficial"
+  | "other";
+export type ModerationStatus = "open" | "in_review" | "actioned" | "dismissed";
+export type ModerationPriority = "low" | "medium" | "high" | "critical";
+export type WarningLevel = "warning" | "temp_ban" | "permanent_ban";
+export type BanLevel = "none" | "warned" | "temp_banned" | "permanent_banned";
+export type AppealStatus = "pending" | "under_review" | "upheld" | "overturned";
+export type CommunityRole = "member" | "guardian";
+
 // ─── Document Types ───────────────────────────────────────────
 
 export interface ProfileDoc extends Models.Document {
@@ -85,6 +116,14 @@ export interface ProfileDoc extends Models.Document {
   artistGenres: string[];
   socialLinks: string[];
   portfolioUrls: string[];
+  // Moderation fields
+  warningCount: number;
+  banLevel: BanLevel;
+  banExpiresAt: string | null;
+  trustScore: number;
+  isVerified: boolean;
+  communityRole: CommunityRole;
+  totalEventsAttended: number;
 }
 
 export interface VenueDoc extends Models.Document {
@@ -197,6 +236,56 @@ export interface AuditLogDoc extends Models.Document {
   entityType: string;
   entityId: string;
   metadata: string | null;
+}
+
+export interface ModerationItemDoc extends Models.Document {
+  entityType: ModerationEntityType;
+  entityId: string;
+  source: ModerationSource;
+  reporterId: string | null;
+  reason: ModerationReason;
+  description: string | null;
+  status: ModerationStatus;
+  priority: ModerationPriority;
+  assignedTo: string | null;
+  actionTaken: string | null;
+  resolvedAt: string | null;
+  resolvedBy: string | null;
+}
+
+export interface ModerationNoteDoc extends Models.Document {
+  moderationItemId: string;
+  authorId: string;
+  body: string;
+}
+
+export interface UserWarningDoc extends Models.Document {
+  userId: string;
+  level: WarningLevel;
+  reason: string;
+  moderationItemId: string | null;
+  issuedBy: string;
+  expiresAt: string | null;
+  liftedAt: string | null;
+  liftedBy: string | null;
+}
+
+export interface EventRatingDoc extends Models.Document {
+  eventId: string;
+  userId: string;
+  rating: number;
+  comment: string | null;
+  organiserId: string;
+}
+
+export interface AppealDoc extends Models.Document {
+  moderationItemId: string;
+  appealerId: string;
+  reason: string;
+  status: AppealStatus;
+  reviewedBy: string | null;
+  reviewNote: string | null;
+  resolvedAt: string | null;
 }
 
 export interface NotificationDoc extends Models.Document {

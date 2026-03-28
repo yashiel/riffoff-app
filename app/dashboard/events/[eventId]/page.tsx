@@ -67,7 +67,7 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
   const ticketDocs = (ticketsResult as { documents: Array<{ checkedInAt: string | null }> }).documents;
   const checkedIn = ticketDocs.filter((t) => t.checkedInAt !== null).length;
   const revenue = tiers.reduce((sum, t) => sum + t.soldCount * t.price, 0);
-  const mainCurrency = tiers[0]?.currency ?? "MYR";
+  const mainCurrency = tiers[0]?.currency ?? "USD";
   const pendingApps = appsResult.filter((a) => a.status === "submitted").length;
   const acceptedApps = appsResult.filter((a) => a.status === "accepted").length;
 
