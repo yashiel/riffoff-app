@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Shield, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, Shield, CheckCircle2, Clock, Download } from "lucide-react";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { QRDisplay } from "@/components/features/tickets/QRDisplay";
@@ -210,9 +210,9 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             </div>
           )}
 
-          {/* Wallet buttons */}
+          {/* Wallet buttons + PDF download */}
           {isActive && !isCheckedIn && event && (
-            <div className="mt-5 sm:mt-6">
+            <div className="mt-5 space-y-3 sm:mt-6">
               <WalletButtons
                 ticketId={ticket.$id}
                 eventTitle={event.title}
@@ -221,6 +221,14 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 ticketCode={ticket.ticketCode}
                 tierName={tier?.name ?? "General"}
               />
+              <a
+                href={`/api/tickets/${ticket.$id}/pdf`}
+                download
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <Download className="size-4" />
+                Download PDF Ticket
+              </a>
             </div>
           )}
 

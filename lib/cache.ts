@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { createAdminClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { Query } from "node-appwrite";
@@ -76,3 +77,56 @@ export const getPublishedEventCount = cache(async (): Promise<number> => {
 
   return result.total;
 });
+
+/* ─── Cross-request caching (survives across requests for revalidation period) ─── */
+
+/** Cached across requests: all venue data (revalidates every 5 minutes) */
+export const getCachedVenues = unstable_cache(
+  async (): Promise<Map<string, VenueDoc>> => {
+    const { databases } = await createAdminClient();
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.VENUES, [
+      Query.limit(200),
+    ]);
+    const map = new Map<string, VenueDoc>();
+    for (const doc of result.documents) {
+      map.set(doc.$id, doc as unknown as VenueDoc);
+    }
+    return map;
+  },
+  ["venues-all"],
+  { revalidate: 300 },
+);
+
+/** Cached across requests: published event count (revalidates every 60s) */
+export const getCachedEventCount = unstable_cache(
+  async (): Promise<number> => {
+    const { databases } = await createAdminClient();
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, [
+      Query.equal("status", "published"),
+      Query.limit(1),
+    ]);
+    return result.total;
+  },
+  ["event-count"],
+  { revalidate: 60 },
+);
+
+/** Cached across requests: genre list (revalidates every 5 minutes) */
+export const getCachedGenreList = unstable_cache(
+  async (): Promise<string[]> => {
+    const { databases } = await createAdminClient();
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.EVENTS, [
+      Query.equal("status", "published"),
+      Query.select(["genres"]),
+      Query.limit(200),
+    ]);
+    const genreSet = new Set<string>();
+    for (const doc of result.documents) {
+      const event = doc as unknown as EventDoc;
+      for (const genre of event.genres) genreSet.add(genre);
+    }
+    return [...genreSet].sort();
+  },
+  ["genres-all"],
+  { revalidate: 300 },
+);
