@@ -138,14 +138,25 @@ export async function issueTicketsForOrder(
   // 8. Send notification + email (non-blocking)
   const firstTicket = tickets[0];
   if (firstTicket) {
-    // Get event title for the notification
+    // Get event + venue + tier details for notification and email
     let eventTitle = "your event";
+    let eventDate = "";
+    let venueName = "";
     let tierName = "";
     let userEmail = "";
     let userName = "";
     try {
       const event = await databases.getDocument(DATABASE_ID, COLLECTIONS.EVENTS, eventId);
-      eventTitle = (event as unknown as { title: string }).title;
+      const eventData = event as unknown as { title: string; startsAt: string; venueId: string };
+      eventTitle = eventData.title;
+      eventDate = eventData.startsAt;
+
+      // Get venue name
+      if (eventData.venueId) {
+        const venue = await databases.getDocument(DATABASE_ID, COLLECTIONS.VENUES, eventData.venueId);
+        venueName = (venue as unknown as { name: string }).name;
+      }
+
       if (tierId) {
         const tierDoc = await databases.getDocument(DATABASE_ID, COLLECTIONS.TICKET_TIERS, tierId);
         tierName = (tierDoc as unknown as { name: string }).name;
@@ -167,13 +178,14 @@ export async function issueTicketsForOrder(
       void sendTicketConfirmationEmail(userEmail, {
         userName,
         eventTitle,
-        eventDate: "", // Will be filled from event doc if available
-        venue: "",
+        eventDate,
+        venue: venueName,
         tierName,
         ticketCode: firstTicket.ticketCode,
         quantity: qty,
         totalAmount: String(order.amount),
         currency: order.currency,
+        qrCodeData: firstTicket.$id,
       });
     }
   }
