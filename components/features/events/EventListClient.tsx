@@ -3,11 +3,11 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
-  Calendar, MapPin, Search, Ticket, ChevronRight, LayoutGrid, List,
+  Calendar, MapPin, Search, ChevronRight, LayoutGrid, List,
   ArrowUpDown, Clock, TrendingUp, Eye, EyeOff, Filter, Zap, Users,
-  BarChart3, ArrowUp, ArrowDown,
+  BarChart3,
 } from "lucide-react";
-import { formatDate, formatCurrency } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import type { EventWithVenue } from "@/actions/events";
 
 interface EventListClientProps {
@@ -142,7 +142,7 @@ export function EventListClient({ events }: EventListClientProps) {
 
   /* ─── Filter + Sort ─── */
   const filtered = useMemo(() => {
-    let result = events.filter((event) => {
+    const result = events.filter((event) => {
       if (statusFilter !== "all" && getDisplayStatus(event) !== statusFilter) return false;
       if (!matchesDateFilter(event.startsAt, dateFilter)) return false;
       if (search) {
@@ -424,7 +424,7 @@ export function EventListClient({ events }: EventListClientProps) {
           </div>
 
           <div className="divide-y divide-white/[0.02]">
-            {filtered.map((event, i) => {
+            {filtered.map((event) => {
               const displayStatus = getDisplayStatus(event);
             const cfg = statusConfig[displayStatus] ?? statusConfig.draft;
               const isUpcoming = new Date(event.startsAt) > new Date();

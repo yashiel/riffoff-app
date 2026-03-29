@@ -167,12 +167,6 @@ export async function getEventRatings(
 
 // ─── Get Event Ratings Summary ──────────────────────
 
-// TODO: For production scale (billion-user), denormalize averageRating and
-// totalRatings directly onto EventDoc. Update them atomically on each new
-// rating via an Appwrite Function trigger or post-write hook. The current
-// approach queries all ratings on every event detail page load, which is
-// acceptable with an eventId index but won't scale past ~50k ratings/event.
-
 export async function getEventRatingsSummary(
   eventId: string,
 ): Promise<{ averageRating: number; totalRatings: number }> {

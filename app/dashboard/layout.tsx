@@ -14,7 +14,6 @@ import {
   Shield,
   QrCode,
   LogOut,
-  LayoutDashboard,
   ExternalLink,
   AlertTriangle,
   Flag,

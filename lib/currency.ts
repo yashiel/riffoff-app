@@ -66,8 +66,7 @@ export async function getExchangeRates(
 
     ratesCache.set(cacheKey, rates);
     return rates;
-  } catch (err) {
-    console.error(`[CURRENCY] Failed to fetch rates for ${cacheKey}:`, err);
+  } catch {
     // Return stale cache if available
     return cached ?? null;
   }

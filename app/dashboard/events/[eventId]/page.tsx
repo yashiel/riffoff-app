@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   Calendar, MapPin, Users, Ticket, Music, Pencil,
   Eye, EyeOff, XCircle, ArrowUpRight, Clock, ChevronRight,
-  BarChart3, Shield, Radio, DoorOpen, CheckCircle2,
+  BarChart3, Radio, DoorOpen, CheckCircle2,
 } from "lucide-react";
 import { getEventById } from "@/actions/events";
 import { getEventTiers } from "@/actions/tiers";

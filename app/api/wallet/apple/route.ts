@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
     // 5. Package as ZIP with .pkpass extension
 
     // Pass structure for reference:
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _passJson = {
       formatVersion: 1,
       passTypeIdentifier: passTypeId,
@@ -115,8 +116,7 @@ export async function POST(request: NextRequest) {
       { error: "Apple Wallet not configured. Add Apple Developer certificates to .env.local" },
       { status: 501 },
     );
-  } catch (error) {
-    console.error("Apple Wallet error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to create Apple Wallet pass" },
       { status: 500 },

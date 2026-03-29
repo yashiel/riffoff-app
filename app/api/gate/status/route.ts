@@ -36,8 +36,7 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 },
     );
-  } catch (error) {
-    console.error("[GATE STATUS] Error:", error);
+  } catch {
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

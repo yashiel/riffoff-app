@@ -13,7 +13,8 @@ interface ApplicationDetailPageProps {
   params: Promise<{ applicationId: string }>;
 }
 
-export async function generateMetadata({ params }: ApplicationDetailPageProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function generateMetadata(_props: ApplicationDetailPageProps) {
   return { title: "Application Details" };
 }
 

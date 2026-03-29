@@ -7,7 +7,7 @@ import { generateTicketPDF } from "../lib/tickets/pdf";
 // RiffOff Email Service
 // ---------------------------------------------------------------------------
 // Production-grade email templates for RiffOff music ticketing platform.
-// Uses Resend API in production, falls back to console.log in dev mode.
+// Uses Resend API in production, silently succeeds in dev mode.
 //
 // Brand: #08080a body, #0f0f12 card, #16161a sub-card, #BFFF00 lime accent,
 // #FF2D78 pink accent, #f4f4f6 primary text, #8b8b9a muted text.
@@ -27,6 +27,7 @@ function getLogoUrl() {
 
 // ── Logo Data URI ─────────────────────────────────────────────────────────
 // RiffOff SVG logo with brand colors: #f4f4f6 (RIFF text) + #BFFF00 (OFF symbol)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGO_PNG_BASE64 =
   "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";
 
@@ -35,12 +36,6 @@ const LOGO_PNG_BASE64 =
 interface EmailResult {
   success: boolean;
   error?: string;
-}
-
-interface InlineImage {
-  filename: string;
-  content: string; // base64
-  content_id: string; // referenced as cid:xxx in HTML
 }
 
 interface TicketConfirmationData {
@@ -144,14 +139,11 @@ async function sendEmail(
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        console.error("[EMAIL] Resend error:", data);
         return { success: false, error: "Failed to send email" };
       }
 
       return { success: true };
-    } catch (err) {
-      console.error("[EMAIL] Resend fetch error:", err);
+    } catch {
       return { success: false, error: "Failed to send email" };
     }
   }
@@ -160,26 +152,6 @@ async function sendEmail(
   return { success: true };
 }
 
-function devLog(
-  type: string,
-  to: string,
-  subject: string,
-  extras?: Record<string, string>,
-) {
-  const line = "=".repeat(48);
-  const pad = (s: string, len: number) => s.padEnd(len);
-  console.log(`\n+${line}+`);
-  console.log(`|  ${pad(type.toUpperCase(), 46)}|`);
-  console.log(`+${"-".repeat(48)}+`);
-  console.log(`|  To:      ${pad(to, 37)}|`);
-  console.log(`|  Subject: ${pad(subject.slice(0, 37), 37)}|`);
-  if (extras) {
-    for (const [k, v] of Object.entries(extras)) {
-      console.log(`|  ${pad(`${k}: ${v}`, 46)}|`);
-    }
-  }
-  console.log(`+${line}+\n`);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Transactional Senders (public API)
@@ -197,7 +169,6 @@ export async function sendVerificationEmail(
   const html = buildOTPTemplate(code, userName, "verify");
 
   if (!getApiKey()) {
-    devLog("Verification Code", email, subject, { Code: code });
     return { success: true };
   }
 
@@ -216,7 +187,6 @@ export async function sendPasswordResetEmail(
   const html = buildOTPTemplate(code, userName, "reset");
 
   if (!getApiKey()) {
-    devLog("Password Reset", email, subject, { Code: code });
     return { success: true };
   }
 
@@ -236,7 +206,6 @@ export async function sendWelcomeEmail(
   const html = buildWelcomeTemplate(resolved);
 
   if (!getApiKey()) {
-    devLog("Welcome Email", email, subject, { User: resolved.userName });
     return { success: true };
   }
 
@@ -294,21 +263,13 @@ export async function sendTicketConfirmationEmail(
       filename: `RiffOff-Ticket-${data.ticketCode}.pdf`,
       content: pdfBuffer.toString("base64"),
     });
-  } catch (err) {
-    console.error("[EMAIL] PDF ticket generation failed:", err);
-    // Email still sends without attachment
+  } catch {
+    // PDF generation failed — email still sends without attachment
   }
 
   const html = await buildTicketConfirmationTemplate(data, inlineQrContentId);
 
   if (!getApiKey()) {
-    devLog("Ticket Confirmation", email, subject, {
-      Event: data.eventTitle,
-      Tier: data.tierName,
-      Qty: String(data.quantity),
-      Code: data.ticketCode,
-      Total: `${data.currency} ${data.totalAmount}`,
-    });
     return { success: true };
   }
 
@@ -331,10 +292,6 @@ export async function sendApplicationStatusEmail(
   const html = buildApplicationStatusTemplate(data);
 
   if (!getApiKey()) {
-    devLog("Application Status", email, subject, {
-      Event: data.eventTitle,
-      Status: data.status,
-    });
     return { success: true };
   }
 
@@ -352,10 +309,6 @@ export async function sendEventPublishedEmail(
   const html = buildEventPublishedTemplate(data);
 
   if (!getApiKey()) {
-    devLog("Event Published", email, subject, {
-      Event: data.eventTitle,
-      Date: data.eventDate,
-    });
     return { success: true };
   }
 
@@ -373,10 +326,6 @@ export async function sendEventCancelledEmail(
   const html = buildEventCancelledTemplate(data);
 
   if (!getApiKey()) {
-    devLog("Event Cancelled", email, subject, {
-      Event: data.eventTitle,
-      Refund: data.refundInfo || "N/A",
-    });
     return { success: true };
   }
 
@@ -392,7 +341,7 @@ function doctype(): string {
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">`;
 }
 
-function headBlock(preheaderText: string): string {
+function headBlock(): string {
   return `<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -671,7 +620,7 @@ function assembleEmail(
 ): string {
   return [
     doctype(),
-    headBlock(preheaderText),
+    headBlock(),
     bodyOpen(),
     preheader(preheaderText),
     outerTableOpen(),

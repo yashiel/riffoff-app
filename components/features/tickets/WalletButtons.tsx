@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Smartphone } from "lucide-react";
 
 interface WalletButtonsProps {
   ticketId: string;

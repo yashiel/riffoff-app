@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
   );
 
   if (!isValid || clientId !== process.env.TNG_CLIENT_ID) {
-    console.error("TNG webhook: invalid signature");
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -31,12 +30,11 @@ export async function POST(request: NextRequest) {
   const orderId = notification.paymentRequestId;
 
   if (resultStatus === "S" && orderId) {
-    const { alreadyProcessed } = await issueTicketsForOrder(
+    await issueTicketsForOrder(
       orderId,
       notification.paymentId ?? "",
     );
 
-    // alreadyProcessed check ensures idempotent webhook handling
   }
 
   // Always respond with success to TNG

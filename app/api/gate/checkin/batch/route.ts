@@ -76,8 +76,7 @@ export async function POST(request: NextRequest) {
     const results = await processBatchSync(inputs);
 
     return NextResponse.json({ results }, { status: 200 });
-  } catch (error) {
-    console.error("[BATCH CHECKIN] Error:", error);
+  } catch {
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

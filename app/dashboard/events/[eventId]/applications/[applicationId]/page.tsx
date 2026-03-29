@@ -13,7 +13,6 @@ import { serialize } from "@/lib/utils";
 import type {
   ApplicationDoc,
   EventDoc,
-  VenueDoc,
   ProfileDoc,
 } from "@/lib/appwrite/types";
 import type { ApplicationWithArtist } from "@/actions/applications";
@@ -68,7 +67,7 @@ export default async function OrganiserApplicationDetailPage({
   if (application.eventId !== eventId) notFound();
 
   // Fetch venue, artist profile, messages, and participants in parallel
-  const [venueResult, artistProfileResult, initialMessages, participants] =
+  const [, artistProfileResult, initialMessages, participants] =
     await Promise.all([
       event.venueId
         ? databases
@@ -85,7 +84,6 @@ export default async function OrganiserApplicationDetailPage({
       getThreadParticipants(applicationId),
     ]);
 
-  const venue = venueResult as unknown as VenueDoc | null;
   const artistProfile =
     (artistProfileResult.documents[0] as unknown as ProfileDoc) ?? null;
 

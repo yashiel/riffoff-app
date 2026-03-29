@@ -26,6 +26,7 @@ const envSchema = z.object({
   PAYPAL_CLIENT_ID: z.string().optional(),
   PAYPAL_CLIENT_SECRET: z.string().optional(),
   PAYPAL_API_URL: z.url().optional(),
+  PAYPAL_WEBHOOK_ID: z.string().optional(),
   NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string().optional(),
 
   // TNG Digital — ALL server only
@@ -38,9 +39,7 @@ const envSchema = z.object({
 
   // Notifications
   RESEND_API_KEY: z.string().optional(),
-  TWILIO_ACCOUNT_SID: z.string().optional(),
-  TWILIO_AUTH_TOKEN: z.string().optional(),
-  TWILIO_PHONE_NUMBER: z.string().optional(),
+  FROM_EMAIL: z.string().email().optional(),
 
   // Ticket signing — minimum 32 chars for HMAC security
   TICKET_SIGNING_SECRET: z.string().min(32).optional(),
@@ -50,6 +49,11 @@ const envSchema = z.object({
 
   // Gate scanner
   GATE_KEY_ENCRYPTION_KEY: z.string().min(32).optional(),
+
+  // Wallet passes
+  APPLE_WALLET_PASS_TYPE_ID: z.string().optional(),
+  APPLE_WALLET_TEAM_ID: z.string().optional(),
+  GOOGLE_WALLET_ISSUER_ID: z.string().optional(),
 });
 
 // ─── Server-only secret leak detection ───────────────
@@ -66,7 +70,6 @@ const SERVER_ONLY_PREFIXES = [
   "TICKET_SIGNING_SECRET",
   "CSRF_SECRET",
   "RESEND_API_KEY",
-  "TWILIO_AUTH_TOKEN",
   "GATE_KEY_ENCRYPTION_KEY",
 ];
 

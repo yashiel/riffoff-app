@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Download, Shield } from "lucide-react";
+import { Download } from "lucide-react";
 import { SettingsSection } from "./SettingsSection";
 import { updateConsent, exportMyData } from "@/actions/settings/privacy";
 import type { ConsentType, UserConsentDoc } from "@/lib/appwrite/types";

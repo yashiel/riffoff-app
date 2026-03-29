@@ -31,6 +31,5 @@ export async function createAuditLog(input: {
     );
   } catch {
     // Audit logging must never break the main flow
-    console.error(`[AUDIT] Failed to log: ${input.action} on ${input.entityType}/${input.entityId}`);
   }
 }

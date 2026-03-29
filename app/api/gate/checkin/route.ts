@@ -97,8 +97,7 @@ export async function POST(request: NextRequest) {
       attendeeName,
       tierName,
     }, { status: 200 });
-  } catch (error) {
-    console.error("[CHECKIN] Error:", error);
+  } catch {
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

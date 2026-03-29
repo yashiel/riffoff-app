@@ -59,8 +59,7 @@ export async function POST(request: NextRequest) {
       ticketCount: tickets.length,
       alreadyProcessed,
     });
-  } catch (error) {
-    console.error("PayPal capture error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to capture PayPal order" },
       { status: 500 },

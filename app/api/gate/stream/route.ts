@@ -388,7 +388,7 @@ export async function GET(request: NextRequest) {
               }
             }
           }
-        } catch (err) {
+        } catch {
           // DB error — send error event but keep stream alive
           send("error", {
             message: "Temporary data fetch error",

@@ -69,11 +69,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Decode service account key
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const keyData = JSON.parse(
       Buffer.from(serviceAccountKey, "base64").toString("utf-8"),
     );
 
     // Create JWT for Google Wallet save URL
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const now = Math.floor(Date.now() / 1000);
 
     const passObject = {
@@ -118,8 +120,7 @@ export async function POST(request: NextRequest) {
     const saveUrl = `https://pay.google.com/gp/v/save/${Buffer.from(JSON.stringify({ eventTicketObjects: [passObject] })).toString("base64")}`;
 
     return NextResponse.json({ saveUrl });
-  } catch (error) {
-    console.error("Google Wallet error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to create Google Wallet pass" },
       { status: 500 },

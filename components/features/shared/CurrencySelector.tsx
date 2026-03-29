@@ -12,9 +12,6 @@ export function CurrencySelector({ currentCurrency }: CurrencySelectorProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const selected = SUPPORTED_CURRENCIES.find((c) => c.code === currentCurrency);
-  const displayFlag = selected?.flag ?? "🌐";
-
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const currency = e.target.value;
     document.cookie = `riffoff-currency=${currency};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;

@@ -5,7 +5,7 @@ import { Monitor, Smartphone, Globe, X, Shield } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { SettingsSection } from "./SettingsSection";
 import { PasswordStrengthBar } from "./PasswordStrengthBar";
-import { changePassword, setPassword, hasPasswordSet } from "@/actions/settings/password";
+import { changePassword, setPassword } from "@/actions/settings/password";
 import { listMySessions, revokeSession, revokeAllOtherSessions, type SessionInfo } from "@/actions/settings/sessions";
 import { requestEmailChange } from "@/actions/settings/email";
 import { formatDate } from "@/lib/utils";

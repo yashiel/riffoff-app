@@ -83,7 +83,6 @@ export async function generateTicketPDF(data: TicketPDFData): Promise<Buffer> {
   // ── Main Card ───────────────────────────────────────────────────────
   const cardY = 20;
   const cardH = H - 40;
-  const cardR = 16;
   page.drawRectangle({
     x: 16, y: cardY, width: W - 32, height: cardH,
     color: C.card,

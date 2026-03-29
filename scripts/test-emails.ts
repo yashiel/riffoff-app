@@ -22,13 +22,6 @@ async function main() {
     sendEventCancelledEmail,
   } = await import("../lib/email");
 
-  const ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
-  const PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
-  
-  // Helper to build Appwrite preview URL with resize
-  const previewUrl = (fileId: string, w = 600, h = 300) =>
-    `${ENDPOINT}/storage/buckets/event-media/files/${fileId}/preview?project=${PROJECT}&width=${w}&height=${h}&gravity=center&quality=75`;
-
   console.log(`\n📧 Sending all 7 email templates to ${TO}\n`);
 
   // 1. Verification OTP

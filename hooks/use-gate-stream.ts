@@ -120,11 +120,12 @@ export function useGateStream(eventId: string) {
 
     // Poll every 5s
     const interval = setInterval(poll, 5000);
+    const retryTimer = retryTimerRef.current;
 
     return () => {
       clearInterval(interval);
-      if (retryTimerRef.current) {
-        clearTimeout(retryTimerRef.current);
+      if (retryTimer) {
+        clearTimeout(retryTimer);
       }
     };
   }, [poll]);

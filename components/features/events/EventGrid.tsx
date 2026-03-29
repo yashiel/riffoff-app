@@ -7,7 +7,6 @@ import {
   MapPin,
   Heart,
   ArrowRight,
-  Users,
   Sparkles,
   Ticket,
 } from "lucide-react";
@@ -259,11 +258,10 @@ function HeroCard({
    ───────────────────────────────────────────────── */
 function SideCard({
   event,
-  initialWishlisted,
   convertedPrice,
 }: {
   event: EventWithVenue;
-  initialWishlisted: boolean;
+  initialWishlisted?: boolean;
   convertedPrice: string | null;
 }) {
   const isFree = event.isFree;

@@ -16,7 +16,6 @@ async function verifyPayPalWebhook(
 ): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
   if (!webhookId) {
-    console.error("PAYPAL_WEBHOOK_ID not configured");
     return false;
   }
 
@@ -83,11 +82,6 @@ export async function POST(request: NextRequest) {
 
     case "PAYMENT.CAPTURE.DENIED":
     case "PAYMENT.CAPTURE.REVERSED": {
-      // Payment denied or reversed — log for investigation
-      console.error(
-        `PayPal payment ${event.event_type}:`,
-        event.resource?.id,
-      );
       break;
     }
 
@@ -111,10 +105,6 @@ export async function POST(request: NextRequest) {
       }
 
       if (!order) {
-        console.error(
-          "PayPal dispute webhook: no order found for transaction",
-          sellerTxnId,
-        );
         break;
       }
 

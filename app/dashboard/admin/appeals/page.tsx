@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { useState, useTransition, useEffect, useRef } from "react";
 import { Clock } from "lucide-react";
-import { cn, formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime } from "@/lib/utils";
 import {
   listAppeals,
   reviewAppeal,

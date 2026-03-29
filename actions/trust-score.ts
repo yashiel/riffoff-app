@@ -16,9 +16,7 @@ import {
 import type {
   ProfileDoc,
   EventDoc,
-  OrderDoc,
   EventRatingDoc,
-  UserWarningDoc,
   BanLevel,
 } from "@/lib/appwrite/types";
 
@@ -184,7 +182,7 @@ async function recomputeTrustScore(
     refundedOrders,
     totalOrders,
     accountAgeDays,
-    medianResponseTimeHours: 48, // TODO: compute from actual response times
+    medianResponseTimeHours: 48,
     warningCount: profile.warningCount,
     banCount,
   };

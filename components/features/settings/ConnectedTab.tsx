@@ -37,8 +37,6 @@ export function ConnectedTab({ providers }: ConnectedTabProps) {
     });
   }
 
-  const linkedProviderNames = new Set(linkedProviders.map((p) => p.provider));
-
   return (
     <div className="space-y-6">
       {error && (

@@ -99,8 +99,7 @@ export async function GET(
         "Cache-Control": "private, no-store",
       },
     });
-  } catch (error) {
-    console.error("[MANIFEST] Error:", error);
+  } catch {
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

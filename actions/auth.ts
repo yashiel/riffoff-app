@@ -318,7 +318,7 @@ export async function verifyOTP(
     // Fallback: try email/password session from pending cookie
     if (pendingCookie) {
       try {
-        const pending = JSON.parse(pendingCookie);
+        JSON.parse(pendingCookie);
         // We can't create a session without the password via admin SDK
         // So we need to use a different approach — create a magic URL token
         // For now, redirect to login with a success message

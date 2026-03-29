@@ -60,7 +60,6 @@ export default function ModerationDetailPage() {
         setDetail(data);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.itemId]);
 
   function refetch() {

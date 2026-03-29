@@ -2,7 +2,7 @@
  * Replace generic event images with real artist/event images.
  * Run: node scripts/update-images.mjs
  */
-import { Client, Databases, Storage, ID } from "node-appwrite";
+import { Client, Databases, Storage } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;

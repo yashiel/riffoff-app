@@ -7,7 +7,6 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { revokeSession } from "@/lib/gate/session";
-import { sign, generateKeyPair, encryptPrivateKey } from "@/lib/crypto/ed25519";
 import { serialize } from "@/lib/utils";
 import type { EventDoc } from "@/lib/appwrite/types";
 
@@ -131,34 +130,6 @@ export async function lockGate(eventId: string, gateId: string) {
 
 export async function unlockGate(eventId: string, gateId: string) {
   return updateGate(eventId, gateId, { status: "open" });
-}
-
-// ─── Signing Key Management ──────────────────────────────
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function ensureSigningKey(databases: any) {
-  const keysResult = await databases.listDocuments(
-    DATABASE_ID,
-    COLLECTIONS.SIGNING_KEYS,
-    [Query.equal("active", true), Query.limit(1)],
-  );
-
-  if (keysResult.total > 0) {
-    return keysResult.documents[0];
-  }
-
-  // Auto-create a new signing key pair
-  const { publicKey, privateKey } = await generateKeyPair();
-  const kek = process.env.GATE_KEK ?? process.env.NEXT_APPWRITE_KEY!;
-  const encrypted = encryptPrivateKey(privateKey, kek);
-  const validUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-
-  return databases.createDocument(
-    DATABASE_ID,
-    COLLECTIONS.SIGNING_KEYS,
-    ID.unique(),
-    { publicKey, encryptedPrivateKey: encrypted, active: true, validUntil },
-  );
 }
 
 // ─── Access Code Generation ──────────────────────────────

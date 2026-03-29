@@ -99,8 +99,7 @@ export async function GET(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error("[OAUTH CALLBACK ERROR]", error);
+  } catch {
     return NextResponse.redirect(`${origin}/login?error=oauth_failed`);
   }
 }

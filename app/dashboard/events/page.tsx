@@ -5,7 +5,6 @@ import {
   MapPin,
   ChevronRight,
   Crown,
-  ArrowRight,
 } from "lucide-react";
 import { EmptyState } from "@/components/features/shared/EmptyState";
 import { getOrganiserEvents } from "@/actions/events";

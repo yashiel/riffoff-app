@@ -10,7 +10,6 @@ import {
   Music,
   Ticket,
   ArrowRight,
-  ChevronRight,
   AlertTriangle,
   Flag,
   Star,

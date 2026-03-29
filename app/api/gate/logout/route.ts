@@ -27,8 +27,7 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error("[GATE LOGOUT] Error:", error);
+  } catch {
     return NextResponse.json({ success: true }, { status: 200 }); // Still return success
   }
 }

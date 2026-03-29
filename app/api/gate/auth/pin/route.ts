@@ -89,8 +89,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     const rawMessage = error instanceof Error ? error.message : String(error);
-    console.error("[PIN AUTH] Error:", rawMessage);
-    // Never expose internal error details — return generic message
     const errorMap: [string, string][] = [
       ["Device limit", "This gate has reached its device limit. Ask the organiser to increase it."],
       ["Invalid", "Invalid PIN. Please try again."],

@@ -7,7 +7,7 @@ import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { createAuditLog } from "@/lib/audit";
 import { createNotification } from "@/actions/notifications";
 import { serialize } from "@/lib/utils";
-import type { ProfileDoc, ModerationItemDoc } from "@/lib/appwrite/types";
+import type { ProfileDoc } from "@/lib/appwrite/types";
 
 // ─── Helpers ─────────────────────────────────────────
 

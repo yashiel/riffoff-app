@@ -45,7 +45,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
   "Content-Security-Policy": [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.paypal.com",
+    "script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://*.appwrite.io https://yashilanka.com https://*.vercel.app https://fastly.picsum.photos https://picsum.photos",
     "font-src 'self' https://fonts.gstatic.com",

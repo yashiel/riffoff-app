@@ -10,8 +10,6 @@ import { createNotification } from "@/actions/notifications";
 import { serialize } from "@/lib/utils";
 import type {
   ProfileDoc,
-  EventDoc,
-  TicketDoc,
   UserWarningDoc,
   BanLevel,
 } from "@/lib/appwrite/types";

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import {
   ArrowRight, Zap, Headphones, QrCode, BarChart3, Shield,
-  Sparkles, Music, Ticket, Globe, Users, Star,
+  Music, Ticket, Globe, Users, Star,
 } from "lucide-react";
 import { HeroBackground } from "@/components/features/shared/HeroBackground";
 import { HeroTicker } from "@/components/features/shared/HeroTicker";

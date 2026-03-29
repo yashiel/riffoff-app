@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { FilterSidebar } from "./FilterSidebar";
 import { EventGrid } from "./EventGrid";
 import { Pagination } from "./Pagination";
-import { cn } from "@/lib/utils";
 import type { EventWithVenue } from "@/actions/events";
 
 interface EventsContentProps {

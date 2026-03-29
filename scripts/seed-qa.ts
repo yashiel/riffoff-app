@@ -16,7 +16,7 @@
  */
 
 import crypto from "crypto";
-import { Client, Databases, ID, Query } from "node-appwrite";
+import { Client, Databases, ID } from "node-appwrite";
 import * as dotenv from "dotenv";
 import * as path from "path";
 
