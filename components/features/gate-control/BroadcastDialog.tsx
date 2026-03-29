@@ -41,7 +41,7 @@ export function BroadcastDialog({ eventId }: BroadcastDialogProps) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-coral px-3.5 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90"
+        className="inline-flex items-center gap-1.5 bg-coral px-3.5 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90"
       >
         <Megaphone className="size-3.5" />
         Broadcast
@@ -100,7 +100,7 @@ export function BroadcastDialog({ eventId }: BroadcastDialogProps) {
               <button
                 onClick={handleSend}
                 disabled={isPending || !message.trim()}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-coral px-4 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 bg-coral px-4 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90 disabled:opacity-50"
               >
                 {isPending ? "Sending..." : "Send"}
               </button>

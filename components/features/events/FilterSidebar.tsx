@@ -138,7 +138,7 @@ export function FilterSidebar({
             </button>
           )}
           {isMobile && onClose && (
-            <button onClick={onClose} className="rounded-lg p-1 text-white/40 hover:text-white">
+            <button onClick={onClose} className="p-1 text-white/40 hover:text-white">
               <X className="size-5" />
             </button>
           )}

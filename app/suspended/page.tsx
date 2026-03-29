@@ -111,7 +111,7 @@ export default async function SuspendedPage() {
           {moderationItemId && (
             <Link
               href={`/dashboard/appeal/${moderationItemId}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-coral px-6 py-3 text-base font-medium text-white transition-colors hover:bg-coral/90"
+              className="inline-flex items-center gap-2 bg-coral px-6 py-3 text-base font-medium text-white transition-colors hover:bg-coral/90"
             >
               Appeal this decision
             </Link>

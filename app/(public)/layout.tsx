@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { getLoggedInUser } from "@/lib/appwrite/server";
+import { logout } from "@/actions/auth";
 import { CurrencySelector } from "@/components/features/shared/CurrencySelector";
 import { ThemeToggle } from "@/components/features/shared/ThemeToggle";
 import { Logo } from "@/components/features/shared/Logo";
@@ -40,9 +41,19 @@ export default async function PublicLayout({
             </Link>
 
             {user ? (
-              <Link href="/dashboard" className="btn-primary !py-2 !px-4 !text-base">
-                Dashboard
-              </Link>
+              <>
+                <Link href="/dashboard" className="btn-primary !py-2 !px-4 !text-base">
+                  Dashboard
+                </Link>
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="text-base font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </>
             ) : (
               <>
                 <Link
@@ -69,9 +80,19 @@ export default async function PublicLayout({
           {/* Mobile nav — login/signup visible + hamburger */}
           <div className="flex items-center gap-2 sm:hidden">
             {user ? (
-              <Link href="/dashboard" className="btn-primary !py-1.5 !px-3 !text-sm">
-                Dashboard
-              </Link>
+              <>
+                <Link href="/dashboard" className="btn-primary !py-1.5 !px-3 !text-sm">
+                  Dashboard
+                </Link>
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </>
             ) : (
               <>
                 <Link
@@ -82,7 +103,7 @@ export default async function PublicLayout({
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-lg bg-coral px-3 py-1.5 text-sm font-bold text-black transition-all hover:bg-coral/90"
+                  className="bg-coral px-3 py-1.5 text-sm font-bold text-black transition-all hover:bg-coral/90"
                 >
                   Sign up
                 </Link>

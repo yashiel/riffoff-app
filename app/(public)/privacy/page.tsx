@@ -210,10 +210,10 @@ export default function PrivacyPolicyPage() {
         <Section num="11" title="Contact Us">
           <p>If you have questions or concerns about this Privacy Policy:</p>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:gap-4">
-            <a href="mailto:privacy@riffoff.live" className="rounded-lg border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
+            <a href="mailto:privacy@riffoff.live" className="border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
               privacy@riffoff.live
             </a>
-            <a href="mailto:support@riffoff.live" className="rounded-lg border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
+            <a href="mailto:support@riffoff.live" className="border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
               support@riffoff.live
             </a>
           </div>

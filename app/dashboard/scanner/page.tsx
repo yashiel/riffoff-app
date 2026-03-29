@@ -279,7 +279,7 @@ export default function ScannerPage() {
                         <button
                           type="submit"
                           disabled={!manualCode.trim() || isPending}
-                          className="rounded-xl bg-coral px-5 py-3 text-sm font-bold uppercase text-black transition-colors hover:bg-coral/90 disabled:opacity-50"
+                          className="bg-coral px-5 py-3 text-sm font-bold uppercase text-black transition-colors hover:bg-coral/90 disabled:opacity-50"
                         >
                           Check
                         </button>

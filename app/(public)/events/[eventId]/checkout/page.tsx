@@ -196,7 +196,7 @@ export default function CheckoutPage({ searchParams, params }: CheckoutPageProps
               type="button"
               onClick={handleCheckout}
               disabled={isPending}
-              className="checkout-cta group relative w-full overflow-hidden rounded-2xl bg-coral px-6 py-4 text-center font-bold text-white transition-all hover:shadow-[0_8px_30px_rgba(var(--coral-rgb,191,255,0),0.3)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#08080a]"
+              className="checkout-cta group relative w-full overflow-hidden bg-coral px-6 py-4 text-center font-bold text-white transition-all hover:shadow-[0_8px_30px_rgba(var(--coral-rgb,191,255,0),0.3)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#08080a]"
             >
               {/* Shimmer effect */}
               <span

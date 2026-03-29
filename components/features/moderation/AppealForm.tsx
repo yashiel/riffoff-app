@@ -93,7 +93,7 @@ export function AppealForm({ moderationItemId, actionTaken, reason }: AppealForm
       <button
         type="submit"
         disabled={isPending || text.length < 10 || text.length > 1000}
-        className="rounded-lg bg-coral px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-coral/90 disabled:opacity-50"
+        className="bg-coral px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-coral/90 disabled:opacity-50"
       >
         {isPending ? "Submitting..." : "Submit Appeal"}
       </button>

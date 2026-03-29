@@ -101,7 +101,7 @@ export default async function GatesPage({ params }: GatesPageProps) {
 
         <Link
           href={`/dashboard/events/${eventId}/gate-control`}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-coral/10 px-4 py-2 text-base font-medium text-coral transition-colors hover:bg-coral/20"
+          className="inline-flex items-center gap-1.5 bg-coral/10 px-4 py-2 text-base font-medium text-coral transition-colors hover:bg-coral/20"
         >
           <Radio className="size-4" />
           Live Control

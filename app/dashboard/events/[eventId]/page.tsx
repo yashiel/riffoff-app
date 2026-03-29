@@ -118,13 +118,13 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
         <div className="absolute right-3 top-3 z-10 flex items-center gap-2 sm:right-5 sm:top-5">
           <Link
             href={`/dashboard/events/${eventId}/edit`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-white/90 backdrop-blur-md transition-all hover:bg-white/20"
+            className="inline-flex items-center gap-1.5 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 backdrop-blur-md transition-all hover:bg-white/20"
           >
             <Pencil className="size-3.5" /> Edit
           </Link>
           {event.status === "draft" && (
             <form action={async () => { "use server"; await publishEvent(eventId); }}>
-              <button type="submit" className="inline-flex items-center gap-1.5 rounded-xl bg-coral/90 px-4 py-2 text-sm font-bold text-black backdrop-blur-md transition-all hover:bg-coral">
+              <button type="submit" className="inline-flex items-center gap-1.5 bg-coral/90 px-4 py-2 text-sm font-bold text-black backdrop-blur-md transition-all hover:bg-coral">
                 <Eye className="size-3.5" /> Publish
               </button>
             </form>
@@ -551,19 +551,19 @@ export default async function ManageEventPage({ params }: ManageEventPageProps) 
             {event.status === "published" && (
               <>
                 <form action={async () => { "use server"; await unpublishEvent(eventId); }}>
-                  <button type="submit" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-amber-400/70 transition-colors hover:bg-amber-400/10 hover:text-amber-400">
+                  <button type="submit" className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-amber-400/70 transition-colors hover:bg-amber-400/10 hover:text-amber-400">
                     <EyeOff className="size-3.5" /> Unpublish
                   </button>
                 </form>
                 <form action={async () => { "use server"; await completeEvent(eventId); }}>
-                  <button type="submit" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-blue-400/70 transition-colors hover:bg-blue-400/10 hover:text-blue-400">
+                  <button type="submit" className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-blue-400/70 transition-colors hover:bg-blue-400/10 hover:text-blue-400">
                     <Clock className="size-3.5" /> Mark Complete
                   </button>
                 </form>
               </>
             )}
             <form action={async () => { "use server"; await cancelEvent(eventId); }}>
-              <button type="submit" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-red-400/50 transition-colors hover:bg-red-400/10 hover:text-red-400">
+              <button type="submit" className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-400/50 transition-colors hover:bg-red-400/10 hover:text-red-400">
                 <XCircle className="size-3.5" /> Cancel Event
               </button>
             </form>

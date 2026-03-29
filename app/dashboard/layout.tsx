@@ -128,7 +128,7 @@ export default async function DashboardLayout({
           <div className="px-3 pb-2">
             <Link
               href="/events"
-              className="flex items-center gap-2 rounded-xl bg-coral/[0.06] px-3 py-2.5 text-base font-medium text-coral transition-colors hover:bg-coral/[0.12]"
+              className="flex items-center gap-2 bg-coral/[0.06] px-3 py-2.5 text-base font-medium text-coral transition-colors hover:bg-coral/[0.12]"
             >
               <ExternalLink className="size-4" />
               Browse Events
@@ -163,7 +163,7 @@ export default async function DashboardLayout({
             <form action={logout} className="mt-1">
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex w-full items-center justify-center gap-1.5 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 aria-label="Log out"
               >
                 <LogOut className="size-3.5" />
@@ -198,7 +198,7 @@ function SidebarLink({ item }: { item: NavItem }) {
   return (
     <Link
       href={item.href}
-      className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-base font-medium text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground"
+      className="group relative flex items-center gap-3 px-3 py-2.5 text-base font-medium text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground"
     >
       <item.icon className="size-[18px] shrink-0 transition-colors group-hover:text-coral" />
       <span className="flex-1">{item.label}</span>

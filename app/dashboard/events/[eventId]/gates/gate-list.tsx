@@ -79,7 +79,7 @@ export function GateList({ eventId, initialGates }: GateListProps) {
             setShowAddForm(true);
             setEditingGateId(null);
           }}
-          className="group inline-flex items-center gap-2 rounded-xl bg-coral px-5 py-2.5 text-base font-bold text-[#0e0e10] transition-all hover:bg-coral/90 hover:shadow-lg hover:shadow-coral/20 active:scale-[0.98]"
+          className="group inline-flex items-center gap-2 bg-coral px-5 py-2.5 text-base font-bold text-[#0e0e10] transition-all hover:bg-coral/90 hover:shadow-lg hover:shadow-coral/20 active:scale-[0.98]"
         >
           <Plus className="size-4 transition-transform group-hover:rotate-90" />
           Add Gate

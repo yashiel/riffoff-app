@@ -37,7 +37,7 @@ export function ProviderSelector({
       </legend>
 
       {/* Segmented pill selector */}
-      <div className="flex gap-2 rounded-2xl border border-border bg-muted/30 p-1.5" role="radiogroup">
+      <div className="flex gap-2 border border-border bg-muted/30 p-1.5" role="radiogroup">
         {available.map((provider) => {
           const isSelected = selected === provider.id;
           const Icon = provider.icon;
@@ -50,7 +50,7 @@ export function ProviderSelector({
               aria-checked={isSelected}
               onClick={() => onChange(provider.id)}
               className={cn(
-                "group relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-semibold transition-all duration-200",
+                "group relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-base font-semibold transition-all duration-200",
                 isSelected
                   ? "bg-coral text-white shadow-md shadow-coral/20 dark:text-[#08080a]"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"

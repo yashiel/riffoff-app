@@ -109,7 +109,7 @@ export function MessageInput({ applicationId, onMessageSent }: MessageInputProps
         <button
           type="submit"
           disabled={!canSend || sending}
-          className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-coral text-white transition-colors hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex size-9 shrink-0 items-center justify-center bg-coral text-white transition-colors hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="size-4" />
         </button>

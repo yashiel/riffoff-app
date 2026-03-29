@@ -14,7 +14,7 @@ export function ExportButton({ eventId }: ExportButtonProps) {
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/80 px-3.5 py-2 text-base font-medium text-foreground transition-colors hover:bg-muted"
+      className="inline-flex items-center gap-1.5 border border-border bg-muted/80 px-3.5 py-2 text-base font-medium text-foreground transition-colors hover:bg-muted"
     >
       <Download className="size-3.5" />
       Export

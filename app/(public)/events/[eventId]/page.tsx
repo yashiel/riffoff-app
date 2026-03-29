@@ -256,7 +256,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                   trigger={
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       aria-label="Report this event"
                     >
                       <Flag className="size-3.5" />
@@ -516,7 +516,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                     trigger={
                       <button
                         type="button"
-                        className="inline-flex items-center gap-2 rounded-lg bg-coral/10 px-4 py-2.5 text-base font-medium text-coral transition-colors hover:bg-coral/20"
+                        className="inline-flex items-center gap-2 bg-coral/10 px-4 py-2.5 text-base font-medium text-coral transition-colors hover:bg-coral/20"
                       >
                         <Star className="size-4" />
                         Rate this event

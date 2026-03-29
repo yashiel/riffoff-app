@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist_Mono } from "next/font/google";
 import { Bebas_Neue, Outfit } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
@@ -77,9 +78,11 @@ export default async function RootLayout({
     >
       <head>
         {/* Prevent flash of wrong theme — runs before paint */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){try{var t=localStorage.getItem('riffoff-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()
-        `}} />
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('riffoff-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()` }}
+        />
       </head>
       <body className="grain min-h-full flex flex-col bg-background text-foreground">
         <QueryProvider>

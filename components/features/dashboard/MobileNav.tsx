@@ -74,7 +74,7 @@ export function MobileNav({
       <header className="fixed inset-x-0 top-0 z-50 flex h-14 items-center border-b border-border bg-background/95 px-4 backdrop-blur-xl">
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
@@ -139,7 +139,7 @@ export function MobileNav({
                       key={item.href}
                       href={item.href}
                       onClick={closeMenu}
-                      className={`group flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium transition-all ${
+                      className={`group flex items-center gap-3 px-3 py-3 text-base font-medium transition-all ${
                         isActive
                           ? "bg-coral/10 text-coral"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -164,7 +164,7 @@ export function MobileNav({
                 <Link
                   href="/events"
                   onClick={closeMenu}
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-coral/80 transition-colors hover:bg-coral/[0.06] hover:text-coral"
+                  className="flex items-center gap-3 px-3 py-3 text-base font-medium text-coral/80 transition-colors hover:bg-coral/[0.06] hover:text-coral"
                 >
                   <ExternalLink className="size-5" />
                   Browse Events
@@ -177,7 +177,7 @@ export function MobileNav({
               <form action={logout}>
                 <button
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-base font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+                  className="flex w-full items-center justify-center gap-2 py-3 text-base font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
                   aria-label="Log out"
                 >
                   <LogOut className="size-4" />

@@ -55,7 +55,7 @@ export default async function OrgEventsPage() {
         </div>
         <Link
           href="/dashboard/events/new"
-          className="btn-primary inline-flex w-fit items-center gap-2 !rounded-xl !px-6 !py-3 !text-base"
+          className="btn-primary inline-flex w-fit items-center gap-2 !px-6 !py-3 !text-base"
         >
           <Plus className="size-4" />
           Create Event

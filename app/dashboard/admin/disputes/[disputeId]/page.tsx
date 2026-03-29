@@ -365,7 +365,7 @@ export default function DisputeDetailPage({
               <button
                 onClick={handleSubmitEvidence}
                 disabled={isPending || !evidenceText.trim()}
-                className="mt-4 w-full rounded-lg bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral/90 disabled:opacity-50"
+                className="mt-4 w-full bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral/90 disabled:opacity-50"
               >
                 {isPending ? "Submitting..." : "Submit Evidence"}
               </button>

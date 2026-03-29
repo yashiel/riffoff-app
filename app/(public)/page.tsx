@@ -5,6 +5,7 @@ import {
   Sparkles, Music, Ticket, Globe, Users, Star,
 } from "lucide-react";
 import { HeroBackground } from "@/components/features/shared/HeroBackground";
+import { HeroTicker } from "@/components/features/shared/HeroTicker";
 import { EventScrollRow } from "@/components/features/events/EventScrollRow";
 import { TrendingArtists, type TrendingArtist } from "@/components/features/events/TrendingArtists";
 import { getUpcomingEvents } from "@/actions/events";
@@ -55,65 +56,118 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col">
       {/* ═══════════════════════════════════════════
-          HERO — Full viewport, cinematic
+          HERO — "The Stage" — immersive typographic hero
+          Inspired by: Soundstage (LA Phil), Elkruff, NOSPR
           ═══════════════════════════════════════════ */}
-      <section className="relative flex min-h-[90svh] items-center overflow-hidden">
+      <section className="relative min-h-[100svh] overflow-hidden">
         <HeroBackground />
 
-        {/* Hero content — always white text on dark bg */}
-        <div className="relative mx-auto w-full max-w-7xl px-6 py-24 sm:px-8 sm:py-32 lg:px-12">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-base font-medium text-white/60 backdrop-blur-sm">
-              <Sparkles className="size-3.5 text-[#FF2D78]" />
-              The anti-scalping ticketing platform
-            </div>
+        {/* Featured event background image — fills hero, sits behind everything */}
+        {upcomingEvents[0]?.coverimageUrl && (
+          <div className="absolute inset-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={upcomingEvents[0].coverimageUrl}
+              alt=""
+              className="h-full w-full object-cover opacity-[0.08]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/80 to-[#0a0a0c]/60" />
+          </div>
+        )}
 
-            <h1 className="mt-8 font-display text-[clamp(2.8rem,8vw,6.5rem)] leading-[0.88] tracking-tight text-white">
-              Your next{" "}
-              <span className="bg-gradient-to-r from-[#FF2D78] via-[#FF6B35] to-[#00D4FF] bg-clip-text text-transparent">
-                live show
-              </span>
-              <br />starts here.
+        {/* Content — anchored to bottom of viewport (Elkruff pattern) */}
+        <div className="relative flex min-h-[100svh] flex-col justify-end">
+
+          {/* Main hero content */}
+          <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
+
+            {/* Oversized headline — Soundstage-inspired tight tracking */}
+            <h1 className="font-display text-[clamp(4rem,12vw,10rem)] leading-[0.78] tracking-[-0.04em] text-white">
+              Get in.
+              <br />
+              <span className="text-[#FF2D78]">Fair and square.</span>
             </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/40 sm:text-lg">
-              Discover events. Get tickets. No hidden fees, no scalping.
-              Built for music lovers, artists, and organisers.
-            </p>
+            {/* Two-column: description left, featured event right */}
+            <div className="mt-8 grid items-end gap-8 sm:mt-10 lg:grid-cols-2 lg:gap-16">
+              {/* Left: Copy + CTAs */}
+              <div className="pb-2">
+                <p className="max-w-md text-lg leading-relaxed text-white/40">
+                  The moments you&apos;ll never forget start with a ticket
+                  you can actually trust. {upcomingEvents.length}+ shows across Southeast Asia.
+                </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/events"
-                className="group inline-flex items-center gap-2 rounded-[10px] bg-[#FF2D78] px-7 py-3.5 text-base font-bold uppercase tracking-wider text-white shadow-[0_4px_20px_rgba(255,45,120,0.3)] transition-all hover:translate-y-[-2px] hover:shadow-[0_8px_30px_rgba(255,45,120,0.4)]"
-              >
-                Browse Events
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/register"
-                className="inline-flex items-center rounded-[10px] border border-white/12 px-6 py-3.5 text-base font-semibold uppercase tracking-wider text-white/60 transition-all hover:border-white/25 hover:text-white"
-              >
-                Create Account
-              </Link>
-            </div>
-
-            <div className="mt-12 flex flex-wrap gap-6">
-              {[
-                { value: "0%", label: "Hidden fees", icon: Shield },
-                { value: "100%", label: "Fraud-proof", icon: Zap },
-                { value: "3", label: "Payments", icon: Globe },
-              ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-white/[0.06]">
-                    <stat.icon className="size-4 text-[#00D4FF]" />
-                  </div>
-                  <div>
-                    <p className="font-display text-xl leading-none text-white">{stat.value}</p>
-                    <p className="text-sm text-white/35">{stat.label}</p>
-                  </div>
+                <div className="mt-8 flex items-center gap-5">
+                  <Link
+                    href="/events"
+                    className="group inline-flex items-center gap-2.5 bg-white px-7 py-4 text-base font-bold uppercase tracking-wider text-black transition-all hover:bg-[#FF2D78] hover:text-white"
+                  >
+                    Browse Events
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="text-base font-medium text-white/40 underline decoration-white/10 underline-offset-4 transition-all hover:text-white/70 hover:decoration-white/30"
+                  >
+                    Create account
+                  </Link>
                 </div>
-              ))}
+              </div>
+
+              {/* Right: Featured event card — visible on lg+ */}
+              {upcomingEvents[0] && (
+                <Link href={`/events/${upcomingEvents[0].$id}`} className="group hidden lg:flex items-end gap-5">
+                  {/* Thumbnail */}
+                  <div className="relative size-28 shrink-0 overflow-hidden xl:size-32">
+                    {upcomingEvents[0].coverimageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={upcomingEvents[0].coverimageUrl}
+                        alt={upcomingEvents[0].title}
+                        className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-white/5" />
+                    )}
+                  </div>
+                  {/* Info */}
+                  <div className="pb-1">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#FF2D78]">
+                      Featured
+                    </p>
+                    <p className="mt-1.5 font-display text-xl leading-tight text-white transition-colors group-hover:text-[#FF2D78]">
+                      {upcomingEvents[0].title}
+                    </p>
+                    <p className="mt-1 text-base text-white/30">
+                      {upcomingEvents[0].venue?.name ?? "Venue TBA"}
+                    </p>
+                  </div>
+                </Link>
+              )}
             </div>
+          </div>
+
+          {/* Trust line + Ticker — bottom strip */}
+          <div className="relative mt-12 sm:mt-16">
+            {/* Trust values */}
+            <div className="mx-auto max-w-7xl px-6 pb-5 sm:px-8 lg:px-12">
+              <div className="flex items-center gap-6">
+                <p className="text-base text-white/25">
+                  <span className="font-semibold text-white/50">Honest</span> pricing
+                </p>
+                <span className="text-white/10">·</span>
+                <p className="text-base text-white/25">
+                  <span className="font-semibold text-white/50">Instant</span> entry
+                </p>
+                <span className="text-white/10">·</span>
+                <p className="text-base text-white/25">
+                  <span className="font-semibold text-white/50">Real</span> fans only
+                </p>
+              </div>
+            </div>
+
+            {/* Continuous scrolling ticker */}
+            <HeroTicker items={upcomingEvents.map((e) => e.title)} />
           </div>
         </div>
       </section>

@@ -148,7 +148,7 @@ export function PublicMobileNav({ user, currentCurrency }: PublicMobileNavProps)
               </Link>
               <Link
                 href="/register"
-                className="flex w-full items-center justify-center rounded-xl bg-coral px-4 py-3 text-base font-bold text-black transition-all hover:bg-coral/90"
+                className="flex w-full items-center justify-center bg-coral px-4 py-3 text-base font-bold text-black transition-all hover:bg-coral/90"
               >
                 Create account
               </Link>

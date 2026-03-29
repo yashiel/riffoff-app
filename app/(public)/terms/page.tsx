@@ -281,10 +281,10 @@ export default function TermsPage() {
         <Section num="16" title="Contact Us">
           <p>If you have questions about these Terms:</p>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:gap-4">
-            <a href="mailto:legal@riffoff.live" className="rounded-lg border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
+            <a href="mailto:legal@riffoff.live" className="border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
               legal@riffoff.live
             </a>
-            <a href="mailto:support@riffoff.live" className="rounded-lg border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
+            <a href="mailto:support@riffoff.live" className="border border-border/50 px-4 py-2.5 text-sm font-medium transition-all hover:border-coral/30 hover:text-coral">
               support@riffoff.live
             </a>
           </div>

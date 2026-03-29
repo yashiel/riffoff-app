@@ -168,11 +168,11 @@ export function DateTimePicker({ name, label, defaultValue, required }: DateTime
             <div className="p-4">
               {/* Month/year nav */}
               <div className="flex items-center justify-between mb-3">
-                <button type="button" onClick={() => navigate(-1)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <button type="button" onClick={() => navigate(-1)} className="flex size-8 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                   <ChevronLeft className="size-4" />
                 </button>
                 <span className="text-base font-semibold">{MONTHS[viewMonth]} {viewYear}</span>
-                <button type="button" onClick={() => navigate(1)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <button type="button" onClick={() => navigate(1)} className="flex size-8 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                   <ChevronRight className="size-4" />
                 </button>
               </div>
@@ -220,13 +220,13 @@ export function DateTimePicker({ name, label, defaultValue, required }: DateTime
               <div className="flex items-center justify-center gap-3">
                 {/* Hour */}
                 <div className="flex flex-col items-center">
-                  <button type="button" onClick={() => updateTime((hours + 1) % 24, minutes)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/80 hover:bg-muted hover:text-foreground">
+                  <button type="button" onClick={() => updateTime((hours + 1) % 24, minutes)} className="flex size-8 items-center justify-center text-muted-foreground/80 hover:bg-muted hover:text-foreground">
                     <ChevronLeft className="size-4 rotate-90" />
                   </button>
                   <div className="flex size-16 items-center justify-center rounded-xl bg-coral/10 border border-coral/20 text-[28px] font-bold tabular-nums text-coral">
                     {String(hours).padStart(2, "0")}
                   </div>
-                  <button type="button" onClick={() => updateTime((hours - 1 + 24) % 24, minutes)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/80 hover:bg-muted hover:text-foreground">
+                  <button type="button" onClick={() => updateTime((hours - 1 + 24) % 24, minutes)} className="flex size-8 items-center justify-center text-muted-foreground/80 hover:bg-muted hover:text-foreground">
                     <ChevronRight className="size-4 rotate-90" />
                   </button>
                   <span className="mt-1 text-sm text-muted-foreground/70 uppercase">Hour</span>
@@ -236,13 +236,13 @@ export function DateTimePicker({ name, label, defaultValue, required }: DateTime
 
                 {/* Minute */}
                 <div className="flex flex-col items-center">
-                  <button type="button" onClick={() => updateTime(hours, (minutes + 5) % 60)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/80 hover:bg-muted hover:text-foreground">
+                  <button type="button" onClick={() => updateTime(hours, (minutes + 5) % 60)} className="flex size-8 items-center justify-center text-muted-foreground/80 hover:bg-muted hover:text-foreground">
                     <ChevronLeft className="size-4 rotate-90" />
                   </button>
                   <div className="flex size-16 items-center justify-center rounded-xl bg-coral/10 border border-coral/20 text-[28px] font-bold tabular-nums text-coral">
                     {String(minutes).padStart(2, "0")}
                   </div>
-                  <button type="button" onClick={() => updateTime(hours, (minutes - 5 + 60) % 60)} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/80 hover:bg-muted hover:text-foreground">
+                  <button type="button" onClick={() => updateTime(hours, (minutes - 5 + 60) % 60)} className="flex size-8 items-center justify-center text-muted-foreground/80 hover:bg-muted hover:text-foreground">
                     <ChevronRight className="size-4 rotate-90" />
                   </button>
                   <span className="mt-1 text-sm text-muted-foreground/70 uppercase">Minute</span>

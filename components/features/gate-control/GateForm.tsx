@@ -184,7 +184,7 @@ export function GateForm({ eventId, gate, onClose, onSuccess }: GateFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-coral px-4 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90 disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 bg-coral px-4 py-2 text-base font-bold text-[#0e0e10] transition-colors hover:bg-coral/90 disabled:opacity-50"
         >
           {isPending
             ? isEditing
