@@ -190,13 +190,25 @@ export async function validateAndCheckIn(
       .catch(() => null),
   ]);
 
+  // Resolve attendee name: profile displayName → user email → "Guest"
+  let attendeeName = profile?.displayName || "";
+  if (!attendeeName) {
+    try {
+      const { users } = await createAdminClient();
+      const ownerUser = await users.get(ticket.ownerId);
+      attendeeName = ownerUser.email || "Guest";
+    } catch {
+      attendeeName = "Guest";
+    }
+  }
+
   return {
     valid: true,
     ticket: {
       ticketId: ticket.$id,
       ticketCode: ticket.ticketCode,
       tierName: (tier as unknown as TicketTierDoc)?.name ?? "—",
-      attendeeName: profile?.displayName ?? "Guest",
+      attendeeName,
       checkedInAt: now,
       eventTitle: event.title,
     },
@@ -318,14 +330,30 @@ export async function getScanHistory(
     if (t) tierMap.set(t.$id, (t as unknown as TicketTierDoc).name);
   }
   for (const p of profiles) {
-    if (p) profileMap.set(p.userId, p.displayName ?? "Guest");
+    if (p) profileMap.set(p.userId, p.displayName ?? "");
+  }
+
+  // For owners with no displayName, fetch email from Appwrite users
+  const missingNameIds = ownerIds.filter((id) => !profileMap.get(id));
+  if (missingNameIds.length > 0) {
+    try {
+      const { users } = await createAdminClient();
+      const userDocs = await Promise.all(
+        missingNameIds.map((id) => users.get(id).catch(() => null)),
+      );
+      for (const u of userDocs) {
+        if (u?.email) {
+          profileMap.set(u.$id, u.email);
+        }
+      }
+    } catch { /* email fallback non-critical */ }
   }
 
   return tickets.map((ticket) => ({
     ticketId: ticket.$id,
     ticketCode: ticket.ticketCode,
     tierName: tierMap.get(ticket.tierId) ?? "—",
-    attendeeName: profileMap.get(ticket.ownerId) ?? "Guest",
+    attendeeName: profileMap.get(ticket.ownerId) || "Guest",
     checkedInAt: ticket.checkedInAt!,
     scannedBy: ticket.checkedInBy ?? "—",
   }));

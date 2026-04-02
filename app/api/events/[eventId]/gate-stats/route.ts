@@ -204,6 +204,27 @@ export async function GET(
           });
         }
       } catch { /* profile batch fetch optional */ }
+
+      // For owners with no displayName in profile, fetch email from Appwrite users
+      const missingNameIds = ownerIds.filter((id) => !profileMap.get(id)?.displayName);
+      if (missingNameIds.length > 0) {
+        try {
+          const { users } = await createAdminClient();
+          const userDocs = await Promise.all(
+            missingNameIds.map((id) => users.get(id).catch(() => null)),
+          );
+          for (const u of userDocs) {
+            if (u?.email) {
+              const existing = profileMap.get(u.$id);
+              if (existing) {
+                existing.displayName = u.email;
+              } else {
+                profileMap.set(u.$id, { photoUrl: "", displayName: u.email });
+              }
+            }
+          }
+        } catch { /* email fallback is non-critical */ }
+      }
     }
 
     // Assemble feed entries from pre-fetched data (no per-entry queries)

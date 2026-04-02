@@ -298,10 +298,31 @@ export async function GET(request: NextRequest) {
                 for (const p of profileDocs) {
                   if (p) {
                     profileMap.set(p.userId as string, {
-                      name: (p.displayName as string) || "Guest",
+                      name: (p.displayName as string) || "",
                       photo: (p.photoUrl as string) || null,
                     });
                   }
+                }
+
+                // For owners with no displayName, fetch email as fallback
+                const missingIds = ownerIds.filter((id) => !profileMap.get(id)?.name);
+                if (missingIds.length > 0) {
+                  try {
+                    const adminClient = await createAdminClient();
+                    const userDocs = await Promise.all(
+                      missingIds.map((id) => adminClient.users.get(id).catch(() => null)),
+                    );
+                    for (const u of userDocs) {
+                      if (u?.email) {
+                        const existing = profileMap.get(u.$id);
+                        if (existing) {
+                          existing.name = u.email;
+                        } else {
+                          profileMap.set(u.$id, { name: u.email, photo: null });
+                        }
+                      }
+                    }
+                  } catch { /* email fallback non-critical */ }
                 }
               }
 
