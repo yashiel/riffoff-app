@@ -255,11 +255,13 @@ export async function validateSession(
 
   // Two-tier device verification:
   // 1. Full fingerprint check when custom headers are present (normal API calls)
-  // 2. Direct user-agent match when headers are missing (SSE/EventSource)
+  // 2. Direct user-agent match when headers are missing (SSE/EventSource/Service Worker)
+  // Note: Service Worker sends "sw" as placeholder — treat same as "unknown"
+  const isRealDeviceHeader = (val: string) => val !== "unknown" && val !== "sw";
   const hasDeviceHeaders =
-    fingerprint.screenSize !== "unknown" ||
-    fingerprint.timezone !== "unknown" ||
-    fingerprint.language !== "unknown";
+    isRealDeviceHeader(fingerprint.screenSize) ||
+    isRealDeviceHeader(fingerprint.timezone) ||
+    isRealDeviceHeader(fingerprint.language);
 
   if (hasDeviceHeaders) {
     // Full fingerprint validation (hash of userAgent + timezone)
