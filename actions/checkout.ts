@@ -11,6 +11,9 @@ import { createTNGPayment } from "@/lib/payments/tng/payments";
 import type { TicketTierDoc, EventDoc, PaymentProvider } from "@/lib/appwrite/types";
 import type { CheckoutResult } from "@/lib/payments/types";
 import crypto from "crypto";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("checkout");
 
 const checkoutSchema = z.object({
   eventId: z.string().min(1),
@@ -108,7 +111,7 @@ export async function initiateCheckout(
       },
     );
   } catch (err) {
-    console.error("Order creation failed:", err);
+    log.error("Order creation failed", err);
     return { error: "Failed to create order. Please try again.", orderId: "", reservationId: "" };
   }
 
@@ -170,7 +173,7 @@ export async function initiateCheckout(
       }
     }
   } catch (error) {
-    console.error(`Checkout error (${provider}):`, error);
+    log.error(`Checkout error (${provider})`, error);
     result.error = "Failed to create payment session. Please try again.";
   }
 

@@ -50,6 +50,9 @@ const envSchema = z.object({
   // Gate scanner
   GATE_KEY_ENCRYPTION_KEY: z.string().min(32).optional(),
 
+  // CORS — comma-separated allowed origins for gate API
+  GATE_CORS_ORIGINS: z.string().optional(),
+
   // Wallet passes
   APPLE_WALLET_PASS_TYPE_ID: z.string().optional(),
   APPLE_WALLET_TEAM_ID: z.string().optional(),

@@ -16,13 +16,16 @@ const PUBLIC_ROUTES = [
   "/api/gate",
 ];
 
-/** Allowed origins for CORS on gate API routes */
-const GATE_CORS_ORIGINS = [
+/** Default origins for CORS on gate API routes (used when GATE_CORS_ORIGINS env is not set) */
+const DEFAULT_GATE_CORS_ORIGINS = [
   "http://localhost:3001",
   "https://scan.riffoff.live",
-  "https://riffoff-gate-deploy.vercel.app",
-  "https://riffoff-gate-deploy-yashi-els-projects.vercel.app",
 ];
+
+/** Parse GATE_CORS_ORIGINS from env (comma-separated) or fall back to defaults */
+const GATE_CORS_ORIGINS: string[] = process.env.GATE_CORS_ORIGINS
+  ? process.env.GATE_CORS_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
+  : DEFAULT_GATE_CORS_ORIGINS;
 
 /** Check if a path matches any public route prefix */
 function isPublicRoute(pathname: string): boolean {

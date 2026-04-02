@@ -68,15 +68,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Decode service account key
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const keyData = JSON.parse(
-      Buffer.from(serviceAccountKey, "base64").toString("utf-8"),
-    );
-
-    // Create JWT for Google Wallet save URL
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const now = Math.floor(Date.now() / 1000);
+    // Service account key and JWT timestamp will be used for signing
+    // when full JWT-based save URL generation is implemented:
+    // const keyData = JSON.parse(Buffer.from(serviceAccountKey, "base64").toString("utf-8"));
+    // const now = Math.floor(Date.now() / 1000);
 
     const passObject = {
       id: `${issuerId}.${ticketId}`,

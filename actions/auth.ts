@@ -8,6 +8,9 @@ import { z } from "zod/v4";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS, SESSION_COOKIE_NAME } from "@/lib/appwrite/config";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("auth");
 import { ensureProfile } from "./profiles";
 import { checkAuthRateLimit } from "@/lib/security/rate-limit";
 import type { VerificationCodeDoc } from "@/lib/appwrite/types";
@@ -138,7 +141,7 @@ export async function register(
     // Send verification email — don't block registration if email fails
     const emailResult = await sendVerificationEmail(email, code, name);
     if (!emailResult.success) {
-      console.error("[AUTH] Email send failed during registration:", emailResult.error);
+      log.error("Email send failed during registration", emailResult.error);
       // Still proceed — user can request a resend on the verify page
     }
 
@@ -159,7 +162,7 @@ export async function register(
     });
 
   } catch (error) {
-    console.error("[REGISTER ERROR]", error);
+    log.error("Registration failed", error);
     const message = error instanceof Error ? error.message : "Registration failed";
     if (message.includes("already exists")) {
       return { error: "An account with this email already exists" };
@@ -313,7 +316,7 @@ export async function verifyOTP(
     // Clean up pending cookie
     cookieStore.delete(PENDING_COOKIE);
   } catch (err) {
-    console.error("[VERIFY] Session creation error:", err);
+    log.error("Session creation error during verification", err);
 
     // Fallback: try email/password session from pending cookie
     if (pendingCookie) {

@@ -12,6 +12,9 @@ import type {
   ProfileDoc,
   EventDoc,
 } from "@/lib/appwrite/types";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("disputes");
 
 // ─── Auth Guard ──────────────────────────────────────
 
@@ -213,7 +216,7 @@ export async function uploadDisputeEvidence(
 
     return { fileId: uploaded.$id, url };
   } catch (err) {
-    console.error("Failed to upload dispute evidence:", err);
+    log.error("Failed to upload dispute evidence", err);
     return null;
   }
 }
@@ -277,7 +280,7 @@ export async function submitDisputeEvidence(
     revalidatePath("/dashboard/admin/disputes");
     return true;
   } catch (err) {
-    console.error("Failed to submit dispute evidence:", err);
+    log.error("Failed to submit dispute evidence", err);
     return false;
   }
 }
@@ -319,9 +322,7 @@ export async function acceptDisputeLoss(
     );
 
     if (!refundResult.success) {
-      console.error(
-        `Refund failed for dispute ${disputeId}: ${refundResult.error}`,
-      );
+      log.error(`Refund failed for dispute ${disputeId}`, refundResult.error);
       // Still mark dispute as lost even if refund fails — the refund can be retried
     }
 
@@ -350,7 +351,7 @@ export async function acceptDisputeLoss(
     revalidatePath("/dashboard/admin/disputes");
     return { success: true };
   } catch (err) {
-    console.error("Failed to accept dispute loss:", err);
+    log.error("Failed to accept dispute loss", err);
     return { success: false, error: "Failed to process dispute loss" };
   }
 }

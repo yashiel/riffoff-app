@@ -16,6 +16,9 @@ import type {
   ProfileDoc,
   EventDoc,
 } from "@/lib/appwrite/types";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("refunds");
 
 // ─── Auth Guard ──────────────────────────────────────
 
@@ -111,15 +114,15 @@ export async function processRefund(
       case "tng": {
         // TNG refunds must be processed manually through the TNG partner dashboard.
         // Log a warning so the admin knows to complete this step outside the system.
-        console.warn(
-          `TNG refund for order ${orderId} must be processed manually via TNG partner dashboard. ` +
-            `Provider ref: ${order.providerRef}, Amount: ${order.amount} ${order.currency}`,
+        log.warn(
+          `TNG refund for order ${orderId} must be processed manually via TNG partner dashboard`,
+          { providerRef: order.providerRef, amount: order.amount, currency: order.currency },
         );
         break;
       }
     }
   } catch (err) {
-    console.error(`Provider refund failed for order ${orderId}:`, err);
+    log.error(`Provider refund failed for order ${orderId}`, err);
     return {
       success: false,
       error: `Payment provider refund failed: ${err instanceof Error ? err.message : "Unknown error"}`,
@@ -132,7 +135,7 @@ export async function processRefund(
       status: "refunded",
     });
   } catch (err) {
-    console.error(`Failed to update order status for ${orderId}:`, err);
+    log.error(`Failed to update order status for ${orderId}`, err);
     // Provider refund succeeded but DB update failed — log for manual reconciliation
     return {
       success: false,
@@ -164,7 +167,7 @@ export async function processRefund(
         ),
     );
   } catch (err) {
-    console.error(`Failed to void tickets for order ${orderId}:`, err);
+    log.error(`Failed to void tickets for order ${orderId}`, err);
     // Continue — order is already refunded, tickets can be voided manually
   }
 
@@ -191,7 +194,7 @@ export async function processRefund(
     );
   } catch {
     // Audit log failure should not block the refund flow
-    console.error(`Failed to create audit log for refund on order ${orderId}`);
+    log.error(`Failed to create audit log for refund on order ${orderId}`);
   }
 
   // 7. Notify the customer
@@ -217,9 +220,7 @@ export async function processRefund(
     });
   } catch {
     // Notification failure should not block the refund flow
-    console.error(
-      `Failed to notify user ${order.userId} about refund for order ${orderId}`,
-    );
+    log.error(`Failed to notify user ${order.userId} about refund for order ${orderId}`);
   }
 
   revalidatePath("/dashboard/admin/disputes");

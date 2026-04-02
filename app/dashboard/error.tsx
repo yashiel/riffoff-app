@@ -20,7 +20,7 @@ export default function DashboardError({
       window.location.reload();
       return;
     }
-    console.error("[DASHBOARD ERROR]", error);
+    console.error("[dashboard] Error boundary caught", { message: error.message, digest: error.digest });
   }, [error, isChunkError]);
 
   return (

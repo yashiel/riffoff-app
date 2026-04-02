@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { ticketId, eventTitle, eventDate, venueName, ticketCode, tierName } = parsed.data;
+    const { ticketId } = parsed.data;
 
     // Verify the user owns this ticket
     const { databases } = await createAdminClient();
@@ -71,47 +71,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production, generate a signed .pkpass file using:
-    // 1. Create pass.json with event details
-    // 2. Add icon.png, logo.png, strip.png
-    // 3. Create manifest.json (SHA1 hashes of all files)
-    // 4. Sign manifest with pass certificate
+    // When Apple Developer certificates are configured, generate a signed .pkpass:
+    // 1. Build pass.json (eventTicket type with primary/secondary/auxiliary fields)
+    // 2. Add icon.png, logo.png, strip.png assets
+    // 3. Create manifest.json with SHA1 hashes of all files
+    // 4. Sign manifest with pass certificate + WWDR cert
     // 5. Package as ZIP with .pkpass extension
-
-    // Pass structure for reference:
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _passJson = {
-      formatVersion: 1,
-      passTypeIdentifier: passTypeId,
-      teamIdentifier: teamId,
-      serialNumber: ticketId,
-      organizationName: "RiffOff",
-      description: `Ticket for ${eventTitle}`,
-      foregroundColor: "rgb(255, 255, 255)",
-      backgroundColor: "rgb(17, 17, 19)",
-      labelColor: "rgb(200, 255, 0)",
-      eventTicket: {
-        primaryFields: [
-          { key: "event", label: "EVENT", value: eventTitle },
-        ],
-        secondaryFields: [
-          { key: "date", label: "DATE", value: eventDate },
-          { key: "venue", label: "VENUE", value: venueName },
-        ],
-        auxiliaryFields: [
-          { key: "tier", label: "TIER", value: tierName },
-          { key: "code", label: "CODE", value: ticketCode },
-        ],
-      },
-      barcode: {
-        format: "PKBarcodeFormatQR",
-        message: ticketCode,
-        messageEncoding: "iso-8859-1",
-      },
-      relevantDate: eventDate,
-    };
-
-    // TODO: Generate and sign .pkpass when certificates are configured
+    // See: https://developer.apple.com/documentation/walletpasses
     return NextResponse.json(
       { error: "Apple Wallet not configured. Add Apple Developer certificates to .env.local" },
       { status: 501 },

@@ -6,6 +6,9 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { serialize } from "@/lib/utils";
 import type { NotificationDoc, NotificationType } from "@/lib/appwrite/types";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("notifications");
 
 // ─── Create Notification (internal helper) ───────────
 
@@ -41,7 +44,7 @@ export async function createNotification(
     );
   } catch {
     // Notification creation should never block the main action
-    console.error(`Failed to create notification for ${input.userId}`);
+    log.error(`Failed to create notification for ${input.userId}`);
   }
 }
 

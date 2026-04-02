@@ -1,6 +1,9 @@
 "use server";
 
 import { getPayPalAccessToken, getPayPalApiUrl } from "./client";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("payments.paypal");
 
 interface CreateOrderInput {
   amountCents: number;
@@ -41,7 +44,7 @@ export async function createPayPalOrder(
   const responseBody = await response.text();
 
   if (!response.ok) {
-    console.error(`[PayPal] Error ${response.status}:`, responseBody);
+    log.error(`Create order failed (${response.status})`, responseBody);
     throw new Error(`PayPal create order failed (${response.status}): ${responseBody}`);
   }
 

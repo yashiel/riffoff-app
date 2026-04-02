@@ -7,6 +7,9 @@ import { createAdminClient, createSessionClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { serialize } from "@/lib/utils";
 import type { ProfileDoc, UserRole } from "@/lib/appwrite/types";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("profiles");
 
 /**
  * Get the current user's profile document.
@@ -28,7 +31,7 @@ export async function getProfile(): Promise<ProfileDoc | null> {
     const doc = documents[0] as unknown as ProfileDoc | undefined;
     return doc ? serialize(doc) : null;
   } catch (error) {
-    console.error("[getProfile] Error:", error);
+    log.error("Failed to get profile", error);
     return null;
   }
 }

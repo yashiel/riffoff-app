@@ -2,8 +2,9 @@
  * Simple in-memory rate limiter for Server Actions.
  * Uses a sliding window approach with automatic cleanup.
  *
- * For production at scale, replace with Redis-backed rate limiting.
- * This is sufficient for small-to-mid traffic (< 10k concurrent users).
+ * For production at scale, swap `memoryStore` for a Redis-backed implementation
+ * of the `RateLimitStore` interface below. This is sufficient for single-instance
+ * deployments with < 10k concurrent users.
  */
 
 interface RateLimitEntry {
@@ -11,13 +12,35 @@ interface RateLimitEntry {
   resetAt: number;
 }
 
-const store = new Map<string, RateLimitEntry>();
+/**
+ * Pluggable store interface for rate limit state.
+ * Default: in-memory Map. For horizontal scaling, implement with Redis/Upstash.
+ */
+export interface RateLimitStore {
+  get(key: string): RateLimitEntry | undefined;
+  set(key: string, entry: RateLimitEntry): void;
+  delete(key: string): void;
+  entries(): IterableIterator<[string, RateLimitEntry]>;
+}
+
+/** In-memory store — default for single-instance deployments */
+function createMemoryStore(): RateLimitStore {
+  const map = new Map<string, RateLimitEntry>();
+  return {
+    get: (key) => map.get(key),
+    set: (key, entry) => map.set(key, entry),
+    delete: (key) => map.delete(key),
+    entries: () => map.entries(),
+  };
+}
+
+const store: RateLimitStore = createMemoryStore();
 
 // Clean expired entries every 60 seconds
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
-    for (const [key, entry] of store) {
+    for (const [key, entry] of store.entries()) {
       if (entry.resetAt <= now) store.delete(key);
     }
   }, 60_000);

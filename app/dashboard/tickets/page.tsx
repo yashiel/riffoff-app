@@ -14,7 +14,7 @@ export default async function TicketsPage() {
     getUpcomingEvents().catch(() => []),
   ]);
 
-  const uncheckedCount = tickets.filter((t: any) => t.status === "active" && !t.checkedInAt).length;
+  const uncheckedCount = tickets.filter((t) => t.status === "active" && !t.checkedInAt).length;
 
   return (
     <div>
