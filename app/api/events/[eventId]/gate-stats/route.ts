@@ -146,23 +146,85 @@ export async function GET(
       Query.limit(100),
     ]).catch(() => ({ documents: [] }));
 
-    const feed = await Promise.all(
-      recentCheckins.documents.map(async (doc) => {
-        let ticketCode = "";
-        try {
-          const ticket = await databases.getDocument(DATABASE_ID, COLLECTIONS.TICKETS, doc.ticketId as string);
-          ticketCode = (ticket.ticketCode as string) || "";
-        } catch { /* ticket might be deleted */ }
-        const gate = gates.documents.find((g) => g.$id === doc.gateId);
-        return {
-          id: doc.$id,
-          ticketCode,
-          gateName: (gate?.name as string) || "Unknown",
-          status: doc.status === "confirmed" ? "valid" : doc.status === "conflicted" ? "duplicate" : "invalid",
-          timestamp: doc.scannedAt as string,
-        };
-      }),
-    );
+    // Batch-fetch tickets (1 query instead of N) for scalability
+    const ticketIds = [...new Set(
+      recentCheckins.documents.map((d) => d.ticketId as string).filter(Boolean),
+    )];
+    const ticketMap = new Map<string, { ticketCode: string; attendeeName: string; tierName: string; tierId: string; ownerId: string }>();
+    if (ticketIds.length > 0) {
+      try {
+        const ticketDocs = await databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
+          Query.equal("$id", ticketIds),
+          Query.limit(ticketIds.length),
+        ]);
+        for (const t of ticketDocs.documents) {
+          ticketMap.set(t.$id, {
+            ticketCode: (t.ticketCode as string) || "",
+            attendeeName: (t.attendeeName as string) || "",
+            tierName: (t.tierName as string) || "",
+            tierId: (t.tierId as string) || "",
+            ownerId: (t.ownerId as string) || "",
+          });
+        }
+      } catch { /* ticket batch fetch optional */ }
+    }
+
+    // Batch-fetch tier names when tickets don't have tierName inline
+    const tierIds = [...new Set(
+      [...ticketMap.values()].filter((t) => !t.tierName && t.tierId).map((t) => t.tierId),
+    )];
+    const tierNameMap = new Map<string, string>();
+    if (tierIds.length > 0) {
+      try {
+        const tierDocs = await databases.listDocuments(DATABASE_ID, COLLECTIONS.TICKET_TIERS, [
+          Query.equal("$id", tierIds),
+          Query.limit(tierIds.length),
+        ]);
+        for (const tier of tierDocs.documents) {
+          tierNameMap.set(tier.$id, (tier.name as string) || "");
+        }
+      } catch { /* tier batch fetch optional */ }
+    }
+
+    // Batch-fetch profiles for photo URLs + display names (1 query instead of N)
+    const ownerIds = [...new Set(
+      [...ticketMap.values()].map((t) => t.ownerId).filter(Boolean),
+    )];
+    const profileMap = new Map<string, { photoUrl: string; displayName: string }>();
+    if (ownerIds.length > 0) {
+      try {
+        const profileDocs = await databases.listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [
+          Query.equal("userId", ownerIds),
+          Query.limit(ownerIds.length),
+        ]);
+        for (const p of profileDocs.documents) {
+          profileMap.set(p.userId as string, {
+            photoUrl: (p.photoUrl as string) || "",
+            displayName: (p.displayName as string) || "",
+          });
+        }
+      } catch { /* profile batch fetch optional */ }
+    }
+
+    // Assemble feed entries from pre-fetched data (no per-entry queries)
+    const feed = recentCheckins.documents.map((doc) => {
+      const ticket = ticketMap.get(doc.ticketId as string);
+      const profile = ticket?.ownerId ? profileMap.get(ticket.ownerId) : undefined;
+      const gate = gates.documents.find((g) => g.$id === doc.gateId);
+      // Fallback chains: ticket field → lookup table → empty
+      const name = ticket?.attendeeName || profile?.displayName || "";
+      const tier = ticket?.tierName || (ticket?.tierId ? tierNameMap.get(ticket.tierId) : "") || "";
+      return {
+        id: doc.$id,
+        ticketCode: ticket?.ticketCode ?? "",
+        attendeeName: name,
+        tierName: tier,
+        attendeePhotoUrl: profile?.photoUrl || null,
+        gateName: (gate?.name as string) || "Unknown",
+        status: doc.status === "confirmed" ? "valid" : doc.status === "conflicted" ? "duplicate" : "invalid",
+        timestamp: doc.scannedAt as string,
+      };
+    });
 
     const devices = sessions.documents.map((s) => ({
       sessionId: s.$id,

@@ -4,6 +4,7 @@ import { validateSession } from "@/lib/gate/session";
 import { processCheckIn, type CheckInInput } from "@/lib/gate/conflicts";
 import { createAdminClient } from "@/lib/appwrite/server";
 import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
+import { Query } from "node-appwrite";
 import { checkScannerRateLimit } from "@/lib/security/rate-limit";
 
 const CheckInSchema = z.object({
@@ -78,17 +79,97 @@ export async function POST(request: NextRequest) {
       conflicted: "conflict",
     };
 
-    // Get ticket details for the scanner UI
+    // Get ticket details + profile data for the scanner UI (single ticket fetch)
     let ticketCode = "";
     let attendeeName = "";
     let tierName = "";
+    let attendeePhotoUrl: string | null = null;
+    let seatInfo: string | null = null;
+    let firstScannedAt: string | null = null;
+    let firstScannedByGate: string | null = null;
+    let checkedIn = 0;
+    let total = 0;
+
     try {
-      const { databases: db } = await createAdminClient();
-      const ticket = await db.getDocument(DATABASE_ID, COLLECTIONS.TICKETS, parsed.data.ticketId);
-      ticketCode = (ticket.ticketCode as string) || "";
-      attendeeName = (ticket.attendeeName as string) || "";
-      tierName = (ticket.tierName as string) || "";
-    } catch { /* ticket details are optional for scan result */ }
+      const { databases: adminDb } = await createAdminClient();
+
+      // Single ticket fetch — extract all fields
+      try {
+        const ticket = await adminDb.getDocument(DATABASE_ID, COLLECTIONS.TICKETS, parsed.data.ticketId);
+        ticketCode = (ticket.ticketCode as string) || "";
+        attendeeName = (ticket.attendeeName as string) || "";
+        tierName = (ticket.tierName as string) || "";
+        seatInfo = (ticket.seatInfo as string) || null;
+
+        // Tier name fallback: look up from tickettiers collection if not on ticket
+        if (!tierName && ticket.tierId) {
+          try {
+            const tier = await adminDb.getDocument(DATABASE_ID, COLLECTIONS.TICKET_TIERS, ticket.tierId as string);
+            tierName = (tier.name as string) || "";
+          } catch { /* tier lookup optional */ }
+        }
+
+        // Look up profile for photo + display name fallback
+        if (ticket.ownerId) {
+          try {
+            const profiles = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [
+              Query.equal("userId", ticket.ownerId as string),
+              Query.limit(1),
+            ]);
+            if (profiles.documents.length > 0) {
+              attendeePhotoUrl = (profiles.documents[0].photoUrl as string) || null;
+              // Fall back to profile displayName if ticket has no attendeeName
+              if (!attendeeName) {
+                attendeeName = (profiles.documents[0].displayName as string) || "";
+              }
+            }
+          } catch { /* profile lookup is optional */ }
+        }
+      } catch { /* ticket details are optional for scan result */ }
+
+      // First scan info — only for duplicate scans
+      if (result.status === "already_checked_in") {
+        try {
+          const firstCheckins = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.GATE_CHECKINS, [
+            Query.equal("ticketId", parsed.data.ticketId),
+            Query.equal("status", "confirmed"),
+            Query.orderAsc("scannedAt"),
+            Query.limit(1),
+          ]);
+          if (firstCheckins.documents.length > 0) {
+            firstScannedAt = (firstCheckins.documents[0].scannedAt as string) || null;
+
+            // Look up gate name
+            const gateId = firstCheckins.documents[0].gateId as string;
+            if (gateId) {
+              try {
+                const gate = await adminDb.getDocument(DATABASE_ID, COLLECTIONS.GATES, gateId);
+                firstScannedByGate = (gate.name as string) || null;
+              } catch { /* gate lookup is optional */ }
+            }
+          }
+        } catch { /* first checkin lookup is optional */ }
+      }
+
+      // Event-wide counts
+      try {
+        const confirmedCheckins = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.GATE_CHECKINS, [
+          Query.equal("eventId", input.eventId),
+          Query.equal("status", "confirmed"),
+          Query.limit(1),
+        ]);
+        checkedIn = confirmedCheckins.total;
+      } catch { /* checkin count is optional */ }
+
+      try {
+        const activeTickets = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
+          Query.equal("eventId", input.eventId),
+          Query.equal("status", "active"),
+          Query.limit(1),
+        ]);
+        total = activeTickets.total;
+      } catch { /* ticket count is optional */ }
+    } catch { /* all enhancement data is optional */ }
 
     return NextResponse.json({
       status: statusMap[result.status] ?? result.status,
@@ -96,6 +177,12 @@ export async function POST(request: NextRequest) {
       ticketCode,
       attendeeName,
       tierName,
+      attendeePhotoUrl,
+      seatInfo,
+      firstScannedAt,
+      firstScannedByGate,
+      checkedIn,
+      total,
     }, { status: 200 });
   } catch {
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });

@@ -111,6 +111,8 @@ export function CommandCenter({ eventId, gates }: CommandCenterProps) {
                   conflicts={live?.conflicts ?? 0}
                   lastScan={live?.lastScan}
                   eventId={eventId}
+                  capacity={(gate.capacity as number) ?? 0}
+                  maxDevices={(gate.maxDevices as number) ?? 0}
                 />
               );
             })}

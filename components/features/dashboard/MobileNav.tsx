@@ -39,6 +39,7 @@ interface MobileNavProps {
   displayName: string;
   initials: string;
   role: string;
+  photoUrl?: string;
 }
 
 export function MobileNav({
@@ -46,6 +47,7 @@ export function MobileNav({
   displayName,
   initials,
   role,
+  photoUrl,
 }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -110,9 +112,18 @@ export function MobileNav({
             <div className="border-b border-border p-5 pt-[calc(env(safe-area-inset-top)+1.25rem)]">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-coral/20 to-coral/5 text-base font-bold text-coral">
-                    {initials}
-                  </div>
+                  {photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={photoUrl}
+                      alt={displayName}
+                      className="size-11 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-coral/20 to-coral/5 text-base font-bold text-coral">
+                      {initials}
+                    </div>
+                  )}
                   <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-400" />
                 </div>
                 <div className="min-w-0 flex-1">

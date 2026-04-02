@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LegalPageLayout } from "@/components/features/shared/LegalPageLayout";
 
 export const metadata: Metadata = {
@@ -167,7 +168,7 @@ export default function PrivacyPolicyPage() {
             {[
               { right: "Access", desc: "Request a copy of the personal data we hold about you." },
               { right: "Correction", desc: "Request correction of inaccurate or incomplete data." },
-              { right: "Deletion", desc: "Request deletion of your account and associated data." },
+              { right: "Deletion", desc: "Request deletion of your account and associated data. See our Data Deletion page." },
               { right: "Portability", desc: "Receive your data in a structured, machine-readable format." },
               { right: "Objection", desc: "Object to processing of your data for certain purposes." },
               { right: "Withdrawal", desc: "Withdraw previously given consent at any time." },
@@ -181,6 +182,11 @@ export default function PrivacyPolicyPage() {
           <p className="mt-3">
             To exercise these rights, visit Settings &gt; Privacy, or contact{" "}
             <a href="mailto:privacy@riffoff.live" className="font-medium text-coral hover:underline">privacy@riffoff.live</a>.
+          </p>
+          <p className="mt-3">
+            To request deletion of your account and all associated data, visit our{" "}
+            <Link href="/data-deletion" className="font-medium text-coral hover:underline">Data Deletion</Link>{" "}
+            page for detailed instructions.
           </p>
         </Section>
 

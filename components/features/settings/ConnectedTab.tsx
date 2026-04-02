@@ -10,10 +10,9 @@ interface ConnectedTabProps {
 
 const PROVIDER_INFO: Record<string, { label: string; icon: string; color: string }> = {
   google: { label: "Google", icon: "G", color: "bg-blue-500/20 text-blue-400" },
-  facebook: { label: "Facebook", icon: "f", color: "bg-indigo-500/20 text-indigo-400" },
 };
 
-const AVAILABLE_PROVIDERS = ["google", "facebook"] as const;
+const AVAILABLE_PROVIDERS = ["google"] as const;
 
 export function ConnectedTab({ providers }: ConnectedTabProps) {
   const [isPending, startTransition] = useTransition();
@@ -31,7 +30,7 @@ export function ConnectedTab({ providers }: ConnectedTabProps) {
     });
   }
 
-  function handleLink(provider: "google" | "facebook") {
+  function handleLink(provider: "google") {
     startTransition(async () => {
       await linkProvider(provider);
     });

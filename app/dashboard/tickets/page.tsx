@@ -21,13 +21,15 @@ export default async function TicketsPage() {
       {/* Auto-refresh when tickets might get scanned */}
       <TicketListRefresher uncheckedCount={uncheckedCount} />
 
-      <h1 className="font-display text-2xl tracking-tight sm:text-3xl lg:text-[40px]">My Tickets</h1>
-      <p className="mt-2 text-base text-muted-foreground/80">
+      <h1 className="font-display text-2xl tracking-tight sm:text-3xl lg:text-[40px]">
+        My Tickets
+      </h1>
+      <p className="mt-2 text-base text-muted-foreground/70">
         Your purchased tickets and e-passes
       </p>
 
       {/* Ticket list with search and filters */}
-      <div className="mt-6 sm:mt-10">
+      <div className="mt-6 sm:mt-8">
         <TicketSearchFilter tickets={tickets} />
       </div>
 

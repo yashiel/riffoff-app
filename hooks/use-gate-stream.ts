@@ -21,6 +21,9 @@ export interface FeedEntry {
   gateName: string;
   status: "valid" | "invalid" | "duplicate";
   timestamp: string;
+  attendeeName?: string;
+  tierName?: string;
+  attendeePhotoUrl?: string | null;
 }
 
 export interface DeviceEntry {

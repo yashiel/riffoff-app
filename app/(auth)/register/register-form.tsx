@@ -55,17 +55,13 @@ export function RegisterForm() {
 
       <div className="mt-8 space-y-4">
         {/* OAuth */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
           <form action={() => loginWithProvider("google")}>
             <button type="submit" className="btn-ghost w-full !text-base">
-              Google
+              Continue with Google
             </button>
           </form>
-          <form action={() => loginWithProvider("facebook")}>
-            <button type="submit" className="btn-ghost w-full !text-base">
-              Facebook
-            </button>
-          </form>
+          {/* Facebook Login hidden until Meta business verification is complete */}
         </div>
 
         <div className="relative py-2">

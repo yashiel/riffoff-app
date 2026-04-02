@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Activity, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import Image from "next/image";
 import type { FeedEntry } from "@/hooks/use-gate-stream";
 
 interface LiveFeedProps {
@@ -16,14 +17,14 @@ const STATUS_CONFIG = {
     color: "text-emerald-400",
     bg: "bg-emerald-400/[0.06]",
     border: "border-emerald-400/10",
-    label: "Valid",
+    label: "Approved",
   },
   invalid: {
     icon: XCircle,
     color: "text-red-400",
     bg: "bg-red-400/[0.06]",
     border: "border-red-400/10",
-    label: "Invalid",
+    label: "Denied",
   },
   duplicate: {
     icon: AlertTriangle,
@@ -34,9 +35,36 @@ const STATUS_CONFIG = {
   },
 } as const;
 
+/** Deterministic color from first character of name */
+function avatarColor(name: string): string {
+  const colors = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#f97316", "#10b981", "#06b6d4"];
+  const code = (name || "?").charCodeAt(0);
+  return colors[code % colors.length];
+}
+
+/** Tier badge with contextual color */
+function TierBadge({ tier }: { tier: string }) {
+  const lower = tier.toLowerCase();
+  const isVip = lower.includes("vip");
+  const isEarly = lower.includes("early");
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold leading-none ${
+        isVip
+          ? "bg-amber-500/15 text-amber-400"
+          : isEarly
+            ? "bg-blue-500/15 text-blue-400"
+            : "bg-muted text-muted-foreground"
+      }`}
+    >
+      {tier}
+    </span>
+  );
+}
+
 /**
- * Scrolling list of recent check-ins — powered by SSE (no polling).
- * Receives entries from parent CommandCenter via the unified gate stream.
+ * Scrolling list of recent check-ins — powered by polling.
+ * Shows attendee photo, name, tier badge, ticket code, gate, and timestamp.
  */
 export function LiveFeed({ entries }: LiveFeedProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -63,7 +91,7 @@ export function LiveFeed({ entries }: LiveFeedProps) {
 
       <div
         ref={scrollRef}
-        className="mt-3 flex-1 space-y-1 overflow-y-auto rounded-2xl border border-border bg-muted/60 p-2"
+        className="mt-3 flex-1 space-y-1.5 overflow-y-auto rounded-2xl border border-border bg-muted/60 p-2"
         style={{ maxHeight: "340px" }}
       >
         {entries.length === 0 ? (
@@ -81,6 +109,8 @@ export function LiveFeed({ entries }: LiveFeedProps) {
             const config = STATUS_CONFIG[entry.status] ?? STATUS_CONFIG.valid;
             const Icon = config.icon;
             const isNew = i === 0;
+            const name = entry.attendeeName || "Unknown";
+            const initial = name.charAt(0).toUpperCase();
 
             return (
               <div
@@ -89,19 +119,49 @@ export function LiveFeed({ entries }: LiveFeedProps) {
                   config.border
                 } ${config.bg} ${isNew ? "animate-in fade-in slide-in-from-top-1 duration-300" : ""}`}
               >
+                {/* Status icon */}
                 <Icon className={`size-4 shrink-0 ${config.color}`} />
+
+                {/* Attendee photo / initials */}
+                <div className="relative size-9 shrink-0">
+                  {entry.attendeePhotoUrl ? (
+                    <Image
+                      src={entry.attendeePhotoUrl}
+                      alt={name}
+                      width={36}
+                      height={36}
+                      className="size-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="flex size-9 items-center justify-center rounded-full text-sm font-bold text-white"
+                      style={{ backgroundColor: avatarColor(name) }}
+                    >
+                      {initial}
+                    </div>
+                  )}
+                </div>
+
+                {/* Name + tier + code */}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className={`font-mono text-base font-bold ${config.color}`}>
-                      {entry.ticketCode}
+                    <span className="truncate text-base font-semibold text-foreground">
+                      {name}
                     </span>
-                    <span className="rounded-md bg-muted px-1.5 py-0.5 text-sm font-medium text-muted-foreground/80">
+                    {entry.tierName && <TierBadge tier={entry.tierName} />}
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-mono">{entry.ticketCode}</span>
+                    <span className="text-muted-foreground/40">·</span>
+                    <span className="rounded-md bg-muted px-1.5 py-0.5 text-xs font-medium">
                       {entry.gateName}
                     </span>
                   </div>
                 </div>
+
+                {/* Timestamp */}
                 <time className="shrink-0 text-sm tabular-nums text-muted-foreground/70">
-                  {new Date(entry.timestamp).toLocaleTimeString()}
+                  {new Date(entry.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </time>
               </div>
             );

@@ -139,9 +139,18 @@ export default async function DashboardLayout({
             <div className="flex items-center gap-3 rounded-xl p-2">
               {/* Avatar */}
               <div className="relative shrink-0">
-                <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/20 to-coral/5 text-base font-bold text-coral">
-                  {initials}
-                </div>
+                {profile?.photoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={profile.photoUrl}
+                    alt={displayName}
+                    className="size-9 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-coral/20 to-coral/5 text-base font-bold text-coral">
+                    {initials}
+                  </div>
+                )}
                 <div className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-sidebar bg-emerald-400" />
               </div>
 
@@ -179,6 +188,7 @@ export default async function DashboardLayout({
         displayName={displayName}
         initials={initials}
         role={role}
+        photoUrl={profile?.photoUrl ?? undefined}
       />
 
       {/* ─── Main content ─── */}

@@ -247,16 +247,32 @@ export async function validateSession(
     return null;
   }
 
-  const fingerprintValid = validateFingerprint(
-    doc.deviceFingerprint,
-    fingerprint.userAgent,
-    fingerprint.screenSize,
-    fingerprint.timezone,
-    fingerprint.language,
-  );
+  // Two-tier device verification:
+  // 1. Full fingerprint check when custom headers are present (normal API calls)
+  // 2. Direct user-agent match when headers are missing (SSE/EventSource)
+  const hasDeviceHeaders =
+    fingerprint.screenSize !== "unknown" ||
+    fingerprint.timezone !== "unknown" ||
+    fingerprint.language !== "unknown";
 
-  if (!fingerprintValid) {
-    return null;
+  if (hasDeviceHeaders) {
+    // Full fingerprint validation (hash of userAgent + timezone)
+    const fingerprintValid = validateFingerprint(
+      doc.deviceFingerprint,
+      fingerprint.userAgent,
+      fingerprint.screenSize,
+      fingerprint.timezone,
+      fingerprint.language,
+    );
+    if (!fingerprintValid) return null;
+  } else {
+    // SSE/EventSource: can't send custom headers, but browser still sends
+    // User-Agent automatically. Compare directly against stored value to
+    // block stolen tokens used from a different browser/device.
+    const storedUA = (doc.userAgent as string) ?? "";
+    if (storedUA && fingerprint.userAgent !== "unknown") {
+      if (fingerprint.userAgent !== storedUA) return null;
+    }
   }
 
   return {
