@@ -257,38 +257,91 @@ export async function GET(request: NextRequest) {
                 ],
               );
 
-              const feed = await Promise.all(
-                recentCheckins.documents.map(async (doc) => {
-                  let ticketCode = "";
-                  try {
-                    const ticket = await databases.getDocument(
-                      DATABASE_ID,
-                      COLLECTIONS.TICKETS,
-                      doc.ticketId as string,
-                    );
-                    ticketCode = (ticket.ticketCode as string) || "";
-                  } catch {
-                    /* ticket might be deleted */
+              // Collect ticket IDs to batch-fetch tickets, then owners + tiers
+              const ticketIds = recentCheckins.documents
+                .map((d) => d.ticketId as string)
+                .filter(Boolean);
+
+              const ticketsMap = new Map<string, { ticketCode: string; ownerId: string; tierId: string }>();
+              if (ticketIds.length > 0) {
+                const ticketDocs = await Promise.all(
+                  ticketIds.map((id) =>
+                    databases.getDocument(DATABASE_ID, COLLECTIONS.TICKETS, id).catch(() => null),
+                  ),
+                );
+                for (const t of ticketDocs) {
+                  if (t) {
+                    ticketsMap.set(t.$id, {
+                      ticketCode: (t.ticketCode as string) || "",
+                      ownerId: t.ownerId as string,
+                      tierId: t.tierId as string,
+                    });
                   }
+                }
+              }
 
-                  const gate = gatesRes.documents.find(
-                    (g) => g.$id === doc.gateId,
-                  );
+              // Fetch profiles for attendee names + photos
+              const ownerIds = [...new Set([...ticketsMap.values()].map((t) => t.ownerId).filter(Boolean))];
+              const profileMap = new Map<string, { name: string; photo: string | null }>();
+              if (ownerIds.length > 0) {
+                const profileDocs = await Promise.all(
+                  ownerIds.map((id) =>
+                    databases
+                      .listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [
+                        Query.equal("userId", id),
+                        Query.limit(1),
+                      ])
+                      .then((r) => r.documents[0] ?? null)
+                      .catch(() => null),
+                  ),
+                );
+                for (const p of profileDocs) {
+                  if (p) {
+                    profileMap.set(p.userId as string, {
+                      name: (p.displayName as string) || "Guest",
+                      photo: (p.photoUrl as string) || null,
+                    });
+                  }
+                }
+              }
 
-                  return {
-                    id: doc.$id,
-                    ticketCode,
-                    gateName: (gate?.name as string) || "Unknown",
-                    status:
-                      doc.status === "confirmed"
-                        ? "valid"
-                        : doc.status === "conflicted"
-                          ? "duplicate"
-                          : "invalid",
-                    timestamp: doc.scannedAt as string,
-                  };
-                }),
-              );
+              // Fetch tier names
+              const tierIds = [...new Set([...ticketsMap.values()].map((t) => t.tierId).filter(Boolean))];
+              const tierMap = new Map<string, string>();
+              if (tierIds.length > 0) {
+                const tierDocs = await Promise.all(
+                  tierIds.map((id) =>
+                    databases.getDocument(DATABASE_ID, COLLECTIONS.TICKET_TIERS, id).catch(() => null),
+                  ),
+                );
+                for (const t of tierDocs) {
+                  if (t) tierMap.set(t.$id, (t.name as string) || "—");
+                }
+              }
+
+              const feed = recentCheckins.documents.map((doc) => {
+                const ticket = ticketsMap.get(doc.ticketId as string);
+                const gate = gatesRes.documents.find(
+                  (g) => g.$id === doc.gateId,
+                );
+                const profile = ticket ? profileMap.get(ticket.ownerId) : undefined;
+
+                return {
+                  id: doc.$id,
+                  ticketCode: ticket?.ticketCode || "",
+                  gateName: (gate?.name as string) || "Unknown",
+                  status:
+                    doc.status === "confirmed"
+                      ? "valid"
+                      : doc.status === "conflicted"
+                        ? "duplicate"
+                        : "invalid",
+                  timestamp: doc.scannedAt as string,
+                  attendeeName: profile?.name || "Guest",
+                  attendeePhotoUrl: profile?.photo || null,
+                  tierName: ticket ? tierMap.get(ticket.tierId) || null : null,
+                };
+              });
 
               send("feed", feed);
             } catch {

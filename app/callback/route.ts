@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/appwrite/server";
-import { SESSION_COOKIE_NAME } from "@/lib/appwrite/config";
+import { SESSION_COOKIE_NAME, DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 import { ensureProfile } from "@/actions/profiles";
+import { Query } from "node-appwrite";
 
 /**
  * OAuth callback Route Handler.
@@ -22,8 +23,69 @@ export async function GET(request: NextRequest) {
     const { account } = await createAdminClient();
     const session = await account.createSession(userId, secret);
 
-    // Ensure profile exists (non-blocking)
-    await ensureProfile(session.userId, undefined).catch(() => {});
+    // Fetch OAuth profile info (name + photo) before ensuring profile
+    let oauthName: string | undefined;
+    let oauthEmail: string | undefined;
+    let pictureUrl: string | null = null;
+
+    try {
+      const admin = await createAdminClient();
+
+      // Get user email from Appwrite
+      const user = await admin.users.get(session.userId);
+      oauthEmail = user.email || undefined;
+
+      const identities = await admin.users.listIdentities([
+        Query.equal("userId", session.userId),
+        Query.limit(5),
+      ]);
+
+      for (const identity of identities.identities) {
+        if (!identity.providerAccessToken) continue;
+
+        if (identity.provider === "google") {
+          const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: { Authorization: `Bearer ${identity.providerAccessToken}` },
+          });
+          if (res.ok) {
+            const info = await res.json() as { name?: string; picture?: string };
+            if (!oauthName && info.name) oauthName = info.name;
+            if (!pictureUrl && info.picture) pictureUrl = info.picture;
+          }
+        } else if (identity.provider === "facebook") {
+          const res = await fetch(
+            `https://graph.facebook.com/me?fields=name,picture.type(large)&access_token=${identity.providerAccessToken}`,
+          );
+          if (res.ok) {
+            const info = await res.json() as { name?: string; picture?: { data?: { url?: string } } };
+            if (!oauthName && info.name) oauthName = info.name;
+            if (!pictureUrl) pictureUrl = info.picture?.data?.url ?? null;
+          }
+        }
+      }
+    } catch { /* OAuth info fetch is non-critical */ }
+
+    // Ensure profile exists with OAuth name (falls back to email if no name)
+    await ensureProfile(session.userId, oauthName, undefined, oauthEmail).catch(() => {});
+
+    // Save photo to profile if we got one
+    if (pictureUrl) {
+      try {
+        const admin = await createAdminClient();
+        const profiles = await admin.databases.listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [
+          Query.equal("userId", session.userId),
+          Query.limit(1),
+        ]);
+        if (profiles.documents.length > 0 && !profiles.documents[0].photoUrl) {
+          await admin.databases.updateDocument(
+            DATABASE_ID,
+            COLLECTIONS.PROFILES,
+            profiles.documents[0].$id,
+            { photoUrl: pictureUrl },
+          );
+        }
+      } catch { /* photo save is non-critical */ }
+    }
 
     // Return a branded loading page that redirects after cookie is set
     const html = `<!DOCTYPE html>

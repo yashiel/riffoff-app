@@ -288,8 +288,8 @@ export async function verifyOTP(
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    // Create profile with signup role
-    await ensureProfile(userId, userName, signupRole);
+    // Create profile with signup role (use email as fallback name)
+    await ensureProfile(userId, userName, signupRole, email);
 
     // Send welcome email (non-blocking)
     void sendWelcomeEmail(email, userName || "");

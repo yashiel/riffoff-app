@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "/events",
   "/privacy",
   "/terms",
+  "/data-deletion",
   "/api/webhooks",
   "/api/gate",
 ];
@@ -45,9 +46,9 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
   "Content-Security-Policy": [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com",
+    `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://js.stripe.com https://www.paypal.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://*.appwrite.io https://yashilanka.com https://*.vercel.app https://fastly.picsum.photos https://picsum.photos",
+    "img-src 'self' data: blob: https://*.appwrite.io https://yashilanka.com https://*.vercel.app https://fastly.picsum.photos https://picsum.photos https://lh3.googleusercontent.com https://*.fbsbx.com https://graph.facebook.com",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.appwrite.io https://yashilanka.com https://riffoff.live https://*.riffoff.live https://api.stripe.com https://www.paypal.com https://*.paypal.com https://api-m.sandbox.paypal.com https://api-m.paypal.com",
     "frame-src https://js.stripe.com https://www.paypal.com https://*.paypal.com https://www.youtube.com https://youtube.com",
@@ -119,6 +120,7 @@ function applySecurityHeaders(response: NextResponse) {
 function applyCorsHeaders(response: NextResponse, origin: string) {
   response.headers.set("Access-Control-Allow-Origin", origin);
   response.headers.set("Access-Control-Allow-Credentials", "true");
+  response.headers.set("Access-Control-Expose-Headers", "X-Gate-Session");
 }
 
 export const config = {

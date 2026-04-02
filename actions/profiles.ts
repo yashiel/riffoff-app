@@ -43,6 +43,7 @@ export async function ensureProfile(
   userId: string,
   displayName?: string,
   role?: "attendee" | "artist" | "organiser",
+  email?: string,
 ): Promise<ProfileDoc> {
   const { databases } = await createAdminClient();
 
@@ -57,6 +58,9 @@ export async function ensureProfile(
     return serialize(documents[0] as unknown as ProfileDoc);
   }
 
+  // Use email as fallback displayName when no name provided
+  const resolvedName = displayName || email || null;
+
   // Create new profile with default role
   const profile = await databases.createDocument(
     DATABASE_ID,
@@ -64,7 +68,7 @@ export async function ensureProfile(
     ID.unique(),
     {
       userId,
-      displayName: displayName ?? null,
+      displayName: resolvedName,
       photoUrl: null,
       role: (role ?? "attendee") as UserRole,
       phone: null,
