@@ -39,7 +39,7 @@ export async function updateGeneralProfile(
   const user = await sessionClient.account.get();
 
   // Rate limit
-  const rateCheck = checkProfileRateLimit(user.$id);
+  const rateCheck = await checkProfileRateLimit(user.$id);
   if (!rateCheck.allowed) {
     return { error: `Too many updates. Try again in ${Math.ceil(rateCheck.retryAfterMs / 1000)}s` };
   }
@@ -140,7 +140,7 @@ export async function uploadAvatar(
 
   const user = await sessionClient.account.get();
 
-  const rateCheck = checkAvatarRateLimit(user.$id);
+  const rateCheck = await checkAvatarRateLimit(user.$id);
   if (!rateCheck.allowed) return { error: "Too many uploads. Try again later." };
 
   const file = formData.get("file") as File | null;

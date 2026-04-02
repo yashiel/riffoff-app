@@ -11,7 +11,7 @@ import type {
 } from "@/actions/events";
 
 export const metadata = { title: "Discover Events" };
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // 5-minute ISR — event listings don't change rapidly
 
 interface EventsPageProps {
   searchParams: Promise<{

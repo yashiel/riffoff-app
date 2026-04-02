@@ -298,27 +298,29 @@ export async function getEventWithDetails(
     const applications =
       applicationsResult.documents as unknown as ApplicationDoc[];
 
-    // Fetch artist profiles for accepted applications
+    // Fetch artist profiles in a single batch query (eliminates N+1)
     const lineup: EventDetails["lineup"] = [];
     if (applications.length > 0) {
-      const artistProfiles = await Promise.all(
-        applications.map((app) =>
-          databases
-            .listDocuments(DATABASE_ID, COLLECTIONS.PROFILES, [
-              Query.equal("userId", app.artistId),
-              Query.limit(1),
-            ])
-            .then(
-              (res) => (res.documents[0] as unknown as ProfileDoc) ?? null,
-            )
-            .catch(() => null),
-        ),
-      );
+      const artistIds = applications.map((app) => app.artistId);
+      let profileMap = new Map<string, ProfileDoc>();
+      try {
+        const profilesRes = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTIONS.PROFILES,
+          [Query.equal("userId", artistIds), Query.limit(100)],
+        );
+        for (const doc of profilesRes.documents) {
+          const profile = doc as unknown as ProfileDoc;
+          profileMap.set(profile.userId, profile);
+        }
+      } catch {
+        profileMap = new Map();
+      }
 
-      for (let i = 0; i < applications.length; i++) {
-        const artist = artistProfiles[i];
+      for (const app of applications) {
+        const artist = profileMap.get(app.artistId);
         if (artist) {
-          lineup.push({ application: applications[i], artist });
+          lineup.push({ application: app, artist });
         }
       }
     }

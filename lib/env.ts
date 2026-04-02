@@ -53,6 +53,10 @@ const envSchema = z.object({
   // CORS — comma-separated allowed origins for gate API
   GATE_CORS_ORIGINS: z.string().optional(),
 
+  // Upstash Redis (optional — enables distributed rate limiting)
+  UPSTASH_REDIS_REST_URL: z.url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+
   // Wallet passes
   APPLE_WALLET_PASS_TYPE_ID: z.string().optional(),
   APPLE_WALLET_TEAM_ID: z.string().optional(),

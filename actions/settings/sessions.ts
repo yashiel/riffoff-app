@@ -49,7 +49,7 @@ export async function revokeSession(
 
   const user = await sessionClient.account.get();
 
-  const rateCheck = checkSensitiveRateLimit(user.$id);
+  const rateCheck = await checkSensitiveRateLimit(user.$id);
   if (!rateCheck.allowed) return { error: "Too many attempts. Try again later." };
 
   // Check it's not the current session
@@ -82,7 +82,7 @@ export async function revokeAllOtherSessions(): Promise<{ error?: string; succes
 
   const user = await sessionClient.account.get();
 
-  const rateCheck = checkSensitiveRateLimit(user.$id);
+  const rateCheck = await checkSensitiveRateLimit(user.$id);
   if (!rateCheck.allowed) return { error: "Too many attempts. Try again later." };
 
   try {

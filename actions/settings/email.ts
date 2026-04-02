@@ -24,7 +24,7 @@ export async function requestEmailChange(
 
   const user = await sessionClient.account.get();
 
-  const rateCheck = checkSensitiveRateLimit(user.$id);
+  const rateCheck = await checkSensitiveRateLimit(user.$id);
   if (!rateCheck.allowed) return { error: "Too many attempts. Try again later." };
 
   if (parsed.data.newEmail === user.email) {

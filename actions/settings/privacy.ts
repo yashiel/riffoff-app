@@ -112,7 +112,7 @@ export async function exportMyData(): Promise<{ data?: string; error?: string }>
 
   const user = await sessionClient.account.get();
 
-  const rateCheck = checkExportRateLimit(user.$id);
+  const rateCheck = await checkExportRateLimit(user.$id);
   if (!rateCheck.allowed) return { error: "You can only export data once per hour" };
 
   const { databases } = await createAdminClient();

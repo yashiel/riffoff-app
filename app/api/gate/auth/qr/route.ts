@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limit QR auth attempts by IP to prevent brute force
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-    const rateLimit = checkAuthRateLimit(`gate-qr:${ip}`);
+    const rateLimit = await checkAuthRateLimit(`gate-qr:${ip}`);
     if (!rateLimit.allowed) {
       const retrySeconds = Math.ceil(rateLimit.retryAfterMs / 1000);
       return NextResponse.json(

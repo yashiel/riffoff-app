@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit scanning by sessionId (120/min)
-    const scanRateLimit = checkScannerRateLimit(session.sessionId);
+    const scanRateLimit = await checkScannerRateLimit(session.sessionId);
     if (!scanRateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many scan attempts. Please slow down." },
@@ -151,24 +151,8 @@ export async function POST(request: NextRequest) {
         } catch { /* first checkin lookup is optional */ }
       }
 
-      // Event-wide counts
-      try {
-        const confirmedCheckins = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.GATE_CHECKINS, [
-          Query.equal("eventId", input.eventId),
-          Query.equal("status", "confirmed"),
-          Query.limit(1),
-        ]);
-        checkedIn = confirmedCheckins.total;
-      } catch { /* checkin count is optional */ }
-
-      try {
-        const activeTickets = await adminDb.listDocuments(DATABASE_ID, COLLECTIONS.TICKETS, [
-          Query.equal("eventId", input.eventId),
-          Query.equal("status", "active"),
-          Query.limit(1),
-        ]);
-        total = activeTickets.total;
-      } catch { /* ticket count is optional */ }
+      // Event-wide counts removed — scanner gets these from SSE stats stream
+      // This eliminates 2 DB queries per scan (major scaling improvement)
     } catch { /* all enhancement data is optional */ }
 
     return NextResponse.json({

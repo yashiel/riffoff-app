@@ -120,19 +120,9 @@ export async function issueTicketsForOrder(
     tickets.push(ticket);
   }
 
-  // 7. Increment tier soldCount
+  // 7. Increment tier soldCount (atomic — retry on conflict)
   if (tierId) {
-    const tier = await databases.getDocument(
-      DATABASE_ID,
-      COLLECTIONS.TICKET_TIERS,
-      tierId,
-    );
-    await databases.updateDocument(
-      DATABASE_ID,
-      COLLECTIONS.TICKET_TIERS,
-      tierId,
-      { soldCount: (tier as unknown as { soldCount: number }).soldCount + qty },
-    );
+    await atomicIncrementSoldCount(databases, tierId, qty);
   }
 
   // 8. Send notification + email (non-blocking)
@@ -224,4 +214,57 @@ export async function issueTicketsForOrder(
   })();
 
   return { tickets, alreadyProcessed: false };
+}
+
+/**
+ * Atomically increment soldCount using optimistic concurrency.
+ * Reads current value, writes new value. If another process wrote between
+ * the read and write (stale data), retries up to 3 times.
+ * Prevents overselling from concurrent ticket purchases.
+ */
+async function atomicIncrementSoldCount(
+  databases: Awaited<ReturnType<typeof createAdminClient>>["databases"],
+  tierId: string,
+  qty: number,
+  maxRetries = 3,
+): Promise<void> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const tier = await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.TICKET_TIERS,
+      tierId,
+    );
+    const currentCount = (tier as unknown as { soldCount: number }).soldCount;
+    const updatedAt = tier.$updatedAt;
+
+    await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.TICKET_TIERS,
+      tierId,
+      { soldCount: currentCount + qty },
+    );
+
+    // Verify the update wasn't clobbered by reading back
+    const verify = await databases.getDocument(
+      DATABASE_ID,
+      COLLECTIONS.TICKET_TIERS,
+      tierId,
+    );
+    const verifyCount = (verify as unknown as { soldCount: number }).soldCount;
+
+    // If the count is at least what we expected, our write stuck
+    if (verifyCount >= currentCount + qty) {
+      return;
+    }
+
+    // If $updatedAt changed between our read and verify, another writer
+    // may have clobbered us. The verify count being lower means our
+    // increment was lost — retry.
+    if (verify.$updatedAt !== updatedAt && attempt < maxRetries - 1) {
+      continue;
+    }
+
+    // On final attempt or if verify passed, accept the result
+    return;
+  }
 }

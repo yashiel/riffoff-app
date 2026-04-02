@@ -1,10 +1,7 @@
 /**
- * Simple in-memory rate limiter for Server Actions.
- * Uses a sliding window approach with automatic cleanup.
- *
- * For production at scale, swap `memoryStore` for a Redis-backed implementation
- * of the `RateLimitStore` interface below. This is sufficient for single-instance
- * deployments with < 10k concurrent users.
+ * Rate limiter with pluggable backend.
+ * Uses in-memory Map by default; automatically switches to Upstash Redis
+ * when UPSTASH_REDIS_REST_URL is configured (for distributed deployments).
  */
 
 interface RateLimitEntry {
@@ -14,12 +11,12 @@ interface RateLimitEntry {
 
 /**
  * Pluggable store interface for rate limit state.
- * Default: in-memory Map. For horizontal scaling, implement with Redis/Upstash.
+ * Default: in-memory Map. Set UPSTASH_REDIS_REST_URL for distributed enforcement.
  */
 export interface RateLimitStore {
-  get(key: string): RateLimitEntry | undefined;
-  set(key: string, entry: RateLimitEntry): void;
-  delete(key: string): void;
+  get(key: string): RateLimitEntry | undefined | Promise<RateLimitEntry | undefined>;
+  set(key: string, entry: RateLimitEntry): void | Promise<void>;
+  delete(key: string): void | Promise<void>;
   entries(): IterableIterator<[string, RateLimitEntry]>;
 }
 
@@ -28,20 +25,64 @@ function createMemoryStore(): RateLimitStore {
   const map = new Map<string, RateLimitEntry>();
   return {
     get: (key) => map.get(key),
-    set: (key, entry) => map.set(key, entry),
-    delete: (key) => map.delete(key),
+    set: (key, entry) => { map.set(key, entry); },
+    delete: (key) => { map.delete(key); },
     entries: () => map.entries(),
   };
 }
 
-const store: RateLimitStore = createMemoryStore();
+/**
+ * Upstash Redis store — uses REST API (no dependency needed).
+ * Entries auto-expire via Redis TTL, so no cleanup interval required.
+ */
+function createUpstashStore(url: string, token: string): RateLimitStore {
+  const PREFIX = "rl:";
 
-// Clean expired entries every 60 seconds
+  async function redis(method: string, args: unknown[]): Promise<unknown> {
+    const res = await fetch(`${url}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify([method, ...args]),
+    });
+    const data = await res.json() as { result: unknown };
+    return data.result;
+  }
+
+  return {
+    async get(key: string): Promise<RateLimitEntry | undefined> {
+      const raw = await redis("GET", [`${PREFIX}${key}`]) as string | null;
+      if (!raw) return undefined;
+      try { return JSON.parse(raw) as RateLimitEntry; } catch { return undefined; }
+    },
+    async set(key: string, entry: RateLimitEntry): Promise<void> {
+      const ttlMs = Math.max(entry.resetAt - Date.now(), 1000);
+      const ttlSec = Math.ceil(ttlMs / 1000);
+      await redis("SET", [`${PREFIX}${key}`, JSON.stringify(entry), "EX", ttlSec]);
+    },
+    async delete(key: string): Promise<void> {
+      await redis("DEL", [`${PREFIX}${key}`]);
+    },
+    // Redis entries auto-expire; no iteration needed
+    entries: () => new Map<string, RateLimitEntry>().entries(),
+  };
+}
+
+/** Select store based on environment: Upstash if configured, else in-memory */
+const store: RateLimitStore = (() => {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (url && token) {
+    return createUpstashStore(url, token);
+  }
+  return createMemoryStore();
+})();
+
+// Clean expired entries every 60 seconds (in-memory only; Redis uses TTL)
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
     for (const [key, entry] of store.entries()) {
-      if (entry.resetAt <= now) store.delete(key);
+      if (entry.resetAt <= now) void store.delete(key);
     }
   }, 60_000);
 }
@@ -64,19 +105,20 @@ export interface RateLimitResult {
 /**
  * Check rate limit for an identifier (e.g., IP or userId).
  * Returns whether the request is allowed and remaining quota.
+ * Async to support Redis-backed stores.
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   identifier: string,
   config: RateLimitConfig,
-): RateLimitResult {
+): Promise<RateLimitResult> {
   const key = `${config.prefix}:${identifier}`;
   const now = Date.now();
 
-  const entry = store.get(key);
+  const entry = await store.get(key);
 
   // No entry or expired → allow and start fresh
   if (!entry || entry.resetAt <= now) {
-    store.set(key, { count: 1, resetAt: now + config.windowMs });
+    await store.set(key, { count: 1, resetAt: now + config.windowMs });
     return { allowed: true, remaining: config.maxRequests - 1, retryAfterMs: 0 };
   }
 
@@ -91,6 +133,7 @@ export function checkRateLimit(
 
   // Increment and allow
   entry.count++;
+  await store.set(key, entry);
   return {
     allowed: true,
     remaining: config.maxRequests - entry.count,
@@ -100,8 +143,8 @@ export function checkRateLimit(
 
 // ─── Pre-configured Rate Limiters ────────────────────
 
-/** Auth actions: 5 attempts per 15 minutes */
-export function checkAuthRateLimit(identifier: string): RateLimitResult {
+/** Auth actions: 10 attempts per 5 minutes */
+export function checkAuthRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "auth",
     maxRequests: 10,
@@ -110,7 +153,7 @@ export function checkAuthRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Payment actions: 10 attempts per 5 minutes */
-export function checkPaymentRateLimit(identifier: string): RateLimitResult {
+export function checkPaymentRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "payment",
     maxRequests: 10,
@@ -119,7 +162,7 @@ export function checkPaymentRateLimit(identifier: string): RateLimitResult {
 }
 
 /** General API: 60 requests per minute */
-export function checkApiRateLimit(identifier: string): RateLimitResult {
+export function checkApiRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "api",
     maxRequests: 60,
@@ -128,7 +171,7 @@ export function checkApiRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Scanner: 120 scans per minute (rapid scanning at the door) */
-export function checkScannerRateLimit(identifier: string): RateLimitResult {
+export function checkScannerRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "scanner",
     maxRequests: 120,
@@ -137,7 +180,7 @@ export function checkScannerRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Profile updates: 10 per 5 minutes */
-export function checkProfileRateLimit(identifier: string): RateLimitResult {
+export function checkProfileRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "profile",
     maxRequests: 10,
@@ -146,7 +189,7 @@ export function checkProfileRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Avatar uploads: 5 per 5 minutes */
-export function checkAvatarRateLimit(identifier: string): RateLimitResult {
+export function checkAvatarRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "avatar",
     maxRequests: 5,
@@ -155,7 +198,7 @@ export function checkAvatarRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Data export: 1 per hour */
-export function checkExportRateLimit(identifier: string): RateLimitResult {
+export function checkExportRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "export",
     maxRequests: 1,
@@ -164,7 +207,7 @@ export function checkExportRateLimit(identifier: string): RateLimitResult {
 }
 
 /** Sensitive settings (password, email, deletion): 3 per 15 minutes */
-export function checkSensitiveRateLimit(identifier: string): RateLimitResult {
+export function checkSensitiveRateLimit(identifier: string): Promise<RateLimitResult> {
   return checkRateLimit(identifier, {
     prefix: "sensitive",
     maxRequests: 3,

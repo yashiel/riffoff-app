@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit scanning by sessionId (120/min)
-    const scanRateLimit = checkScannerRateLimit(session.sessionId);
+    const scanRateLimit = await checkScannerRateLimit(session.sessionId);
     if (!scanRateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many scan attempts. Please slow down." },

@@ -76,7 +76,7 @@ export async function createSessionFromQR(
     throw new Error("Invalid QR code signature");
   }
 
-  // Check device limit on the gate
+  // Pre-check device limit (fast rejection for obvious over-limit)
   await enforceDeviceLimit(databases, qrPayload.eventId, qrPayload.gateId);
 
   const sessionExpiresAt = new Date(
@@ -98,6 +98,9 @@ export async function createSessionFromQR(
       lastSeenAt: now.toISOString(),
     },
   );
+
+  // Post-create validation — closes race window between count and create
+  await enforceDeviceLimit(databases, qrPayload.eventId, qrPayload.gateId, doc.$id);
 
   return {
     sessionId: doc.$id,
@@ -169,7 +172,7 @@ export async function createSessionFromPIN(
   // Use the actual gateId from PIN record (not the "default" sent by client)
   const resolvedGateId = (pinDoc.gateId as string) || gateId;
 
-  // Check device limit on the gate
+  // Pre-check device limit (fast rejection)
   await enforceDeviceLimit(databases, pinDoc.eventId as string, resolvedGateId);
 
   const sessionExpiresAt = new Date(
@@ -197,6 +200,9 @@ export async function createSessionFromPIN(
       } : {}),
     },
   );
+
+  // Post-create validation — closes race window
+  await enforceDeviceLimit(databases, pinDoc.eventId as string, resolvedGateId, doc.$id);
 
   return {
     sessionId: doc.$id,
@@ -320,11 +326,16 @@ export async function updateLastSeen(sessionId: string): Promise<void> {
  * Enforce device limit for a gate.
  * maxDevices = 0 means unlimited (no restriction).
  * Throws if adding a new device would exceed the gate's maxDevices limit.
+ *
+ * If sessionIdToRollback is provided (post-create validation), deletes
+ * the session if the limit is exceeded — closing the race window between
+ * count-check and session-create.
  */
 async function enforceDeviceLimit(
   databases: Databases,
   eventId: string,
   gateId: string,
+  sessionIdToRollback?: string,
 ): Promise<void> {
   // Fetch the gate to check maxDevices
   let gate;
@@ -348,11 +359,21 @@ async function enforceDeviceLimit(
       Query.equal("eventId", eventId),
       Query.equal("gateId", gateId),
       Query.equal("status", "active"),
+      Query.select(["$id"]),
       Query.limit(maxDevices + 1),
     ],
   );
 
-  if (activeSessions.total >= maxDevices) {
+  if (activeSessions.total > maxDevices || (!sessionIdToRollback && activeSessions.total >= maxDevices)) {
+    // If this is a post-create check, roll back the session we just created
+    if (sessionIdToRollback) {
+      await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTIONS.GATE_SESSIONS,
+        sessionIdToRollback,
+        { status: "revoked" },
+      ).catch(() => {});
+    }
     throw new Error(
       `Device limit reached. This gate allows a maximum of ${maxDevices} device${maxDevices !== 1 ? "s" : ""}.`,
     );

@@ -7,6 +7,16 @@ import { DATABASE_ID, COLLECTIONS } from "@/lib/appwrite/config";
 // Vercel: allow up to 30s for this SSE endpoint
 export const maxDuration = 30;
 
+// ─── Module-level stats cache (shared across SSE connections) ───
+// Prevents thundering herd: 1000 SSE clients → 1 DB query set per 2s, not 1000
+interface CachedStats {
+  total: { checkedIn: number; totalTickets: number };
+  gates: Array<{ gateId: string; gateName: string; checkedIn: number; devices: number; conflicts: number; lastScan?: string }>;
+  timestamp: number;
+}
+const statsCache = new Map<string, CachedStats>();
+const STATS_CACHE_TTL_MS = 2000; // 2 seconds
+
 /**
  * GET /api/gate/stream?token=<sessionId>&role=scanner|dashboard
  *
@@ -147,15 +157,18 @@ export async function GET(request: NextRequest) {
             databases.listDocuments(DATABASE_ID, COLLECTIONS.GATE_CHECKINS, [
               Query.equal("eventId", eventId),
               Query.equal("status", "confirmed"),
+              Query.select(["$id"]),
               Query.limit(1),
             ]),
             databases.listDocuments(DATABASE_ID, COLLECTIONS.GATE_SESSIONS, [
               Query.equal("eventId", eventId),
               Query.equal("status", "active"),
+              Query.select(["$id", "gateId", "deviceId"]),
               Query.limit(100),
             ]),
             databases.listDocuments(DATABASE_ID, COLLECTIONS.GATES, [
               Query.equal("eventId", eventId),
+              Query.select(["$id", "name", "sortOrder"]),
               Query.orderAsc("sortOrder"),
             ]),
           ]);
@@ -166,72 +179,74 @@ export async function GET(request: NextRequest) {
             const ticketsRes = await databases.listDocuments(
               DATABASE_ID,
               COLLECTIONS.TICKETS,
-              [Query.equal("eventId", eventId), Query.limit(1)],
+              [Query.equal("eventId", eventId), Query.select(["$id"]), Query.limit(1)],
             );
             totalTickets = ticketsRes.total;
           } catch {
             /* optional */
           }
 
-          // Build per-gate stats
-          const gateStats = await Promise.all(
-            gatesRes.documents.map(async (gate) => {
-              const gateCheckins = await databases.listDocuments(
-                DATABASE_ID,
-                COLLECTIONS.GATE_CHECKINS,
-                [
-                  Query.equal("eventId", eventId),
-                  Query.equal("gateId", gate.$id),
-                  Query.equal("status", "confirmed"),
-                  Query.limit(1),
-                ],
-              );
+          // Build per-gate stats using batched aggregation (1 query instead of 3N)
+          // Check module-level cache first to avoid thundering herd
+          const cached = statsCache.get(eventId);
+          const now = Date.now();
+          let gateStats: CachedStats["gates"];
 
-              const gateConflicts = await databases.listDocuments(
-                DATABASE_ID,
-                COLLECTIONS.GATE_CHECKINS,
-                [
-                  Query.equal("eventId", eventId),
-                  Query.equal("gateId", gate.$id),
-                  Query.equal("status", "conflicted"),
-                  Query.limit(1),
-                ],
-              );
+          if (cached && now - cached.timestamp < STATS_CACHE_TTL_MS) {
+            gateStats = cached.gates;
+          } else {
+            // Single query: fetch all checkins with minimal fields
+            const allCheckins = await databases.listDocuments(
+              DATABASE_ID,
+              COLLECTIONS.GATE_CHECKINS,
+              [
+                Query.equal("eventId", eventId),
+                Query.select(["gateId", "status", "scannedAt"]),
+                Query.limit(5000),
+              ],
+            );
 
+            // Aggregate in memory — O(n) single pass
+            const perGate = new Map<string, { confirmed: number; conflicted: number; lastScan?: string }>();
+            for (const doc of allCheckins.documents) {
+              const gId = doc.gateId as string;
+              if (!perGate.has(gId)) {
+                perGate.set(gId, { confirmed: 0, conflicted: 0 });
+              }
+              const entry = perGate.get(gId)!;
+              if (doc.status === "confirmed") {
+                entry.confirmed++;
+                const scannedAt = doc.scannedAt as string | undefined;
+                if (scannedAt && (!entry.lastScan || scannedAt > entry.lastScan)) {
+                  entry.lastScan = scannedAt;
+                }
+              } else if (doc.status === "conflicted") {
+                entry.conflicted++;
+              }
+            }
+
+            gateStats = gatesRes.documents.map((gate) => {
+              const agg = perGate.get(gate.$id) ?? { confirmed: 0, conflicted: 0 };
               const gateDevices = sessionsRes.documents.filter(
                 (s) => s.gateId === gate.$id,
               ).length;
-
-              // Get last scan for this gate
-              let lastScan: string | undefined;
-              try {
-                const lastScanRes = await databases.listDocuments(
-                  DATABASE_ID,
-                  COLLECTIONS.GATE_CHECKINS,
-                  [
-                    Query.equal("eventId", eventId),
-                    Query.equal("gateId", gate.$id),
-                    Query.orderDesc("scannedAt"),
-                    Query.limit(1),
-                  ],
-                );
-                if (lastScanRes.documents.length > 0) {
-                  lastScan = lastScanRes.documents[0].scannedAt as string;
-                }
-              } catch {
-                /* optional */
-              }
-
               return {
                 gateId: gate.$id,
                 gateName: gate.name as string,
-                checkedIn: gateCheckins.total,
+                checkedIn: agg.confirmed,
                 devices: gateDevices,
-                conflicts: gateConflicts.total,
-                lastScan,
+                conflicts: agg.conflicted,
+                lastScan: agg.lastScan,
               };
-            }),
-          );
+            });
+
+            // Update cache
+            statsCache.set(eventId, {
+              total: { checkedIn: checkinsRes.total, totalTickets },
+              gates: gateStats,
+              timestamp: now,
+            });
+          }
 
           const currentCheckinCount = checkinsRes.total;
 

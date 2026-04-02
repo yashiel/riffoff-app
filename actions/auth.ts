@@ -64,7 +64,7 @@ export async function login(
   const { email, password } = parsed.data;
 
   // Rate limit by email to prevent brute force
-  const rateLimitResult = checkAuthRateLimit(email);
+  const rateLimitResult = await checkAuthRateLimit(email);
   if (!rateLimitResult.allowed) {
     const retryMinutes = Math.ceil(rateLimitResult.retryAfterMs / 60000);
     return { error: `Too many login attempts. Try again in ${retryMinutes} minute${retryMinutes > 1 ? "s" : ""}.` };
@@ -187,7 +187,7 @@ export async function verifyOTP(
   }
 
   // Rate limit OTP verification to prevent brute force
-  const rateLimitResult = checkAuthRateLimit(`otp:${email}`);
+  const rateLimitResult = await checkAuthRateLimit(`otp:${email}`);
   if (!rateLimitResult.allowed) {
     const retryMinutes = Math.ceil(rateLimitResult.retryAfterMs / 60000);
     return { error: `Too many verification attempts. Try again in ${retryMinutes} minute${retryMinutes > 1 ? "s" : ""}.` };

@@ -101,7 +101,7 @@ export async function createReservation(
     };
   }
 
-  // Create reservation
+  // Create reservation (create-then-validate to close race window)
   const reservation = (await databases.createDocument(
     DATABASE_ID,
     COLLECTIONS.RESERVATIONS,
@@ -116,6 +116,32 @@ export async function createReservation(
       idempotencyKey,
     },
   )) as unknown as ReservationDoc;
+
+  // Re-validate after creation: if total held+sold now exceeds quota, roll back
+  const postCreateHeld = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.RESERVATIONS,
+    [
+      Query.equal("tierId", tierId),
+      Query.equal("status", "held"),
+      Query.greaterThan("expiresAt", new Date().toISOString()),
+    ],
+  );
+  const totalHeld = postCreateHeld.documents.reduce(
+    (sum, doc) => sum + ((doc as unknown as ReservationDoc).qty ?? 0),
+    0,
+  );
+
+  if (tier.soldCount + totalHeld > tier.quota) {
+    // Over-committed — cancel this reservation
+    await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.RESERVATIONS,
+      reservation.$id,
+      { status: "cancelled" },
+    );
+    return { error: "Sold out — please try again" };
+  }
 
   return { reservation: serialize(reservation) };
 }

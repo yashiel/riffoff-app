@@ -35,6 +35,8 @@ import {
   serialize,
 } from "@/lib/utils";
 
+export const revalidate = 60; // 1-minute ISR — event details, RSVPs, and ratings change more often
+
 interface EventPageProps {
   params: Promise<{ eventId: string }>;
 }
