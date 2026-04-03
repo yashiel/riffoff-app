@@ -20,6 +20,7 @@ interface EventsPageProps {
     date?: string;
     city?: string;
     page?: string;
+    cursor?: string;
   }>;
 }
 
@@ -32,6 +33,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     dateRange: (params.date as EventFilterType["dateRange"]) ?? "all",
     city: params.city,
     page: params.page ? parseInt(params.page, 10) : 1,
+    cursor: params.cursor,
   };
 
   const cookieStore = await cookies();
@@ -41,6 +43,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   let events: EventWithVenue[] = [];
   let page = 1;
   let totalPages = 1;
+  let lastCursor: string | null = null;
   let genres: string[] = [];
   let wishlistedIds: string[] = [];
   let convertedPrices: Record<string, string> = {};
@@ -56,6 +59,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     events = eventsResult.events;
     page = eventsResult.page;
     totalPages = eventsResult.totalPages;
+    lastCursor = eventsResult.lastCursor;
     genres = genresResult;
     cityEvents = cityEventsResult;
     totalEvents = cityEventsResult.reduce((acc, c) => acc + c.count, 0);
@@ -105,6 +109,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         convertedPrices={convertedPrices}
         page={page}
         totalPages={totalPages}
+        lastCursor={lastCursor}
       />
     </Suspense>
   );

@@ -16,6 +16,7 @@ interface EventsContentProps {
   convertedPrices: Record<string, string>;
   page: number;
   totalPages: number;
+  lastCursor?: string | null;
 }
 
 export function EventsContent({
@@ -27,6 +28,7 @@ export function EventsContent({
   convertedPrices,
   page,
   totalPages,
+  lastCursor,
 }: EventsContentProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -83,7 +85,7 @@ export function EventsContent({
 
             {totalPages > 1 && (
               <div className="mt-12">
-                <Pagination currentPage={page} totalPages={totalPages} />
+                <Pagination currentPage={page} totalPages={totalPages} lastCursor={lastCursor} />
               </div>
             )}
           </div>

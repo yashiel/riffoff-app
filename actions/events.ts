@@ -26,6 +26,8 @@ export interface EventFilters {
   dateRange?: "today" | "weekend" | "week" | "month" | "all";
   city?: string;
   page?: number;
+  /** Cursor for efficient deep pagination (last event $id from previous page) */
+  cursor?: string;
 }
 
 export interface EventWithVenue extends EventDoc {
@@ -45,18 +47,23 @@ export interface EventDetails {
 /** List published events with optional filters and pagination */
 export async function getPublishedEvents(filters: EventFilters = {}) {
   const { databases } = await createAdminClient();
-  const { search, genre, dateRange, city, page = 1 } = filters;
+  const { search, genre, dateRange, city, page = 1, cursor } = filters;
 
   // When city filtering is active, fetch more since we filter post-join
   const fetchLimit = city ? 500 : PAGE_SIZE;
-  const fetchOffset = city ? 0 : (page - 1) * PAGE_SIZE;
 
   const queries: string[] = [
     Query.equal("status", "published"),
     Query.orderDesc("startsAt"),
     Query.limit(fetchLimit),
-    Query.offset(fetchOffset),
   ];
+
+  // Cursor-based pagination (fast for deep pages) takes priority over offset
+  if (cursor && !city) {
+    queries.push(Query.cursorAfter(cursor));
+  } else if (!city) {
+    queries.push(Query.offset((page - 1) * PAGE_SIZE));
+  }
 
   // Date filtering
   const now = new Date().toISOString();
@@ -155,12 +162,17 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
     ? eventsWithVenue.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
     : eventsWithVenue;
 
+  // Last event ID for cursor-based "Next" navigation
+  const lastEvent = paginatedEvents[paginatedEvents.length - 1];
+  const lastCursor = lastEvent?.$id ?? null;
+
   return {
     events: serialize(paginatedEvents),
     total,
     page,
     pageSize: PAGE_SIZE,
     totalPages,
+    lastCursor,
   };
 }
 

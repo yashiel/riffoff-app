@@ -8,19 +8,28 @@ import { cn } from "@/lib/utils";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
+  /** Last event $id for cursor-based "Next" navigation (faster than offset for deep pages) */
+  lastCursor?: string | null;
 }
 
-export function Pagination({ currentPage, totalPages }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, lastCursor }: PaginationProps) {
   const searchParams = useSearchParams();
 
   if (totalPages <= 1) return null;
 
-  function getPageUrl(page: number): string {
+  function getPageUrl(page: number, cursor?: string): string {
     const params = new URLSearchParams(searchParams.toString());
     if (page <= 1) {
       params.delete("page");
+      params.delete("cursor");
     } else {
       params.set("page", String(page));
+      // Use cursor for "Next" navigation (fast for deep pages)
+      if (cursor) {
+        params.set("cursor", cursor);
+      } else {
+        params.delete("cursor");
+      }
     }
     return `/events?${params.toString()}`;
   }
@@ -44,7 +53,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
       aria-label="Pagination"
       className="flex items-center justify-center gap-1"
     >
-      {/* Previous */}
+      {/* Previous — always uses offset (going backward is fine) */}
       {currentPage > 1 ? (
         <Link
           href={getPageUrl(currentPage - 1)}
@@ -59,7 +68,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         </span>
       )}
 
-      {/* Page numbers */}
+      {/* Page numbers — use offset (bookmarkable, direct jump) */}
       {pages.map((p, i) =>
         p === "..." ? (
           <span
@@ -85,10 +94,10 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         )
       )}
 
-      {/* Next */}
+      {/* Next — uses cursor for fast deep pagination */}
       {currentPage < totalPages ? (
         <Link
-          href={getPageUrl(currentPage + 1)}
+          href={getPageUrl(currentPage + 1, lastCursor ?? undefined)}
           className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label="Next page"
         >
