@@ -58,7 +58,7 @@ vi.mock("node-appwrite", async () => {
 // Imports — real modules under test
 // ---------------------------------------------------------------------------
 
-import { generateKeyPair, sign, verify } from "../../crypto/ed25519";
+import { generateKeyPair } from "../../crypto/ed25519";
 import {
   generateFingerprint,
   validateFingerprint,

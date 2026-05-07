@@ -809,7 +809,7 @@ describe("Moderation Security Tests", () => {
 
       // Appeal doc
       mockGetDocument.mockImplementation(
-        (_db: string, coll: string, docId: string) => {
+        (_db: string, coll: string, _docId: string) => {
           if (coll === "appeals") {
             return Promise.resolve({
               $id: "appeal-1",

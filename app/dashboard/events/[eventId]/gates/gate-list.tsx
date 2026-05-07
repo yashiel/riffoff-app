@@ -10,7 +10,6 @@ import {
   DoorOpen,
   Shield,
   QrCode,
-  KeyRound,
   Copy,
   Check,
   Download,

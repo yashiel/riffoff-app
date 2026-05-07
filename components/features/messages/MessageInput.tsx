@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Paperclip, X } from "lucide-react";
 import { sendMessage, sendMessageWithAttachment } from "@/actions/messages";
 
@@ -14,6 +14,24 @@ export function MessageInput({ applicationId, onMessageSent }: MessageInputProps
   const [file, setFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Listen for quick-reply templates from the QuickReplies component.
+  // CustomEvent.detail is the body string to pre-fill.
+  useEffect(() => {
+    function handleQuickReply(e: Event) {
+      const detail = (e as CustomEvent<string>).detail;
+      if (typeof detail !== "string") return;
+      setBody(detail);
+      // Focus + select all so the organiser can edit immediately
+      requestAnimationFrame(() => {
+        textareaRef.current?.focus();
+        textareaRef.current?.select();
+      });
+    }
+    window.addEventListener("riffoff:quick-reply", handleQuickReply);
+    return () => window.removeEventListener("riffoff:quick-reply", handleQuickReply);
+  }, []);
 
   const canSend = body.trim().length > 0 || file !== null;
 
@@ -91,6 +109,7 @@ export function MessageInput({ applicationId, onMessageSent }: MessageInputProps
 
         {/* Text input */}
         <textarea
+          ref={textareaRef}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Type a message..."

@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { z } from "zod/v4";
 
 /**
  * PayPal Integration Logic Tests
@@ -106,9 +107,6 @@ describe("PayPal providerRef idempotency", () => {
 });
 
 describe("PayPal checkout input validation (Zod schema)", () => {
-  // Recreate the route input schema
-  const { z } = require("zod/v4");
-
   const createOrderSchema = z.object({
     orderId: z.string().min(1),
   });

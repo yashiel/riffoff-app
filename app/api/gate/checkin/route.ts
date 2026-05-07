@@ -87,8 +87,8 @@ export async function POST(request: NextRequest) {
     let seatInfo: string | null = null;
     let firstScannedAt: string | null = null;
     let firstScannedByGate: string | null = null;
-    let checkedIn = 0;
-    let total = 0;
+    const checkedIn = 0;
+    const total = 0;
 
     try {
       const { databases: adminDb } = await createAdminClient();

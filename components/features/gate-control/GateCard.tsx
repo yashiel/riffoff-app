@@ -9,7 +9,6 @@ import {
   Clock,
   DoorOpen,
   ChevronDown,
-  KeyRound,
   Copy,
   Check,
   QrCode,
@@ -50,7 +49,7 @@ export function GateCard({
   const [expanded, setExpanded] = useState(false);
   const [generatedPIN, setGeneratedPIN] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  const [qrRawData, setQrRawData] = useState<string | null>(null);
+  const [, setQrRawData] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [generating, setGenerating] = useState(false);
 

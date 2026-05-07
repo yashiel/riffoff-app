@@ -52,9 +52,13 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
   // When city filtering is active, fetch more since we filter post-join
   const fetchLimit = city ? 500 : PAGE_SIZE;
 
+  // Default ordering — soonest events first. Standard discovery UX:
+  // attendees want to see what's happening next, not what's furthest away.
+  const now = new Date().toISOString();
   const queries: string[] = [
     Query.equal("status", "published"),
-    Query.orderDesc("startsAt"),
+    Query.greaterThanEqual("startsAt", now), // hide past events from discovery
+    Query.orderAsc("startsAt"),
     Query.limit(fetchLimit),
   ];
 
@@ -65,11 +69,8 @@ export async function getPublishedEvents(filters: EventFilters = {}) {
     queries.push(Query.offset((page - 1) * PAGE_SIZE));
   }
 
-  // Date filtering
-  const now = new Date().toISOString();
+  // Date filtering — narrow the upcoming window further when a date pill is selected
   if (dateRange && dateRange !== "all") {
-    queries.push(Query.greaterThanEqual("startsAt", now));
-
     const end = getDateRangeEnd(dateRange);
     if (end) {
       queries.push(Query.lessThanEqual("startsAt", end));

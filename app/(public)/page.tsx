@@ -38,7 +38,7 @@ export default async function HomePage() {
 
   const cookieStore = await cookies();
   const displayCurrency = cookieStore.get("riffoff-currency")?.value || "original";
-  let convertedPrices: Record<string, string> = {};
+  const convertedPrices: Record<string, string> = {};
   if (displayCurrency !== "original" && upcomingEvents.length > 0) {
     try {
       const rates = await getExchangeRates("USD");

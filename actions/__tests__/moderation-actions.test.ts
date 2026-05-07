@@ -90,24 +90,6 @@ function mockAdminAuth() {
   });
 }
 
-function mockNonAdminAuth() {
-  mockAccountGet.mockResolvedValue(NORMAL_USER);
-  mockListDocuments.mockResolvedValue({
-    total: 1,
-    documents: [
-      {
-        $id: "prof-user",
-        userId: NORMAL_USER.$id,
-        role: "attendee",
-        displayName: "Normal User",
-        communityRole: "member",
-        warningCount: 0,
-        banLevel: "none",
-      },
-    ],
-  });
-}
-
 // ─── Tests ──────────────────────────────────────────────────
 
 describe("submitReport", () => {

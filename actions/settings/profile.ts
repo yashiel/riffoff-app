@@ -1,6 +1,6 @@
 "use server";
 
-import { Query } from "node-appwrite";
+import { Query, Permission, Role } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
@@ -177,6 +177,9 @@ export async function uploadAvatar(
       BUCKETS.PROFILE_AVATARS,
       fileId,
       InputFile.fromBuffer(buffer, file.name),
+      // Avatars are intentionally public-readable — they appear on the
+      // user's lineup, applications, comments, and gate scanner.
+      [Permission.read(Role.any())],
     );
 
     const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;

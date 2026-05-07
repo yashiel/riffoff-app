@@ -46,21 +46,21 @@ const ICON_MAP: Record<NotificationType, React.ElementType> = {
 const COLOR_MAP: Record<NotificationType, string> = {
   ticket_purchased: "text-coral",
   event_published: "text-coral",
-  event_cancelled: "text-red-400",
-  application_submitted: "text-blue-400",
-  application_accepted: "text-emerald-400",
-  application_rejected: "text-red-400",
-  application_shortlisted: "text-amber-400",
-  checkin_complete: "text-emerald-400",
+  event_cancelled: "text-rose-700 dark:text-rose-400",
+  application_submitted: "text-blue-700 dark:text-blue-400",
+  application_accepted: "text-emerald-700 dark:text-emerald-400",
+  application_rejected: "text-rose-700 dark:text-rose-400",
+  application_shortlisted: "text-amber-700 dark:text-amber-400",
+  checkin_complete: "text-emerald-700 dark:text-emerald-400",
   system: "text-muted-foreground",
-  moderation_warning: "text-amber-400",
-  moderation_ban: "text-red-500",
-  moderation_appeal_result: "text-blue-400",
-  event_suspended: "text-red-400",
-  event_reinstated: "text-emerald-400",
-  rating_received: "text-amber-400",
-  community_guardian_promoted: "text-purple-400",
-  verified_badge_granted: "text-emerald-400",
+  moderation_warning: "text-amber-700 dark:text-amber-400",
+  moderation_ban: "text-rose-700 dark:text-rose-500",
+  moderation_appeal_result: "text-blue-700 dark:text-blue-400",
+  event_suspended: "text-rose-700 dark:text-rose-400",
+  event_reinstated: "text-emerald-700 dark:text-emerald-400",
+  rating_received: "text-amber-700 dark:text-amber-400",
+  community_guardian_promoted: "text-purple-700 dark:text-purple-400",
+  verified_badge_granted: "text-emerald-700 dark:text-emerald-400",
 };
 
 interface NotificationItemProps {
@@ -85,10 +85,10 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 
   const content = (
     <div
-      className={`flex gap-3 rounded-xl p-3 transition-colors ${
+      className={`flex gap-3 rounded-xl p-3 transition-colors cursor-pointer ${
         isUnread
-          ? "bg-[var(--border)] hover:bg-[var(--border)]"
-          : "opacity-60 hover:opacity-80"
+          ? "bg-coral/5 ring-1 ring-coral/15 hover:bg-coral/10"
+          : "hover:bg-muted/40"
       } ${isPending ? "opacity-50" : ""}`}
       onClick={handleClick}
       role="button"

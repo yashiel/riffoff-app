@@ -84,7 +84,6 @@ describe("Role-based access contracts", () => {
 
   it("attendee cannot access organiser routes", () => {
     const role = "attendee";
-    const organiserRoutes = ["/dashboard/events", "/dashboard/scanner"];
     const allowedRoles = ["organiser", "admin"];
     expect(allowedRoles.includes(role)).toBe(false);
   });

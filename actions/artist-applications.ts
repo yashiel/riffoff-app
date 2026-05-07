@@ -226,3 +226,41 @@ export async function getMyApplications(): Promise<ArtistApplicationWithEvent[]>
     };
   }));
 }
+
+// ─── Lookup: Has the current artist applied to a specific event? ──────────
+
+/**
+ * Returns the current user's application for the given event, or null.
+ * Used by the public event detail page to render the right CTA
+ * ("Apply to Perform" vs "View your application: status").
+ */
+export async function getMyApplicationForEvent(
+  eventId: string,
+): Promise<ApplicationDoc | null> {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return null;
+
+  let user;
+  try {
+    user = await sessionClient.account.get();
+  } catch {
+    return null;
+  }
+
+  const { databases } = await createAdminClient();
+
+  const result = await databases.listDocuments(
+    DATABASE_ID,
+    COLLECTIONS.APPLICATIONS,
+    [
+      Query.equal("eventId", eventId),
+      Query.equal("artistId", user.$id),
+      Query.orderDesc("submittedAt"),
+      Query.limit(1),
+    ],
+  );
+
+  if (result.total === 0) return null;
+  const doc = result.documents[0] as unknown as ApplicationDoc;
+  return serialize(doc);
+}

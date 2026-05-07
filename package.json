@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "demo:seed": "tsx scripts/demo-seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -56,6 +57,7 @@
     "eslint-config-next": "16.2.1",
     "jsdom": "^29.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.0"
   }

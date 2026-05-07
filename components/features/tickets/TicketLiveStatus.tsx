@@ -44,6 +44,8 @@ export function TicketLiveStatus({
     // Don't poll if already checked in
     if (isCheckedIn) return;
 
+    // Immediate check on mount — avoids waiting full pollInterval after scan
+    checkStatus();
     const interval = setInterval(checkStatus, pollInterval);
 
     return () => clearInterval(interval);

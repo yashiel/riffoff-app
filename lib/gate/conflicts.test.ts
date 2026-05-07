@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ID } from "node-appwrite";
 
 const mockCreateDocument = vi.fn();
 const mockGetDocument = vi.fn();
@@ -31,6 +30,20 @@ vi.mock("node-appwrite", async () => {
 
 import { processCheckIn, processBatchSync } from "./conflicts";
 import type { CheckInInput } from "./conflicts";
+import { createHash } from "crypto";
+
+/**
+ * processCheckIn uses a deterministic SHA-256 hash of `ticketId:eventId`
+ * (sliced to 36 chars) as the gate-checkin document ID. This prevents
+ * race conditions between two scanners hitting the same ticket — the
+ * second create call hits a 409 conflict and we return "already_checked_in".
+ */
+function expectedCheckinId(ticketId: string, eventId: string): string {
+  return createHash("sha256")
+    .update(`${ticketId}:${eventId}`)
+    .digest("hex")
+    .slice(0, 36);
+}
 
 function makeInput(overrides: Partial<CheckInInput> = {}): CheckInInput {
   return {
@@ -62,14 +75,17 @@ describe("processCheckIn", () => {
 
     const result = await processCheckIn(makeInput());
 
-    expect(result.status).toBe("confirmed");
-    expect(result.checkinId).toBe("generated-id");
+    const expectedId = expectedCheckinId("ticket-1", "event-1");
 
-    // Verify gate-checkin doc created with status "confirmed"
+    expect(result.status).toBe("confirmed");
+    expect(result.checkinId).toBe(expectedId);
+
+    // Verify gate-checkin doc created with status "confirmed" and the
+    // deterministic ID derived from ticketId+eventId.
     expect(mockCreateDocument).toHaveBeenCalledWith(
       "riffoff",
       "gate-checkins",
-      "generated-id",
+      expectedId,
       expect.objectContaining({
         ticketId: "ticket-1",
         eventId: "event-1",

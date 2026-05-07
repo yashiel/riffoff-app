@@ -8,6 +8,7 @@ import { isCurrentUserAdmin } from "@/lib/auth-utils";
 import { notifyApplicationStatusChanged } from "@/actions/notifications";
 import { sendApplicationStatusEmail } from "@/lib/email";
 import { serialize } from "@/lib/utils";
+import { ORGANISER_DECISIONS } from "@/lib/applications/status-meta";
 import type {
   ApplicationDoc,
   ApplicationStatus,
@@ -78,16 +79,7 @@ export async function getEventApplications(
   })));
 }
 
-/** Valid status transitions */
-const VALID_TRANSITIONS: Record<ApplicationStatus, ApplicationStatus[]> = {
-  submitted: ["shortlisted", "rejected"],
-  shortlisted: ["accepted", "rejected"],
-  accepted: [],
-  rejected: [],
-  withdrawn: [],
-};
-
-/** Update application status (organiser action) */
+/** Update application status (organiser action — reversible) */
 export async function updateApplicationStatus(
   applicationId: string,
   newStatus: ApplicationStatus,
@@ -114,12 +106,15 @@ export async function updateApplicationStatus(
   const adminStatus = await isCurrentUserAdmin();
   if (event.organiserId !== user.$id && !adminStatus) return { error: "Not authorized" };
 
-  // Validate transition
-  const allowed = VALID_TRANSITIONS[application.status];
-  if (!allowed || !allowed.includes(newStatus)) {
-    return {
-      error: `Cannot change status from "${application.status}" to "${newStatus}"`,
-    };
+  // Validate the request
+  if (!ORGANISER_DECISIONS.includes(newStatus)) {
+    return { error: `"${newStatus}" is not an organiser-changeable status` };
+  }
+  if (application.status === "withdrawn") {
+    return { error: "The artist has withdrawn this application — it cannot be changed" };
+  }
+  if (application.status === newStatus) {
+    return {}; // no-op — already there
   }
 
   try {
@@ -174,6 +169,9 @@ export async function updateApplicationStatus(
     }
 
     revalidatePath(`/dashboard/events/${application.eventId}/applications`);
+    revalidatePath(`/dashboard/events/${application.eventId}/applications/${applicationId}`);
+    revalidatePath(`/events/${application.eventId}`);
+    revalidatePath("/dashboard/applications");
     return {};
   } catch {
     return { error: "Failed to update application status" };

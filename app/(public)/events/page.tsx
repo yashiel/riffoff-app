@@ -46,7 +46,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   let lastCursor: string | null = null;
   let genres: string[] = [];
   let wishlistedIds: string[] = [];
-  let convertedPrices: Record<string, string> = {};
+  const convertedPrices: Record<string, string> = {};
   let cityEvents: Array<{ cityId: string; count: number }> = [];
   let totalEvents = 0;
 

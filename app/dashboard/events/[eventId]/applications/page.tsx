@@ -4,9 +4,13 @@ import { ArrowLeft } from "lucide-react";
 import { getEventById } from "@/actions/events";
 import { getEventApplications } from "@/actions/applications";
 import { ApplicationList } from "@/components/features/applications/ApplicationList";
+import { EventApplicationsRealtime } from "@/components/features/applications/EventApplicationsRealtime";
 import { serialize } from "@/lib/utils";
 
 export const metadata = { title: "Manage Applications" };
+
+// Always render fresh — realtime triggers router.refresh() on every queue change.
+export const dynamic = "force-dynamic";
 
 interface ApplicationsPageProps {
   params: Promise<{ eventId: string }>;
@@ -21,6 +25,7 @@ export default async function ApplicationsPage({ params }: ApplicationsPageProps
 
   return (
     <div>
+      <EventApplicationsRealtime eventId={eventId} />
       <Link
         href={`/dashboard/events/${eventId}`}
         className="mb-4 inline-flex items-center gap-1.5 text-base text-muted-foreground transition-colors hover:text-coral"
