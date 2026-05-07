@@ -4,6 +4,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
  * PayPal Create Order Route Handler Tests
  *
  * Tests the /api/paypal/create-order endpoint logic:
+ * - Auth check (session required)
+ * - Order ownership verification
  * - Input validation
  * - Order status checks
  * - Idempotent reuse of existing PayPal orders
@@ -11,17 +13,24 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
  * - Error handling
  */
 
-// Mock Appwrite
+// ─── Mocks ────────────────────────────────────────────
+
 const mockGetDocument = vi.fn();
 const mockUpdateDocument = vi.fn();
+const mockAccountGet = vi.fn();
 
 vi.mock("@/lib/appwrite/server", () => ({
-  createAdminClient: vi.fn().mockResolvedValue({
-    databases: {
-      getDocument: (...args: unknown[]) => mockGetDocument(...args),
-      updateDocument: (...args: unknown[]) => mockUpdateDocument(...args),
-    },
-  }),
+  createSessionClient: () =>
+    Promise.resolve({
+      account: { get: () => mockAccountGet() },
+    }),
+  createAdminClient: () =>
+    Promise.resolve({
+      databases: {
+        getDocument: (...args: unknown[]) => mockGetDocument(...args),
+        updateDocument: (...args: unknown[]) => mockUpdateDocument(...args),
+      },
+    }),
 }));
 
 vi.mock("@/lib/appwrite/config", () => ({
@@ -29,7 +38,6 @@ vi.mock("@/lib/appwrite/config", () => ({
   COLLECTIONS: { ORDERS: "orders" },
 }));
 
-// Mock PayPal orders
 const mockCreatePayPalOrder = vi.fn();
 vi.mock("@/lib/payments/paypal/orders", () => ({
   createPayPalOrder: (...args: unknown[]) => mockCreatePayPalOrder(...args),
@@ -39,9 +47,11 @@ beforeEach(() => {
   mockGetDocument.mockReset();
   mockUpdateDocument.mockReset();
   mockCreatePayPalOrder.mockReset();
+  mockAccountGet.mockReset();
+  // Default: an authenticated user who owns the order in question
+  mockAccountGet.mockResolvedValue({ $id: "user-1" });
 });
 
-// Helper to create a mock NextRequest
 function makeRequest(body: Record<string, unknown>) {
   return {
     json: async () => body,
@@ -67,8 +77,29 @@ describe("POST /api/paypal/create-order", () => {
     expect(data.error).toBe("Invalid input");
   });
 
+  it("returns 404 when the order belongs to a different user", async () => {
+    mockGetDocument.mockResolvedValueOnce({
+      $id: "order-1",
+      userId: "someone-else",
+      status: "pending",
+      amount: 5800,
+      currency: "USD",
+    });
+
+    const { POST } = await import("@/app/api/paypal/create-order/route");
+    const res = await POST(makeRequest({ orderId: "order-1" }) as never);
+
+    expect(res.status).toBe(404);
+  });
+
   it("rejects order that is not pending", async () => {
-    mockGetDocument.mockResolvedValue({ $id: "order-1", status: "paid", amount: 5800, currency: "USD" });
+    mockGetDocument.mockResolvedValueOnce({
+      $id: "order-1",
+      userId: "user-1",
+      status: "paid",
+      amount: 5800,
+      currency: "USD",
+    });
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     const res = await POST(makeRequest({ orderId: "order-1" }) as never);
@@ -79,8 +110,9 @@ describe("POST /api/paypal/create-order", () => {
   });
 
   it("reuses existing PayPal order when providerRef is set", async () => {
-    mockGetDocument.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
       $id: "order-1",
+      userId: "user-1",
       status: "pending",
       amount: 5800,
       currency: "USD",
@@ -93,19 +125,20 @@ describe("POST /api/paypal/create-order", () => {
 
     expect(res.status).toBe(200);
     expect(data.id).toBe("PP-EXISTING-123");
-    expect(mockCreatePayPalOrder).not.toHaveBeenCalled(); // No new PayPal order
+    expect(mockCreatePayPalOrder).not.toHaveBeenCalled();
   });
 
   it("does NOT reuse providerRef that starts with pending_", async () => {
-    mockGetDocument.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
       $id: "order-1",
+      userId: "user-1",
       status: "pending",
       amount: 5800,
       currency: "USD",
       providerRef: "pending_order-1",
     });
-    mockCreatePayPalOrder.mockResolvedValue({ id: "PP-NEW-456" });
-    mockUpdateDocument.mockResolvedValue({});
+    mockCreatePayPalOrder.mockResolvedValueOnce({ id: "PP-NEW-456" });
+    mockUpdateDocument.mockResolvedValueOnce({});
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     const res = await POST(makeRequest({ orderId: "order-1" }) as never);
@@ -117,15 +150,16 @@ describe("POST /api/paypal/create-order", () => {
   });
 
   it("creates PayPal order with correct amount and currency", async () => {
-    mockGetDocument.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
       $id: "order-2",
+      userId: "user-1",
       status: "pending",
       amount: 10750,
       currency: "USD",
       providerRef: "pending_order-2",
     });
-    mockCreatePayPalOrder.mockResolvedValue({ id: "PP-ORDER-789" });
-    mockUpdateDocument.mockResolvedValue({});
+    mockCreatePayPalOrder.mockResolvedValueOnce({ id: "PP-ORDER-789" });
+    mockUpdateDocument.mockResolvedValueOnce({});
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     const res = await POST(makeRequest({ orderId: "order-2" }) as never);
@@ -140,15 +174,16 @@ describe("POST /api/paypal/create-order", () => {
   });
 
   it("updates providerRef in Appwrite after creating PayPal order", async () => {
-    mockGetDocument.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
       $id: "order-3",
+      userId: "user-1",
       status: "pending",
       amount: 5000,
       currency: "USD",
       providerRef: "pending_order-3",
     });
-    mockCreatePayPalOrder.mockResolvedValue({ id: "PP-ORDER-ABC" });
-    mockUpdateDocument.mockResolvedValue({});
+    mockCreatePayPalOrder.mockResolvedValueOnce({ id: "PP-ORDER-ABC" });
+    mockUpdateDocument.mockResolvedValueOnce({});
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     await POST(makeRequest({ orderId: "order-3" }) as never);
@@ -162,14 +197,15 @@ describe("POST /api/paypal/create-order", () => {
   });
 
   it("returns 500 when PayPal API fails", async () => {
-    mockGetDocument.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
       $id: "order-4",
+      userId: "user-1",
       status: "pending",
       amount: 5000,
       currency: "USD",
       providerRef: "pending_order-4",
     });
-    mockCreatePayPalOrder.mockRejectedValue(new Error("PayPal API error"));
+    mockCreatePayPalOrder.mockRejectedValueOnce(new Error("PayPal API error"));
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     const res = await POST(makeRequest({ orderId: "order-4" }) as never);
@@ -180,7 +216,7 @@ describe("POST /api/paypal/create-order", () => {
   });
 
   it("returns 500 when Appwrite document fetch fails", async () => {
-    mockGetDocument.mockRejectedValue(new Error("Document not found"));
+    mockGetDocument.mockRejectedValueOnce(new Error("Document not found"));
 
     const { POST } = await import("@/app/api/paypal/create-order/route");
     const res = await POST(makeRequest({ orderId: "nonexistent" }) as never);

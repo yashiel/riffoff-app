@@ -55,9 +55,9 @@ export function ConfirmDialog({
       <DialogTrigger asChild disabled={disabled}>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="border-[var(--border)] bg-[#1e1e1e] sm:max-w-md">
+      <DialogContent className="border-border bg-popover text-popover-foreground sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className={danger ? "text-red-400" : ""}>{title}</DialogTitle>
+          <DialogTitle className={danger ? "text-rose-700 dark:text-rose-400" : ""}>{title}</DialogTitle>
           <DialogDescription className="text-base text-muted-foreground">
             {description}
           </DialogDescription>

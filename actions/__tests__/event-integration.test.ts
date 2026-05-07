@@ -7,8 +7,7 @@ import { z } from "zod/v4";
  */
 
 // Event status machine
-const EVENT_STATUSES = ["draft", "published", "cancelled"] as const;
-type EventStatus = (typeof EVENT_STATUSES)[number];
+type EventStatus = "draft" | "published" | "cancelled";
 
 const VALID_TRANSITIONS: Record<EventStatus, EventStatus[]> = {
   draft: ["published"],

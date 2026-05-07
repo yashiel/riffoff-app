@@ -190,7 +190,14 @@ export async function sendMessageWithAttachment(
       inputFile,
     );
 
-    const attachmentUrl = `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${BUCKETS.ARTIST_RIDERS}/files/${uploaded.$id}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
+    // Route attachment URLs through our authenticated proxy so the file
+    // stays private (no anonymous read perms on the bucket). The proxy
+    // verifies thread participation before streaming the bytes.
+    // The schema's URL validator requires an absolute URL.
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/+$/, "") ??
+      "http://localhost:3000";
+    const attachmentUrl = `${appUrl}/api/messages/attachments/${uploaded.$id}`;
 
     const message = await databases.createDocument(
       DATABASE_ID,

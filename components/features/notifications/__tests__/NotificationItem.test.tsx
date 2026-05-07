@@ -74,10 +74,19 @@ describe("NotificationItem", () => {
     expect(screen.getByText("Just now")).toBeInTheDocument();
   });
 
-  it("applies reduced opacity for read notifications", () => {
+  it("does not apply the unread coral highlight for read notifications", () => {
     const readNotif = { ...baseNotification, readAt: new Date().toISOString() };
     const { container } = render(<NotificationItem notification={readNotif} />);
-    const item = container.querySelector(".opacity-60");
-    expect(item).toBeInTheDocument();
+    // The unread state adds a coral-tinted ring; read notifications don't
+    expect(container.querySelector(".ring-coral\\/15")).not.toBeInTheDocument();
+    // Read notifications still render with a hover background class
+    expect(container.querySelector(".hover\\:bg-muted\\/40")).toBeInTheDocument();
+  });
+
+  it("applies the unread coral highlight for unread notifications", () => {
+    const { container } = render(
+      <NotificationItem notification={baseNotification} />,
+    );
+    expect(container.querySelector(".ring-coral\\/15")).toBeInTheDocument();
   });
 });

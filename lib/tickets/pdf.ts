@@ -227,7 +227,7 @@ export async function generateTicketPDF(data: TicketPDFData): Promise<Buffer> {
         width: 500,
         margin: 2,
         color: { dark: "#000000", light: "#ffffff" },
-        type: "png" as "png",
+        type: "png" as const,
       });
       const qrImage = await doc.embedPng(qrPng);
       const qrSize = 160;

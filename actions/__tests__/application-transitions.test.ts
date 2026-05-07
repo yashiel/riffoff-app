@@ -1,64 +1,75 @@
 import { describe, it, expect } from "vitest";
 import type { ApplicationStatus } from "@/lib/appwrite/types";
 
-/** Valid status transitions — mirrors the logic in actions/applications.ts */
-const VALID_TRANSITIONS: Record<ApplicationStatus, ApplicationStatus[]> = {
-  submitted: ["shortlisted", "rejected"],
-  shortlisted: ["accepted", "rejected"],
-  accepted: [],
-  rejected: [],
-  withdrawn: [],
-};
+/**
+ * Status transition rules — mirrors the logic in actions/applications.ts
+ *
+ * Organiser-driven statuses are fully reversible — the organiser can change
+ * their mind at any time. `withdrawn` is the artist's own decision and is
+ * terminal: organisers cannot un-withdraw an application on the artist's behalf.
+ */
+const ORGANISER_DECISIONS: ApplicationStatus[] = [
+  "submitted",
+  "shortlisted",
+  "accepted",
+  "rejected",
+];
 
-describe("Application status transitions", () => {
-  it("submitted can transition to shortlisted", () => {
-    expect(VALID_TRANSITIONS["submitted"]).toContain("shortlisted");
+function organiserCanChange(
+  from: ApplicationStatus,
+  to: ApplicationStatus,
+): boolean {
+  if (from === "withdrawn") return false; // artist decision is terminal
+  if (!ORGANISER_DECISIONS.includes(to)) return false; // organiser can never withdraw
+  return true;
+}
+
+describe("Application status transitions (reversible)", () => {
+  it("submitted → shortlisted is allowed", () => {
+    expect(organiserCanChange("submitted", "shortlisted")).toBe(true);
   });
 
-  it("submitted can transition to rejected", () => {
-    expect(VALID_TRANSITIONS["submitted"]).toContain("rejected");
+  it("submitted → accepted is allowed (organiser may skip shortlisting)", () => {
+    expect(organiserCanChange("submitted", "accepted")).toBe(true);
   });
 
-  it("submitted CANNOT transition directly to accepted", () => {
-    expect(VALID_TRANSITIONS["submitted"]).not.toContain("accepted");
+  it("submitted → rejected is allowed", () => {
+    expect(organiserCanChange("submitted", "rejected")).toBe(true);
   });
 
-  it("shortlisted can transition to accepted", () => {
-    expect(VALID_TRANSITIONS["shortlisted"]).toContain("accepted");
+  it("accepted → shortlisted is allowed (organiser changes their mind)", () => {
+    expect(organiserCanChange("accepted", "shortlisted")).toBe(true);
   });
 
-  it("shortlisted can transition to rejected", () => {
-    expect(VALID_TRANSITIONS["shortlisted"]).toContain("rejected");
+  it("accepted → rejected is allowed (organiser reverses acceptance)", () => {
+    expect(organiserCanChange("accepted", "rejected")).toBe(true);
   });
 
-  it("accepted is a terminal state (no transitions)", () => {
-    expect(VALID_TRANSITIONS["accepted"]).toHaveLength(0);
+  it("rejected → shortlisted is allowed (organiser reconsiders)", () => {
+    expect(organiserCanChange("rejected", "shortlisted")).toBe(true);
   });
 
-  it("rejected is a terminal state (no transitions)", () => {
-    expect(VALID_TRANSITIONS["rejected"]).toHaveLength(0);
+  it("rejected → accepted is allowed (organiser fully reverses rejection)", () => {
+    expect(organiserCanChange("rejected", "accepted")).toBe(true);
   });
 
-  it("withdrawn is a terminal state (no transitions)", () => {
-    expect(VALID_TRANSITIONS["withdrawn"]).toHaveLength(0);
+  it("any organiser status can be reset back to submitted", () => {
+    expect(organiserCanChange("shortlisted", "submitted")).toBe(true);
+    expect(organiserCanChange("accepted", "submitted")).toBe(true);
+    expect(organiserCanChange("rejected", "submitted")).toBe(true);
   });
 
-  it("no status can transition to submitted (start state only)", () => {
-    for (const transitions of Object.values(VALID_TRANSITIONS)) {
-      expect(transitions).not.toContain("submitted");
+  it("withdrawn is terminal — organiser cannot change it", () => {
+    expect(organiserCanChange("withdrawn", "submitted")).toBe(false);
+    expect(organiserCanChange("withdrawn", "shortlisted")).toBe(false);
+    expect(organiserCanChange("withdrawn", "accepted")).toBe(false);
+    expect(organiserCanChange("withdrawn", "rejected")).toBe(false);
+  });
+
+  it("organiser cannot transition any status to withdrawn (artist-only)", () => {
+    for (const from of ORGANISER_DECISIONS) {
+      expect(organiserCanChange(from, "withdrawn")).toBe(false);
     }
-  });
-
-  it("no status can transition to withdrawn (artist action only)", () => {
-    for (const transitions of Object.values(VALID_TRANSITIONS)) {
-      expect(transitions).not.toContain("withdrawn");
-    }
-  });
-
-  it("enforces a linear pipeline: submitted → shortlisted → accepted", () => {
-    expect(VALID_TRANSITIONS["submitted"]).toContain("shortlisted");
-    expect(VALID_TRANSITIONS["shortlisted"]).toContain("accepted");
-    expect(VALID_TRANSITIONS["submitted"]).not.toContain("accepted");
   });
 });
 

@@ -106,7 +106,7 @@ export function NotificationBell() {
       >
         <Bell className="size-4" />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-3.5 items-center justify-center rounded-full bg-coral text-[8px] font-bold text-black">
+          <span className="absolute -right-0.5 -top-0.5 flex size-3.5 items-center justify-center rounded-full bg-coral text-[8px] font-bold text-white ring-2 ring-background">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -114,9 +114,9 @@ export function NotificationBell() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-2xl border border-[var(--border)] bg-[#1e1e1e] shadow-2xl sm:w-80 lg:bottom-full lg:left-0 lg:right-auto lg:top-auto lg:mt-0 lg:mb-2">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl sm:w-80 lg:bottom-full lg:left-0 lg:right-auto lg:top-auto lg:mt-0 lg:mb-2">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <h3 className="text-base font-bold text-foreground">Notifications</h3>
             {unreadCount > 0 && (
               <button
@@ -151,7 +151,7 @@ export function NotificationBell() {
           {/* View all link */}
           <Link
             href="/dashboard/notifications"
-            className="block border-t border-[var(--border)] py-2.5 text-center text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="block border-t border-border py-2.5 text-center text-base font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
             onClick={() => setIsOpen(false)}
           >
             View all notifications

@@ -316,7 +316,7 @@ describe("createFraudModerationItem", () => {
     await createFraudModerationItem(signal);
 
     expect(mockCreateDocument).toHaveBeenCalledOnce();
-    const [dbId, collId, _docId, data] = mockCreateDocument.mock.calls[0];
+    const [dbId, collId, , data] = mockCreateDocument.mock.calls[0];
     expect(dbId).toBe("test-db");
     expect(collId).toBe("moderation_items");
     expect(data.entityType).toBe("event");

@@ -84,7 +84,10 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('riffoff-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()` }}
         />
       </head>
-      <body className="grain min-h-full flex flex-col bg-background text-foreground">
+      <body
+        className="grain min-h-full flex flex-col bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <QueryProvider>
           <AuthProvider user={authUser}>
             {children}

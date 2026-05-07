@@ -23,10 +23,13 @@ import { TrustScoreBadge } from "@/components/features/trust/TrustScoreBadge";
 import { VerifiedBadge } from "@/components/features/trust/VerifiedBadge";
 import { RatingDisplay } from "@/components/features/ratings/RatingDisplay";
 import { RatingModal } from "@/components/features/ratings/RatingModal";
+import { ApplyToPerformCTA } from "@/components/features/applications/ApplyToPerformCTA";
 import { getEventWithDetails } from "@/actions/events";
 import { getUserRSVP } from "@/actions/rsvps";
 import { getOrganiserTrustData } from "@/actions/trust-score";
 import { getEventRatingsSummary } from "@/actions/ratings";
+import { getProfile } from "@/actions/profiles";
+import { getMyApplicationForEvent } from "@/actions/artist-applications";
 import { getExchangeRates, formatConvertedPrice } from "@/lib/currency";
 import {
   formatDate,
@@ -60,6 +63,16 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   const userRSVP = await getUserRSVP(eventId);
   const isPast = new Date(event.endsAt) < new Date();
 
+  // Artist-application context — only relevant for signed-in artists
+  // and the event must not have ended yet.
+  const viewerProfile = !isPast ? await getProfile() : null;
+  const isArtistViewer = viewerProfile?.role === "artist";
+  const isOwnEvent = viewerProfile?.userId === event.organiserId;
+  const myApplication =
+    isArtistViewer && !isOwnEvent
+      ? await getMyApplicationForEvent(eventId)
+      : null;
+
   // Moderation / trust data — wrapped in try/catch so they never crash the page
   let trustData: { trustScore: number; isVerified: boolean } | null = null;
   try {
@@ -80,7 +93,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   const cookieStore = await cookies();
   const displayCurrency =
     cookieStore.get("riffoff-currency")?.value || "original";
-  let convertedTierPrices: Record<string, string> = {};
+  const convertedTierPrices: Record<string, string> = {};
 
   if (displayCurrency !== "original") {
     const rates = await getExchangeRates("USD");
@@ -404,6 +417,15 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                   </Link>
                 </div>
               </div>
+            )}
+
+            {/* ─── Apply to Perform CTA (artists only) ─── */}
+            {!isPast && isArtistViewer && !isOwnEvent && (
+              <ApplyToPerformCTA
+                eventId={event.$id}
+                applicationStatus={myApplication?.status ?? null}
+                applicationId={myApplication?.$id ?? null}
+              />
             )}
 
             {/* ─── Divider ─── */}

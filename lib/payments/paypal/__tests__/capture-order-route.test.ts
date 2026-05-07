@@ -4,6 +4,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
  * PayPal Capture Order Route Handler Tests
  *
  * Tests the /api/paypal/capture-order endpoint logic:
+ * - Auth check (session required)
+ * - Order ownership verification
  * - Input validation (orderID + appOrderId required)
  * - Capture result status verification
  * - Ticket issuance delegation
@@ -11,21 +13,41 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
  * - Error handling
  */
 
-// Mock PayPal capture
+// ─── Mocks ────────────────────────────────────────────
+
 const mockCapturePayPalOrder = vi.fn();
 vi.mock("@/lib/payments/paypal/orders", () => ({
   capturePayPalOrder: (...args: unknown[]) => mockCapturePayPalOrder(...args),
 }));
 
-// Mock ticket issuance
 const mockIssueTicketsForOrder = vi.fn();
 vi.mock("@/lib/tickets/issue", () => ({
   issueTicketsForOrder: (...args: unknown[]) => mockIssueTicketsForOrder(...args),
 }));
 
+const mockGetDocument = vi.fn();
+const mockAccountGet = vi.fn();
+vi.mock("@/lib/appwrite/server", () => ({
+  createSessionClient: () =>
+    Promise.resolve({
+      account: { get: () => mockAccountGet() },
+    }),
+  createAdminClient: () =>
+    Promise.resolve({
+      databases: {
+        getDocument: (...args: unknown[]) => mockGetDocument(...args),
+      },
+    }),
+}));
+
 beforeEach(() => {
   mockCapturePayPalOrder.mockReset();
   mockIssueTicketsForOrder.mockReset();
+  mockGetDocument.mockReset();
+  mockAccountGet.mockReset();
+  // Default — authenticated user owns the order in question
+  mockAccountGet.mockResolvedValue({ $id: "user-1" });
+  mockGetDocument.mockResolvedValue({ userId: "user-1", $id: "order-default" });
 });
 
 function makeRequest(body: Record<string, unknown>) {
@@ -62,15 +84,32 @@ describe("POST /api/paypal/capture-order", () => {
     expect(data.error).toBe("Invalid input");
   });
 
+  it("returns 404 when the order belongs to a different user", async () => {
+    mockGetDocument.mockResolvedValueOnce({
+      $id: "order-1",
+      userId: "someone-else",
+    });
+
+    const { POST } = await import("@/app/api/paypal/capture-order/route");
+    const res = await POST(
+      makeRequest({ orderID: "PP-123", appOrderId: "order-1" }) as never,
+    );
+
+    expect(res.status).toBe(404);
+  });
+
   it("returns error when capture status is not COMPLETED", async () => {
-    mockCapturePayPalOrder.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({ $id: "order-1", userId: "user-1" });
+    mockCapturePayPalOrder.mockResolvedValueOnce({
       id: "PP-123",
       status: "VOIDED",
       purchase_units: [],
     });
 
     const { POST } = await import("@/app/api/paypal/capture-order/route");
-    const res = await POST(makeRequest({ orderID: "PP-123", appOrderId: "order-1" }) as never);
+    const res = await POST(
+      makeRequest({ orderID: "PP-123", appOrderId: "order-1" }) as never,
+    );
     const data = await res.json();
 
     expect(res.status).toBe(400);
@@ -78,41 +117,46 @@ describe("POST /api/paypal/capture-order", () => {
   });
 
   it("issues tickets on successful capture", async () => {
-    mockCapturePayPalOrder.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({ $id: "order-2", userId: "user-1" });
+    mockCapturePayPalOrder.mockResolvedValueOnce({
       id: "PP-456",
       status: "COMPLETED",
       purchase_units: [{ reference_id: "order-2" }],
     });
-    mockIssueTicketsForOrder.mockResolvedValue({
+    mockIssueTicketsForOrder.mockResolvedValueOnce({
       tickets: [{ $id: "ticket-1" }, { $id: "ticket-2" }],
       alreadyProcessed: false,
     });
 
     const { POST } = await import("@/app/api/paypal/capture-order/route");
-    const res = await POST(makeRequest({ orderID: "PP-456", appOrderId: "order-2" }) as never);
+    const res = await POST(
+      makeRequest({ orderID: "PP-456", appOrderId: "order-2" }) as never,
+    );
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
     expect(data.ticketCount).toBe(2);
     expect(data.alreadyProcessed).toBe(false);
-
     expect(mockIssueTicketsForOrder).toHaveBeenCalledWith("order-2", "PP-456");
   });
 
   it("handles idempotent (already processed) orders", async () => {
-    mockCapturePayPalOrder.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({ $id: "order-3", userId: "user-1" });
+    mockCapturePayPalOrder.mockResolvedValueOnce({
       id: "PP-789",
       status: "COMPLETED",
       purchase_units: [{ reference_id: "order-3" }],
     });
-    mockIssueTicketsForOrder.mockResolvedValue({
+    mockIssueTicketsForOrder.mockResolvedValueOnce({
       tickets: [{ $id: "ticket-existing" }],
       alreadyProcessed: true,
     });
 
     const { POST } = await import("@/app/api/paypal/capture-order/route");
-    const res = await POST(makeRequest({ orderID: "PP-789", appOrderId: "order-3" }) as never);
+    const res = await POST(
+      makeRequest({ orderID: "PP-789", appOrderId: "order-3" }) as never,
+    );
     const data = await res.json();
 
     expect(data.success).toBe(true);
@@ -120,10 +164,16 @@ describe("POST /api/paypal/capture-order", () => {
   });
 
   it("returns 500 when PayPal capture throws", async () => {
-    mockCapturePayPalOrder.mockRejectedValue(new Error("Network error"));
+    mockGetDocument.mockResolvedValueOnce({
+      $id: "order-bad",
+      userId: "user-1",
+    });
+    mockCapturePayPalOrder.mockRejectedValueOnce(new Error("Network error"));
 
     const { POST } = await import("@/app/api/paypal/capture-order/route");
-    const res = await POST(makeRequest({ orderID: "PP-BAD", appOrderId: "order-bad" }) as never);
+    const res = await POST(
+      makeRequest({ orderID: "PP-BAD", appOrderId: "order-bad" }) as never,
+    );
     const data = await res.json();
 
     expect(res.status).toBe(500);
@@ -131,15 +181,21 @@ describe("POST /api/paypal/capture-order", () => {
   });
 
   it("returns 500 when ticket issuance fails", async () => {
-    mockCapturePayPalOrder.mockResolvedValue({
+    mockGetDocument.mockResolvedValueOnce({
+      $id: "order-ok",
+      userId: "user-1",
+    });
+    mockCapturePayPalOrder.mockResolvedValueOnce({
       id: "PP-OK",
       status: "COMPLETED",
       purchase_units: [{ reference_id: "order-ok" }],
     });
-    mockIssueTicketsForOrder.mockRejectedValue(new Error("DB error"));
+    mockIssueTicketsForOrder.mockRejectedValueOnce(new Error("DB error"));
 
     const { POST } = await import("@/app/api/paypal/capture-order/route");
-    const res = await POST(makeRequest({ orderID: "PP-OK", appOrderId: "order-ok" }) as never);
+    const res = await POST(
+      makeRequest({ orderID: "PP-OK", appOrderId: "order-ok" }) as never,
+    );
 
     expect(res.status).toBe(500);
   });

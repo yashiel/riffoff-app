@@ -5,6 +5,7 @@ const mockGetDocument = vi.hoisted(() => vi.fn());
 const mockUpdateDocument = vi.hoisted(() => vi.fn());
 const mockListDocuments = vi.hoisted(() => vi.fn());
 const mockValidateFingerprint = vi.hoisted(() => vi.fn());
+const mockEd25519Verify = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/appwrite/server", () => ({
   createAdminClient: vi.fn().mockResolvedValue({
@@ -20,6 +21,24 @@ vi.mock("@/lib/appwrite/server", () => ({
 vi.mock("../crypto/device-fingerprint", () => ({
   validateFingerprint: mockValidateFingerprint,
 }));
+
+vi.mock("@/lib/crypto/ed25519", () => ({
+  verify: mockEd25519Verify,
+}));
+
+/** Helper: mock a 'getDocument' call that asks for a specific collection */
+function mockGetDocumentForCollection(
+  collection: string,
+  value: unknown | Error,
+) {
+  mockGetDocument.mockImplementationOnce(async (_db, col) => {
+    if (col === collection) {
+      if (value instanceof Error) throw value;
+      return value;
+    }
+    throw new Error(`unexpected getDocument(${col})`);
+  });
+}
 
 import {
   createSessionFromQR,
@@ -49,10 +68,23 @@ describe("session", () => {
       gateId: "gate-001",
       issuedBy: "user-admin-001",
       expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      signature: "valid-sig",
+      kid: "key-001",
     };
 
     it("valid QR payload creates session and returns session object", async () => {
-      mockCreateDocument.mockResolvedValue({
+      // 1. signing key lookup
+      mockGetDocumentForCollection("signing-keys", {
+        $id: "key-001",
+        active: true,
+        publicKey: "test-public-key",
+      });
+      // 2. ed25519 verifies as valid
+      mockEd25519Verify.mockResolvedValueOnce(true);
+      // 3. enforceDeviceLimit pre-check — gate doesn't exist (returns early)
+      mockGetDocumentForCollection("gates", new Error("not found"));
+      // 4. session creation
+      mockCreateDocument.mockResolvedValueOnce({
         $id: "session-001",
         eventId: "event-001",
         gateId: "gate-001",
@@ -63,6 +95,8 @@ describe("session", () => {
         expiresAt: "2026-03-27T00:00:00.000Z",
         lastSeenAt: "2026-03-26T12:00:00.000Z",
       });
+      // 5. enforceDeviceLimit post-create — gate still doesn't exist
+      mockGetDocumentForCollection("gates", new Error("not found"));
 
       const session = await createSessionFromQR(
         validQRPayload,
@@ -91,14 +125,31 @@ describe("session", () => {
     });
 
     it("invalid signature throws error", async () => {
-      const invalidSigPayload = {
-        ...validQRPayload,
-        signature: "invalid",
+      mockGetDocumentForCollection("signing-keys", {
+        $id: "key-001",
+        active: true,
+        publicKey: "test-public-key",
+      });
+      mockEd25519Verify.mockResolvedValueOnce(false);
+
+      await expect(
+        createSessionFromQR(validQRPayload, deviceId, deviceFingerprint),
+      ).rejects.toThrow("Invalid QR code signature");
+
+      expect(mockCreateDocument).not.toHaveBeenCalled();
+    });
+
+    it("missing signature throws error", async () => {
+      const unsignedPayload = {
+        eventId: "event-001",
+        gateId: "gate-001",
+        issuedBy: "user-admin-001",
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
       };
 
       await expect(
-        createSessionFromQR(invalidSigPayload, deviceId, deviceFingerprint),
-      ).rejects.toThrow("Invalid QR code signature");
+        createSessionFromQR(unsignedPayload, deviceId, deviceFingerprint),
+      ).rejects.toThrow(/missing cryptographic signature/);
 
       expect(mockCreateDocument).not.toHaveBeenCalled();
     });
@@ -106,7 +157,8 @@ describe("session", () => {
 
   describe("createSessionFromPIN", () => {
     it("valid PIN creates session and returns session object", async () => {
-      mockListDocuments.mockResolvedValue({
+      // PIN lookup
+      mockListDocuments.mockResolvedValueOnce({
         total: 1,
         documents: [
           {
@@ -120,8 +172,10 @@ describe("session", () => {
           },
         ],
       });
-
-      mockCreateDocument.mockResolvedValue({
+      // Pre-check enforceDeviceLimit — gate not configured, returns early
+      mockGetDocumentForCollection("gates", new Error("not found"));
+      // Session creation
+      mockCreateDocument.mockResolvedValueOnce({
         $id: "session-002",
         eventId: "event-001",
         gateId: "gate-001",
@@ -132,6 +186,8 @@ describe("session", () => {
         expiresAt: "2026-03-27T00:00:00.000Z",
         lastSeenAt: "2026-03-26T12:00:00.000Z",
       });
+      // Post-create enforceDeviceLimit — gate still not configured
+      mockGetDocumentForCollection("gates", new Error("not found"));
 
       const session = await createSessionFromPIN(
         "123456",
@@ -151,12 +207,12 @@ describe("session", () => {
       );
     });
 
-    it("invalid PIN throws error", async () => {
-      // First call (with expiry filter) returns nothing
-      mockListDocuments.mockResolvedValueOnce({ total: 0, documents: [] });
-      // Second call (without expiry filter) also returns nothing
+    it("invalid PIN throws a generic error (no enumeration)", async () => {
       mockListDocuments.mockResolvedValueOnce({ total: 0, documents: [] });
 
+      // The implementation deliberately returns the same error for both
+      // invalid and expired PINs to prevent attackers from probing valid
+      // PIN values.
       await expect(
         createSessionFromPIN(
           "wrong-pin",
@@ -164,25 +220,14 @@ describe("session", () => {
           deviceId,
           deviceFingerprint,
         ),
-      ).rejects.toThrow("Invalid PIN");
+      ).rejects.toThrow(/Invalid or expired PIN/);
     });
 
-    it("expired PIN throws error", async () => {
-      // First call (with expiry filter) returns nothing
+    it("expired PIN also throws the generic error (no enumeration)", async () => {
+      // Expired PINs are filtered out by the query (`Query.greaterThan
+      // expiresAt now`), so the listDocuments call returns total=0
+      // for an expired PIN.
       mockListDocuments.mockResolvedValueOnce({ total: 0, documents: [] });
-      // Second call (without expiry filter) finds the expired PIN
-      mockListDocuments.mockResolvedValueOnce({
-        total: 1,
-        documents: [
-          {
-            $id: "pin-expired",
-            pin: "654321",
-            gateId: "gate-001",
-            eventId: "event-001",
-            expiresAt: new Date(Date.now() - 60 * 1000).toISOString(),
-          },
-        ],
-      });
 
       await expect(
         createSessionFromPIN(
@@ -191,7 +236,7 @@ describe("session", () => {
           deviceId,
           deviceFingerprint,
         ),
-      ).rejects.toThrow("PIN has expired");
+      ).rejects.toThrow(/Invalid or expired PIN/);
     });
   });
 
